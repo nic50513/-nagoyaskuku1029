@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v8)</title>
-    <!-- Tailwind CSS -->
+    <title>Japan Trip 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <!-- FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -117,7 +115,7 @@
         <div class="flex justify-between items-center px-4 py-1 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : 'bg-green-50 border-green-100'">
             <div class="text-[10px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : 'text-green-500'">
                 <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-                {{ syncStatus === 'syncing' ? '雲端資料讀取中...' : '同步完成 (v8)' }}
+                {{ syncStatus === 'syncing' ? '雲端資料處理中...' : '同步完成 (v9)' }}
             </div>
             <button @click="manualSync" class="text-[10px] bg-white border border-gray-200 px-2.5 py-1 rounded shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
                 <i class="fa-solid fa-cloud-arrow-down"></i> 手動同步
@@ -489,7 +487,7 @@
                     <div class="flex items-center justify-between mb-3 relative z-10">
                         <span class="text-xs font-bold text-maple-200 uppercase tracking-wider flex items-center gap-1">
                             <i class="fa-solid fa-chart-pie text-sm"></i> 
-                            {{ expenseFilterPayer === 'All' ? '全部花費總計' : (expenseFilterPayer + ' 的專屬墊付加總') }}
+                            {{ expenseFilterPayer === 'All' ? '全部花費總計' : (expenseFilterPayer + ' 的墊付花費加總') }}
                         </span>
                         <span class="text-[10px] bg-black/20 px-2 py-0.5 rounded-full backdrop-blur">共 {{ filteredExpenses.length }} 筆</span>
                     </div>
@@ -848,7 +846,7 @@
     const { createApp, ref, computed, onMounted, watch } = Vue;
 
     const spotGuides = {
-        '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ (つづみそば)', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。' },
+        '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。' },
         '早餐: かじ橋食堂': { title: '宮川河畔元氣朝食・かじ橋食堂', intro: '清晨 06:00 開門營業的溫馨日式食堂，前往白川鄉前品嚐現煮日式朝食的最佳選擇。', mustEat: ['🍳 日式朝食定食 (烤鮭魚、煎蛋、高山越光米)', '🥩 飛驒牛朴葉味噌定食', '🍜 晨間醬油熱拉麵'], mustBuy: ['🌾 高山小農越光米、朴葉味噌調理包'], mustVisit: ['🪟 靠窗座位可欣賞宮川溪流與老街早起街景'], tips: '營業時間：06:00-14:00。早晨要搭 07:20 巴士去白川鄉，建議 06:00 準時入座。' },
         '飛驒高山老街+高山陣屋': { title: '飛驒高山老街 & 高山陣屋', intro: '完整保留黑色木造格子窗江戶町家建築，陣屋是全日本唯一現存的江戶時代代官所。', mustEat: ['🥩 坂口屋炙燒飛驒牛握壽司', '🍡 三葉五平餅', '🍦 原田酒造大吟釀霜淇淋'], mustBuy: ['🎎 猿寶寶除厄吉祥物', '🍶 船坂酒造深山菊原酒'], mustVisit: ['📸 宮川中橋：紅色朱橋搭配沿岸楓紅', '🏛️ 高山陣屋：參觀百年前的審判所與枯山水'], tips: '老街多數店鋪在傍晚 17:00 前就會陸續打烊，請趁早逛！' },
         '飛騨高山老街+高山陣屋': { title: '飛驒高山老街 & 高山陣屋', intro: '完整保留黑色木造格子窗江戶町家建築，陣屋是全日本唯一現存的江戶時代代官所。', mustEat: ['🥩 坂口屋炙燒飛驒牛握壽司', '🍡 三葉五平餅', '🍦 原田酒造大吟釀霜淇淋'], mustBuy: ['🎎 猿寶寶除厄吉祥物', '🍶 船坂酒造深山菊原酒'], mustVisit: ['📸 宮川中橋：紅色朱橋搭配沿岸楓紅', '🏛️ 高山陣屋：參觀百年前的審判所與枯山水'], tips: '老街多數店鋪在傍晚 17:00 前就會陸續打烊，請趁早逛！' },
@@ -866,7 +864,7 @@
 
     const hotelGuides = {
         'FAV LUX HIDATAKAYAMA': { title: 'FAV LUX Hida Takayama', intro: '2023 全新開幕高質感設計旅宿，步行至高山車站僅 3 分鐘。', facilities: ['♨️ 舒適大浴場與半露天溫泉設施', '🛋️ 客房備有客廳、微波爐與大冰箱', '🛜 全館高速 Wi-Fi 與自助洗衣'], convenience: ['🏪 7-Eleven 高山花里町店 (步行2分)', '🏪 全家高山站前店 (步行3分)', '🛒 松本清藥妝店 (步行5分)'], nightNearby: ['🏮 高山車站周邊居酒屋街', '🌉 宮川沿岸夜景與中橋點燈'], tips: '飯店距離車站非常近，隔天搭巴士去上高地極為方便！' },
-        'Henn na Hotel Nagoya': { title: 'Henn na Hotel Nagoya (名古屋機器人飯店)', intro: '恐龍機器人接待特色科技旅宿，位於伏見站旁，交通四通八達。', facilities: ['🤖 恐龍全息投影櫃檯接待', '👖 全客房配備 LG Styler 智慧蒸氣電子衣櫥', '🛜 免費 Wi-Fi 與自助行李置物櫃'], convenience: ['🏪 Lawson 伏見站南店 (步行1分)', '🏪 7-Eleven 名古屋伏見站東店 (步行2分)', '🛒 大型生活超市與藥妝店 (步行4分)'], nightNearby: ['🛍️ 榮商圈綠洲21夜景', '🍜 伏見與榮地下街宵夜美食'], tips: '地鐵伏見站三分鐘即達，去吉卜力與榮商圈免轉車！' }
+        'Henn na Hotel Nagoya': { title: 'Henn na Hotel Nagoya (名古屋機器人飯店)', intro: '恐 পরীক্ষ恐龍機器人接待特色科技旅宿，位於伏見站旁，交通四通八達。', facilities: ['🤖 恐龍全息投影櫃檯接待', '👖 全客房配備 LG Styler 智慧蒸氣電子衣櫥', '🛜 免費 Wi-Fi 與自助行李置物櫃'], convenience: ['🏪 Lawson 伏見站南店 (步行1分)', '🏪 7-Eleven 名古屋伏見站東店 (步行2分)', '🛒 大型生活超市與藥妝店 (步行4分)'], nightNearby: ['🛍️ 榮商圈綠洲21夜景', '🍜 伏見與榮地下街宵夜美食'], tips: '地鐵伏見站三分鐘即達，去吉卜力與榮商圈免轉車！' }
     };
 
     const makeHourly = (minT, maxT, cond) => {
@@ -939,7 +937,6 @@
 
     const app = createApp({
         setup() {
-            // 掛載成功後移除原生載入畫面
             onMounted(() => {
                 const fallback = document.getElementById('loading-fallback');
                 if(fallback) fallback.style.display = 'none';
@@ -1053,26 +1050,27 @@
                 } catch(e) {}
             };
 
-            const SYNC_URL = 'https://kvdb.io/AnV9H7mC5uL8iK2wPx4s1Q/japan2026_sync_v7';
+            const SYNC_URL = 'https://api.jsonbin.io/v3/b/66eb8adfac3f335b991a7e28';
+            const MASTER_KEY = '$2a$10$tZc4x/fR79r4kG00f1B1ye2t2sC60k9hR3r8V6C67i0O4XzM2mOha';
 
             const fetchCloudData = (isManual = false) => {
                 syncStatus.value = 'syncing';
                 try {
-                    fetch(`${SYNC_URL}?t=${Date.now()}`, { cache: 'no-store' })
+                    fetch(`${SYNC_URL}/latest?t=${Date.now()}`, { headers: { 'X-Master-Key': MASTER_KEY, 'Cache-Control': 'no-cache' } })
                         .then(r => r.ok ? r.json() : null)
                         .then(json => {
-                            if (json && json.itinerary && Array.isArray(json.itinerary) && json.itinerary.length > 0) {
+                            if (json && json.record && json.record.itinerary && Array.isArray(json.record.itinerary) && json.record.itinerary.length > 0) {
                                 let isUpdated = false;
-                                if (JSON.stringify(itineraryData.value) !== JSON.stringify(json.itinerary)) {
-                                    itineraryData.value = json.itinerary;
+                                if (JSON.stringify(itineraryData.value) !== JSON.stringify(json.record.itinerary)) {
+                                    itineraryData.value = json.record.itinerary;
                                     isUpdated = true;
                                 }
-                                if (json.shopping && JSON.stringify(shoppingList.value) !== JSON.stringify(json.shopping)) {
-                                    shoppingList.value = json.shopping;
+                                if (json.record.shopping && Array.isArray(json.record.shopping) && JSON.stringify(shoppingList.value) !== JSON.stringify(json.record.shopping)) {
+                                    shoppingList.value = json.record.shopping;
                                     isUpdated = true;
                                 }
-                                if (json.expenses && JSON.stringify(expenses.value) !== JSON.stringify(json.expenses)) {
-                                    expenses.value = json.expenses;
+                                if (json.record.expenses && Array.isArray(json.record.expenses) && JSON.stringify(expenses.value) !== JSON.stringify(json.record.expenses)) {
+                                    expenses.value = json.record.expenses;
                                     isUpdated = true;
                                 }
                                 saveLocal();
@@ -1080,12 +1078,12 @@
                                 if(isManual) alert(isUpdated ? '✅ 手動同步成功！已載入最新資料。' : '✅ 同步完成！目前已是最新資料。');
                             } else {
                                 syncStatus.value = 'online';
-                                if(isManual) alert('⚠️ 雲端目前無資料，請先新增一筆資料來觸發上傳！');
+                                if(isManual) alert('⚠️ 雲端目前無資料，請先在此設備新增修改一筆資料來觸發上傳！');
                             }
                         })
                         .catch(() => { 
                             syncStatus.value = 'online'; 
-                            if(isManual) alert('❌ 網路連線錯誤，請稍後再試。');
+                            if(isManual) alert('❌ 網路連線錯誤或流量超載，請稍後再試。');
                         });
                 } catch(e) {
                     syncStatus.value = 'online';
@@ -1098,9 +1096,9 @@
                 saveLocal();
                 try {
                     fetch(SYNC_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ itinerary: itineraryData.value, shopping: shoppingList.value, expenses: expenses.value, last_update: Date.now() })
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY, 'X-Bin-Versioning': 'false' },
+                        body: JSON.stringify({ itinerary: itineraryData.value, shopping: shoppingList.value, expenses: expenses.value })
                     })
                     .then(() => { syncStatus.value = 'online'; })
                     .catch(() => { syncStatus.value = 'online'; });
