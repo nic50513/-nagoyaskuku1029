@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Japan Trip 2026</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -111,7 +113,7 @@
             </button>
         </div>
         
-        <!-- 雲端同步狀態列與手動同步按鈕 (使用真 KVDB) -->
+        <!-- 雲端同步狀態列與手動同步按鈕 -->
         <div class="flex justify-between items-center px-4 py-1 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : 'bg-green-50 border-green-100'">
             <div class="text-[10px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : 'text-green-500'">
                 <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
@@ -216,7 +218,7 @@
                     </div>
                 </div>
 
-                <!-- 行程清單 (原生排序，完全防護) -->
+                <!-- 行程清單 -->
                 <div class="space-y-4 pb-8">
                     <div v-for="(item, idx) in currentItinerary" :key="item.id || idx" class="relative group">
                         
@@ -306,7 +308,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Tab 2: 資訊 -->
             <div v-show="currentTab === 'info'" class="space-y-5 animate-fade-in">
                 <div class="bg-gradient-to-r from-maple-500 to-maple-700 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
@@ -1049,27 +1051,26 @@
                 } catch(e) {}
             };
 
-            const SYNC_URL = 'https://api.jsonbin.io/v3/b/66eb8adfac3f335b991a7e28';
-            const MASTER_KEY = '$2a$10$tZc4x/fR79r4kG00f1B1ye2t2sC60k9hR3r8V6C67i0O4XzM2mOha';
+            const SYNC_URL = 'https://kvdb.io/AnV9H7mC5uL8iK2wPx4s1Q/japan2026_sync_v7';
 
             const fetchCloudData = (isManual = false) => {
                 syncStatus.value = 'syncing';
                 try {
-                    fetch(`${SYNC_URL}/latest?t=${Date.now()}`, { headers: { 'X-Master-Key': MASTER_KEY, 'Cache-Control': 'no-cache' } })
+                    fetch(`${SYNC_URL}?t=${Date.now()}`, { cache: 'no-store' })
                         .then(r => r.ok ? r.json() : null)
                         .then(json => {
-                            if (json && json.record && json.record.itinerary && Array.isArray(json.record.itinerary) && json.record.itinerary.length > 0) {
+                            if (json && json.itinerary && Array.isArray(json.itinerary) && json.itinerary.length > 0) {
                                 let isUpdated = false;
-                                if (JSON.stringify(itineraryData.value) !== JSON.stringify(json.record.itinerary)) {
-                                    itineraryData.value = json.record.itinerary;
+                                if (JSON.stringify(itineraryData.value) !== JSON.stringify(json.itinerary)) {
+                                    itineraryData.value = json.itinerary;
                                     isUpdated = true;
                                 }
-                                if (json.record.shopping && Array.isArray(json.record.shopping) && JSON.stringify(shoppingList.value) !== JSON.stringify(json.record.shopping)) {
-                                    shoppingList.value = json.record.shopping;
+                                if (json.shopping && JSON.stringify(shoppingList.value) !== JSON.stringify(json.shopping)) {
+                                    shoppingList.value = json.shopping;
                                     isUpdated = true;
                                 }
-                                if (json.record.expenses && Array.isArray(json.record.expenses) && JSON.stringify(expenses.value) !== JSON.stringify(json.record.expenses)) {
-                                    expenses.value = json.record.expenses;
+                                if (json.expenses && JSON.stringify(expenses.value) !== JSON.stringify(json.expenses)) {
+                                    expenses.value = json.expenses;
                                     isUpdated = true;
                                 }
                                 saveLocal();
@@ -1077,12 +1078,12 @@
                                 if(isManual) alert(isUpdated ? '✅ 手動同步成功！已載入最新資料。' : '✅ 同步完成！目前已是最新資料。');
                             } else {
                                 syncStatus.value = 'online';
-                                if(isManual) alert('⚠️ 雲端資料庫目前無資料，請先在此設備新增修改一筆資料來觸發上傳！');
+                                if(isManual) alert('⚠️ 雲端目前無資料，請先新增一筆資料來觸發上傳！');
                             }
                         })
                         .catch(() => { 
                             syncStatus.value = 'online'; 
-                            if(isManual) alert('❌ 網路連線錯誤或流量超載，請稍後再試。');
+                            if(isManual) alert('❌ 網路連線錯誤，請稍後再試。');
                         });
                 } catch(e) {
                     syncStatus.value = 'online';
@@ -1095,9 +1096,9 @@
                 saveLocal();
                 try {
                     fetch(SYNC_URL, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY, 'X-Bin-Versioning': 'false' },
-                        body: JSON.stringify({ itinerary: itineraryData.value, shopping: shoppingList.value, expenses: expenses.value })
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ itinerary: itineraryData.value, shopping: shoppingList.value, expenses: expenses.value, last_update: Date.now() })
                     })
                     .then(() => { syncStatus.value = 'online'; })
                     .catch(() => { syncStatus.value = 'online'; });
