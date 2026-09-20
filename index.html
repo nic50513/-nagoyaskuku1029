@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v13)</title>
+    <title>Japan Trip 2026 (v14)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -93,7 +93,7 @@
 
     <!-- 終極防呆版本標籤 -->
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v13
+        ✅ 系統版本: v14
     </div>
 
     <div v-cloak>
@@ -141,6 +141,7 @@
                     </div>
                 </div>
 
+                <!-- 氣象卡片 -->
                 <div v-if="currentWeather" class="mt-4 mb-5 bg-white border border-maple-100 rounded-2xl p-4 card-shadow">
                     <div v-if="currentDayRegions.length > 1" class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-gray-100">
                         <span class="text-[11px] font-bold text-gray-400 flex items-center gap-1">
@@ -203,6 +204,7 @@
                     </div>
                 </div>
 
+                <!-- 每日焦點概覽 -->
                 <div v-if="currentOverview" class="mb-4 bg-gradient-to-br from-white to-maple-50/40 rounded-2xl p-4 border border-maple-200/70 card-shadow relative overflow-hidden">
                     <div class="absolute -right-3 -bottom-3 text-maple-500 opacity-5 text-7xl font-black select-none pointer-events-none">
                         DAY {{ selectedDateIndex + 1 }}
@@ -222,6 +224,8 @@
                 <!-- 行程清單 -->
                 <div class="space-y-4 pb-8">
                     <div v-for="(item, idx) in currentItinerary" :key="item.id || idx" class="relative group">
+                        
+                        <!-- 交通連接線 -->
                         <div v-if="idx > 0" class="flex items-center justify-center gap-2 py-1 text-xs text-gray-400 font-medium mb-3">
                             <div class="w-px h-6 bg-maple-200"></div>
                             <div class="bg-white border border-maple-100 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
@@ -230,11 +234,14 @@
                             </div>
                         </div>
 
+                        <!-- 航班專屬卡片 -->
                         <div v-if="item.category === 'flight'" class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-3xl p-5 border border-blue-200 shadow-sm relative group overflow-hidden">
                             <div class="flex justify-between items-center mb-4 relative z-10">
                                 <span class="text-[10px] font-bold bg-blue-500 text-white px-2 py-1 rounded shadow-sm flex items-center gap-1"><i class="fa-solid fa-plane text-xs"></i> 航班資訊</span>
                                 <div class="flex items-center gap-3">
                                     <span class="text-sm font-bold text-blue-800 bg-white/60 px-2 py-0.5 rounded">{{ item.startTime }}</span>
+                                    
+                                    <!-- 排序按鈕 -->
                                     <div class="flex flex-col items-end gap-1">
                                         <button v-if="idx > 0" @click.stop="moveItem(idx, -1)" class="w-6 h-6 bg-white/50 rounded flex items-center justify-center text-blue-400 hover:text-blue-700 shadow-sm"><i class="fa-solid fa-chevron-up text-[10px]"></i></button>
                                         <button v-if="idx < currentItinerary.length - 1" @click.stop="moveItem(idx, 1)" class="w-6 h-6 bg-white/50 rounded flex items-center justify-center text-blue-400 hover:text-blue-700 shadow-sm"><i class="fa-solid fa-chevron-down text-[10px]"></i></button>
@@ -252,9 +259,13 @@
                             <div v-if="item.note" class="mt-4 text-xs font-bold text-blue-800 bg-white/70 backdrop-blur p-2.5 rounded-xl border border-blue-200/50 relative z-10 shadow-inner flex items-start gap-2">
                                 <i class="fa-solid fa-circle-info text-base mt-0.5"></i><span class="leading-relaxed whitespace-pre-line break-words">{{ item.note }}</span>
                             </div>
-                            <button @click.stop="editItineraryItem(item)" class="absolute bottom-3 right-3 w-9 h-9 bg-white text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white shadow-md transition-colors border border-blue-200 z-20"><i class="fa-solid fa-pen text-sm"></i></button>
+                            
+                            <button @click.stop="editItineraryItem(item)" class="absolute bottom-3 right-3 w-9 h-9 bg-white text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white shadow-md transition-colors border border-blue-200 z-20">
+                                <i class="fa-solid fa-pen text-sm"></i>
+                            </button>
                         </div>
 
+                        <!-- 一般卡片 -->
                         <div v-else class="bg-white rounded-3xl p-5 pb-12 card-shadow relative overflow-hidden group">
                             <div class="flex justify-between items-start mb-3 relative z-10">
                                 <div class="flex items-center gap-3">
@@ -264,6 +275,8 @@
                                         <div v-if="item.startTime" class="text-sm font-bold text-maple-700 bg-maple-50 px-1.5 py-0.5 rounded mt-0.5 flex items-center gap-1"><i class="fa-regular fa-clock text-[12px]"></i>{{ item.startTime }}</div>
                                     </div>
                                 </div>
+                                
+                                <!-- 排序按鈕 -->
                                 <div class="flex flex-col items-end gap-1.5">
                                     <button v-if="idx > 0" @click.stop="moveItem(idx, -1)" class="w-7 h-7 bg-gray-50 border border-gray-100 rounded flex items-center justify-center text-gray-400 hover:bg-maple-100 hover:text-maple-600 transition-colors shadow-sm"><i class="fa-solid fa-arrow-up text-xs"></i></button>
                                     <button v-if="idx < currentItinerary.length - 1" @click.stop="moveItem(idx, 1)" class="w-7 h-7 bg-gray-50 border border-gray-100 rounded flex items-center justify-center text-gray-400 hover:bg-maple-100 hover:text-maple-600 transition-colors shadow-sm"><i class="fa-solid fa-arrow-down text-xs"></i></button>
@@ -838,7 +851,7 @@
     const { createApp, ref, computed, onMounted, watch } = Vue;
 
     const spotGuides = {
-        '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ (つづみそば)', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。' },
+        '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。' },
         '早餐: かじ橋食堂': { title: '宮川河畔元氣朝食・かじ橋食堂', intro: '清晨 06:00 開門營業的溫馨日式食堂，前往白川鄉前品嚐現煮日式朝食的最佳選擇。', mustEat: ['🍳 日式朝食定食 (烤鮭魚、煎蛋、高山越光米)', '🥩 飛驒牛朴葉味噌定食', '🍜 晨間醬油熱拉麵'], mustBuy: ['🌾 高山小農越光米、朴葉味噌調理包'], mustVisit: ['🪟 靠窗座位可欣賞宮川溪流與老街早起街景'], tips: '營業時間：06:00-14:00。早晨要搭 07:20 巴士去白川鄉，建議 06:00 準時入座。' },
         '飛驒高山老街+高山陣屋': { title: '飛驒高山老街 & 高山陣屋', intro: '完整保留黑色木造格子窗江戶町家建築，陣屋是全日本唯一現存的江戶時代代官所。', mustEat: ['🥩 坂口屋炙燒飛驒牛握壽司', '🍡 三葉五平餅', '🍦 原田酒造大吟釀霜淇淋'], mustBuy: ['🎎 猿寶寶除厄吉祥物', '🍶 船坂酒造深山菊原酒'], mustVisit: ['📸 宮川中橋：紅色朱橋搭配沿岸楓紅', '🏛️ 高山陣屋：參觀百年前的審判所與枯山水'], tips: '老街多數店鋪在傍晚 17:00 前就會陸續打烊，請趁早逛！' },
         '飛騨高山老街+高山陣屋': { title: '飛驒高山老街 & 高山陣屋', intro: '完整保留黑色木造格子窗江戶町家建築，陣屋是全日本唯一現存的江戶時代代官所。', mustEat: ['🥩 坂口屋炙燒飛驒牛握壽司', '🍡 三葉五平餅', '🍦 原田酒造大吟釀霜淇淋'], mustBuy: ['🎎 猿寶寶除厄吉祥物', '🍶 船坂酒造深山菊原酒'], mustVisit: ['📸 宮川中橋：紅色朱橋搭配沿岸楓紅', '🏛️ 高山陣屋：參觀百年前的審判所與枯山水'], tips: '老街多數店鋪在傍晚 17:00 前就會陸續打烊，請趁早逛！' },
@@ -1015,6 +1028,11 @@
             const expenses = ref([
                 { name: 'Klook 高山車票', amount: 4780, category: 'transport', date: '2026-10-29', payment: 'card', payer: '甯', currency: 'TWD' },
                 { name: '飛驒牛 SUKIYAKI', amount: 6500, category: 'food', date: '2026-10-29', payment: 'cash', payer: '王', currency: 'JPY' }
+            ]);
+            
+            const hotels = ref([
+                { name: 'FAV LUX HIDATAKAYAMA', date: '10/29 - 10/31', address: '高山市花里町', phone: '0577-33-xxxx' },
+                { name: 'Henn na Hotel Nagoya', date: '10/31 - 11/03', address: '名古屋市中區錦', phone: '052-223-xxxx' }
             ]);
 
             const showItineraryModal = ref(false);
