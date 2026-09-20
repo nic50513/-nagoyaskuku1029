@@ -65,244 +65,222 @@
         .fab-btn:active { transform: scale(0.95); box-shadow: 0 4px 15px rgba(222, 123, 84, 0.4); }
         .note-content { height: auto !important; max-height: none !important; overflow: visible !important; }
         .expenses-banner { background: linear-gradient(135deg, #DE7B54 0%, #B85530 100%); }
-        
-        [v-cloak] { display: none; }
-        #app[data-v-app] #loading-fallback { display: none; }
     </style>
 </head>
 <body>
 
-<!-- 安全防護：全域錯誤捕捉介面 -->
-<div id="vue-error-logger" style="display:none; position:fixed; top:0; left:0; width:100%; background:rgba(220,38,38,0.95); color:white; z-index:9999; padding:20px; font-size:14px; word-break:break-all; min-height:100vh;">
-    <h3 style="font-size:18px; font-weight:bold; margin-bottom:10px;"><i class="fa-solid fa-triangle-exclamation"></i> 系統啟動異常</h3>
-    <p>抱歉！網頁載入發生錯誤，請將下方程式碼截圖給開發者：</p>
-    <div id="error-text" style="background:rgba(0,0,0,0.5); padding:15px; border-radius:8px; margin-top:10px; font-family:monospace; font-size:12px; white-space:pre-wrap;"></div>
-</div>
-
-<script>
-    window.onerror = function(message, source, lineno, colno, error) {
-        document.getElementById('vue-error-logger').style.display = 'block';
-        document.getElementById('error-text').innerText += '[Global Error] ' + message + '\nLine: ' + lineno + '\n\n';
-    };
-</script>
-
 <div id="app" class="app-container">
-    <div id="loading-fallback" class="flex flex-col items-center justify-center min-h-[50vh] text-maple-500 pt-20">
-        <i class="fa-solid fa-spinner fa-spin text-5xl mb-4"></i>
-        <h2 class="text-xl font-bold">系統載入中...</h2>
-        <p class="text-xs text-gray-400 mt-2">正在初始化您的日本之旅，請稍候。</p>
+    <div class="banner-wrapper"></div>
+    
+    <div class="nav-tabs-bar">
+        <button @click="currentTab = 'itinerary'" title="行程" :class="{'active': currentTab === 'itinerary'}" class="tab-button">
+            <i class="fa-solid fa-map-location-dot"></i>
+        </button>
+        <button @click="currentTab = 'info'" title="資訊" :class="{'active': currentTab === 'info'}" class="tab-button">
+            <i class="fa-solid fa-circle-info"></i>
+        </button>
+        <button @click="currentTab = 'transit'" title="交通" :class="{'active': currentTab === 'transit'}" class="tab-button">
+            <i class="fa-solid fa-train-subway"></i>
+        </button>
+        <button @click="currentTab = 'shopping'" title="購物" :class="{'active': currentTab === 'shopping'}" class="tab-button">
+            <i class="fa-solid fa-basket-shopping"></i>
+        </button>
+        <button @click="currentTab = 'expenses'" title="花費" :class="{'active': currentTab === 'expenses'}" class="tab-button">
+            <i class="fa-solid fa-coins"></i>
+        </button>
+    </div>
+    
+    <!-- 雲端同步狀態列與手動同步按鈕 -->
+    <div class="flex justify-between items-center px-4 py-1 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : 'bg-green-50 border-green-100'">
+        <div class="text-[10px] font-bold" :class="syncStatus === 'syncing' ? 'text-blue-500' : 'text-green-500'">
+            <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
+            {{ syncStatus === 'syncing' ? '雲端資料處理中...' : '跨裝置同步就緒' }}
+        </div>
+        <button @click="fetchCloudData" class="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all">
+            <i class="fa-solid fa-cloud-arrow-down"></i> 手動同步
+        </button>
     </div>
 
-    <div v-cloak>
-        <div class="banner-wrapper"></div>
-        
-        <div class="nav-tabs-bar">
-            <button @click="currentTab = 'itinerary'" title="行程" :class="{'active': currentTab === 'itinerary'}" class="tab-button">
-                <i class="fa-solid fa-map-location-dot"></i>
-            </button>
-            <button @click="currentTab = 'info'" title="資訊" :class="{'active': currentTab === 'info'}" class="tab-button">
-                <i class="fa-solid fa-circle-info"></i>
-            </button>
-            <button @click="currentTab = 'transit'" title="交通" :class="{'active': currentTab === 'transit'}" class="tab-button">
-                <i class="fa-solid fa-train-subway"></i>
-            </button>
-            <button @click="currentTab = 'shopping'" title="購物" :class="{'active': currentTab === 'shopping'}" class="tab-button">
-                <i class="fa-solid fa-basket-shopping"></i>
-            </button>
-            <button @click="currentTab = 'expenses'" title="花費" :class="{'active': currentTab === 'expenses'}" class="tab-button">
-                <i class="fa-solid fa-coins"></i>
-            </button>
-        </div>
-        
-        <div v-if="syncStatus === 'syncing'" class="bg-blue-50 text-blue-500 text-[10px] font-bold text-center py-0.5 flex items-center justify-center gap-1 border-b border-blue-100 transition-all">
-            <i class="fa-solid fa-sync animate-spin"></i> 雲端資料同步中...
-        </div>
-        <div v-else class="bg-green-50 text-green-500 text-[10px] font-bold text-center py-0.5 flex items-center justify-center gap-1 border-b border-green-100 transition-all">
-            <i class="fa-solid fa-cloud-check"></i> 同步完成 (跨裝置連線就緒)
-        </div>
+    <main class="px-4 app-main">
+        <!-- Tab 1: 行程 -->
+        <div v-show="currentTab === 'itinerary'" class="animate-fade-in">
+            <div class="flex overflow-x-auto hide-scrollbar space-x-3 pb-2 snap-x sticky date-selector-sticky -mx-4 px-4">
+                <div v-for="(day, index) in dates" :key="index" 
+                     @click="selectedDateIndex = index"
+                     class="snap-center flex-shrink-0 w-[60px] h-[70px] rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 border shadow-sm relative overflow-hidden"
+                     :class="selectedDateIndex === index ? 'bg-maple-500 text-white border-maple-500 shadow-md scale-105' : 'bg-white text-gray-400 border-maple-100 hover:bg-maple-50'">
+                    <i v-if="selectedDateIndex === index" class="fa-brands fa-pagelines absolute -top-1 -right-1 text-maple-200 opacity-30 text-lg"></i>
+                    <span class="text-sm font-bold uppercase tracking-wider">{{ day.weekday }}</span> 
+                    <span class="text-lg font-black">{{ day.date }}</span> 
+                </div>
+            </div>
 
-        <main class="px-4 app-main">
-            <!-- Tab 1: 行程 -->
-            <div v-show="currentTab === 'itinerary'" class="animate-fade-in">
-                <div class="flex overflow-x-auto hide-scrollbar space-x-3 pb-2 snap-x sticky date-selector-sticky -mx-4 px-4">
-                    <div v-for="(day, index) in dates" :key="index" 
-                         @click="selectedDateIndex = index"
-                         class="snap-center flex-shrink-0 w-[60px] h-[70px] rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 border shadow-sm relative overflow-hidden"
-                         :class="selectedDateIndex === index ? 'bg-maple-500 text-white border-maple-500 shadow-md scale-105' : 'bg-white text-gray-400 border-maple-100 hover:bg-maple-50'">
-                        <i v-if="selectedDateIndex === index" class="fa-brands fa-pagelines absolute -top-1 -right-1 text-maple-200 opacity-30 text-lg"></i>
-                        <span class="text-sm font-bold uppercase tracking-wider">{{ day.weekday }}</span> 
-                        <span class="text-lg font-black">{{ day.date }}</span> 
+            <!-- 氣象卡片 -->
+            <div v-if="currentWeather" class="mt-4 mb-5 bg-white border border-maple-100 rounded-2xl p-4 card-shadow">
+                <div v-if="currentDayRegions.length > 1" class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-gray-100">
+                    <span class="text-[11px] font-bold text-gray-400 flex items-center gap-1">
+                        <i class="fa-solid fa-location-dot text-maple-500"></i> 地區天氣：
+                    </span>
+                    <div class="flex gap-1.5 bg-gray-50 p-1 rounded-xl border border-gray-100">
+                        <button v-for="(r, rIdx) in currentDayRegions" :key="r.region"
+                                @click="selectedRegionIndex = rIdx"
+                                class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1"
+                                :class="selectedRegionIndex === rIdx ? 'bg-white text-maple-700 shadow-sm border border-maple-200/60' : 'text-gray-400 hover:text-gray-600'">
+                            <span class="w-1.5 h-1.5 rounded-full" :class="selectedRegionIndex === rIdx ? 'bg-maple-500' : 'bg-gray-300'"></span>
+                            {{ r.region }}
+                        </button>
                     </div>
                 </div>
 
-                <!-- 氣象卡片 -->
-                <div v-if="currentWeather" class="mt-4 mb-5 bg-white border border-maple-100 rounded-2xl p-4 card-shadow">
-                    <div v-if="currentDayRegions.length > 1" class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-gray-100">
-                        <span class="text-[11px] font-bold text-gray-400 flex items-center gap-1">
-                            <i class="fa-solid fa-location-dot text-maple-500"></i> 地區天氣：
-                        </span>
-                        <div class="flex gap-1.5 bg-gray-50 p-1 rounded-xl border border-gray-100">
-                            <button v-for="(r, rIdx) in currentDayRegions" :key="r.region"
-                                    @click="selectedRegionIndex = rIdx"
-                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1"
-                                    :class="selectedRegionIndex === rIdx ? 'bg-white text-maple-700 shadow-sm border border-maple-200/60' : 'text-gray-400 hover:text-gray-600'">
-                                <span class="w-1.5 h-1.5 rounded-full" :class="selectedRegionIndex === rIdx ? 'bg-maple-500' : 'bg-gray-300'"></span>
-                                {{ r.region }}
-                            </button>
+                <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                    <div class="flex items-center text-maple-700 space-x-3.5">
+                        <div class="w-11 h-11 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
+                            <i :class="getWeatherIcon(currentWeather.condition)" class="text-2xl text-orange-400"></i>
                         </div>
-                    </div>
-
-                    <div class="flex justify-between items-center pb-3 border-b border-gray-100">
-                        <div class="flex items-center text-maple-700 space-x-3.5">
-                            <div class="w-11 h-11 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
-                                <i :class="getWeatherIcon(currentWeather.condition)" class="text-2xl text-orange-400"></i>
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-1.5 mb-0.5">
-                                    <span class="text-xs font-black text-white bg-maple-500 px-1.5 py-0.5 rounded">{{ currentWeather.region }}</span>
-                                    <div class="flex items-end gap-1 leading-none">
-                                        <span class="text-2xl font-black">{{ (currentWeather.temp || '0/0').split('/')[0] }}°</span>
-                                        <span class="text-xs font-bold text-gray-400 mb-0.5">/ {{ (currentWeather.temp || '0/0').split('/')[1] }}°C</span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-[11px] font-bold text-gray-500 bg-gray-50 px-2 py-0.5 rounded-md">體感: {{ currentWeather.feel }}°C</span> 
-                                    <span class="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md"><i class="fa-solid fa-umbrella text-[10px]"></i> 降雨率: {{ currentWeather.pop }}%</span>
+                        <div>
+                            <div class="flex items-center gap-1.5 mb-0.5">
+                                <span class="text-xs font-black text-white bg-maple-500 px-1.5 py-0.5 rounded">{{ currentWeather.region }}</span>
+                                <div class="flex items-end gap-1 leading-none">
+                                    <span class="text-2xl font-black">{{ (currentWeather.temp || '0/0').split('/')[0] }}°</span>
+                                    <span class="text-xs font-bold text-gray-400 mb-0.5">/ {{ (currentWeather.temp || '0/0').split('/')[1] }}°C</span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="text-right text-xs text-gray-500">
-                            <span class="font-bold block text-gray-800 text-sm mb-1.5">{{ getWeatherDescription(currentWeather.condition) }}</span>
-                            <span class="text-gray-400 inline-flex items-center gap-1 font-medium text-[11px] bg-gray-50 px-2 py-1 rounded-md">
-                                <i class="fa-solid fa-train-subway text-xs"></i> 大眾運輸
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="pt-3">
-                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center justify-between">
-                            <span class="flex items-center gap-1">
-                                <i class="fa-regular fa-clock text-maple-500"></i> {{ currentWeather.region }} 24小時逐時氣溫與降雨率
-                            </span>
-                            <span class="text-[9px] text-gray-400">左右滑動 ➔</span>
-                        </div>
-                        <div class="flex overflow-x-auto no-scrollbar gap-2.5 py-1 -mx-1 px-1 snap-x">
-                            <div v-for="h in (currentWeather.hourly || [])" :key="h.time" 
-                                 class="flex-shrink-0 flex flex-col items-center justify-center py-2 px-2 rounded-xl bg-gray-50/80 border border-gray-100 min-w-[54px] snap-start hover:bg-orange-50/50 transition-colors">
-                                <span class="text-[10px] font-medium text-gray-400 mb-1">{{ h.time }}</span>
-                                <i :class="[getHourlyWeatherIcon(h), h.isNight ? 'text-indigo-400' : 'text-orange-400']" class="text-base mb-1"></i>
-                                <span class="text-xs font-black text-gray-700 mb-0.5">{{ h.temp }}°</span>
-                                <span class="text-[9px] font-bold text-blue-500"><i class="fa-solid fa-droplet text-[8px]"></i> {{ h.pop }}%</span>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-[11px] font-bold text-gray-500 bg-gray-50 px-2 py-0.5 rounded-md">體感: {{ currentWeather.feel }}°C</span> 
+                                <span class="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md"><i class="fa-solid fa-umbrella text-[10px]"></i> 降雨率: {{ currentWeather.pop }}%</span>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- 每日焦點概覽 -->
-                <div v-if="currentOverview" class="mb-4 bg-gradient-to-br from-white to-maple-50/40 rounded-2xl p-4 border border-maple-200/70 card-shadow relative overflow-hidden">
-                    <div class="absolute -right-3 -bottom-3 text-maple-500 opacity-5 text-7xl font-black select-none pointer-events-none">
-                        DAY {{ selectedDateIndex + 1 }}
-                    </div>
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-maple-500 text-white shadow-sm flex items-center gap-1">
-                            <i class="fa-solid fa-flag"></i> DAY {{ selectedDateIndex + 1 }} 焦點
+                    <div class="text-right text-xs text-gray-500">
+                        <span class="font-bold block text-gray-800 text-sm mb-1.5">{{ getWeatherDescription(currentWeather.condition) }}</span>
+                        <span class="text-gray-400 inline-flex items-center gap-1 font-medium text-[11px] bg-gray-50 px-2 py-1 rounded-md">
+                            <i class="fa-solid fa-train-subway text-xs"></i> 大眾運輸
                         </span>
-                        <h3 class="text-sm font-black text-gray-800 leading-tight">{{ currentOverview.title }}</h3>
-                    </div>
-                    <p class="text-xs text-gray-600 leading-relaxed mb-3">{{ currentOverview.desc }}</p>
-                    <div class="flex flex-wrap gap-1.5">
-                        <span v-for="tag in currentOverview.highlights" :key="tag" class="text-[10px] font-bold text-maple-700 bg-white/90 border border-maple-200 px-2 py-0.5 rounded-lg shadow-2xs"># {{ tag }}</span>
                     </div>
                 </div>
 
-                <!-- 行程清單 (完全移除容易報錯的套件，改用原生排序) -->
-                <div class="space-y-4 pb-8">
-                    <div v-for="(item, idx) in currentItinerary" :key="item.id" class="relative group">
+                <div class="pt-3">
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                        <span class="flex items-center gap-1">
+                            <i class="fa-regular fa-clock text-maple-500"></i> {{ currentWeather.region }} 24小時逐時氣溫與降雨率
+                        </span>
+                        <span class="text-[9px] text-gray-400">左右滑動 ➔</span>
+                    </div>
+                    <div class="flex overflow-x-auto no-scrollbar gap-2.5 py-1 -mx-1 px-1 snap-x">
+                        <div v-for="h in (currentWeather.hourly || [])" :key="h.time" 
+                             class="flex-shrink-0 flex flex-col items-center justify-center py-2 px-2 rounded-xl bg-gray-50/80 border border-gray-100 min-w-[54px] snap-start hover:bg-orange-50/50 transition-colors">
+                            <span class="text-[10px] font-medium text-gray-400 mb-1">{{ h.time }}</span>
+                            <i :class="[getHourlyWeatherIcon(h), h.isNight ? 'text-indigo-400' : 'text-orange-400']" class="text-base mb-1"></i>
+                            <span class="text-xs font-black text-gray-700 mb-0.5">{{ h.temp }}°</span>
+                            <span class="text-[9px] font-bold text-blue-500"><i class="fa-solid fa-droplet text-[8px]"></i> {{ h.pop }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 每日焦點概覽 -->
+            <div v-if="currentOverview" class="mb-4 bg-gradient-to-br from-white to-maple-50/40 rounded-2xl p-4 border border-maple-200/70 card-shadow relative overflow-hidden">
+                <div class="absolute -right-3 -bottom-3 text-maple-500 opacity-5 text-7xl font-black select-none pointer-events-none">
+                    DAY {{ selectedDateIndex + 1 }}
+                </div>
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-maple-500 text-white shadow-sm flex items-center gap-1">
+                        <i class="fa-solid fa-flag"></i> DAY {{ selectedDateIndex + 1 }} 焦點
+                    </span>
+                    <h3 class="text-sm font-black text-gray-800 leading-tight">{{ currentOverview.title }}</h3>
+                </div>
+                <p class="text-xs text-gray-600 leading-relaxed mb-3">{{ currentOverview.desc }}</p>
+                <div class="flex flex-wrap gap-1.5">
+                    <span v-for="tag in currentOverview.highlights" :key="tag" class="text-[10px] font-bold text-maple-700 bg-white/90 border border-maple-200 px-2 py-0.5 rounded-lg shadow-2xs"># {{ tag }}</span>
+                </div>
+            </div>
+
+            <!-- 行程清單 (原生排序，完全防護) -->
+            <div class="space-y-4 pb-8">
+                <div v-for="(item, idx) in currentItinerary" :key="item.id || idx" class="relative group">
+                    
+                    <!-- 交通連接線 -->
+                    <div v-if="idx > 0" class="flex items-center justify-center gap-2 py-1 text-xs text-gray-400 font-medium mb-3">
+                        <div class="w-px h-6 bg-maple-200"></div>
+                        <div class="bg-white border border-maple-100 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                            <i :class="getTransportIcon(currentItinerary[idx-1] ? currentItinerary[idx-1].transportType : 'walk')" class="text-maple-500 text-sm"></i>
+                            <span>{{ currentItinerary[idx-1] ? (currentItinerary[idx-1].travelTime || '依現場車次') : '依現場車次' }}</span>
+                        </div>
+                    </div>
+
+                    <!-- 航班專屬卡片 -->
+                    <div v-if="item.category === 'flight'" class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-3xl p-5 border border-blue-200 shadow-sm relative group overflow-hidden">
+                        <div class="flex justify-between items-center mb-4 relative z-10">
+                            <span class="text-[10px] font-bold bg-blue-500 text-white px-2 py-1 rounded shadow-sm flex items-center gap-1"><i class="fa-solid fa-plane text-xs"></i> 航班資訊</span>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-bold text-blue-800 bg-white/60 px-2 py-0.5 rounded">{{ item.startTime }}</span>
+                                <!-- 排序按鈕 -->
+                                <div class="flex flex-col items-end gap-1">
+                                    <button v-if="idx > 0" @click.stop="moveItem(idx, -1)" class="w-6 h-6 bg-white/50 rounded flex items-center justify-center text-blue-400 hover:text-blue-700 shadow-sm"><i class="fa-solid fa-chevron-up text-[10px]"></i></button>
+                                    <button v-if="idx < currentItinerary.length - 1" @click.stop="moveItem(idx, 1)" class="w-6 h-6 bg-white/50 rounded flex items-center justify-center text-blue-400 hover:text-blue-700 shadow-sm"><i class="fa-solid fa-chevron-down text-[10px]"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center px-2 relative z-10">
+                            <div class="text-center"><div class="text-2xl font-black text-gray-800 tracking-tight">{{ (item.address || 'TPE').split(' ')[0] }}</div></div>
+                            <div class="flex flex-col items-center text-blue-500 px-4 w-full">
+                                <span class="bg-white px-2 py-0.5 rounded-full shadow-sm border border-blue-100 mb-1 text-[10px] font-bold z-10">{{ item.travelTime || '依航班時刻' }}</span>
+                                <div class="w-full border-t-2 border-dashed border-blue-300 relative -mt-3"><i class="fa-solid fa-plane absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-50 px-1 text-base"></i></div>
+                            </div>
+                            <div class="text-center"><div class="text-2xl font-black text-gray-800 tracking-tight">{{ (item.name || 'NGO').split(' ')[0] }}</div></div>
+                        </div>
+                        <div v-if="item.note" class="mt-4 text-xs font-bold text-blue-800 bg-white/70 backdrop-blur p-2.5 rounded-xl border border-blue-200/50 relative z-10 shadow-inner flex items-start gap-2">
+                            <i class="fa-solid fa-circle-info text-base mt-0.5"></i><span class="leading-relaxed whitespace-pre-line break-words">{{ item.note }}</span>
+                        </div>
                         
-                        <!-- 交通連接線 -->
-                        <div v-if="idx > 0" class="flex items-center justify-center gap-2 py-1 text-xs text-gray-400 font-medium mb-3">
-                            <div class="w-px h-6 bg-maple-200"></div>
-                            <div class="bg-white border border-maple-100 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
-                                <i :class="getTransportIcon(currentItinerary[idx-1] ? currentItinerary[idx-1].transportType : 'walk')" class="text-maple-500 text-sm"></i>
-                                <span>{{ currentItinerary[idx-1] ? (currentItinerary[idx-1].travelTime || '依現場車次') : '依現場車次' }}</span>
-                            </div>
-                        </div>
+                        <button @click.stop="editItineraryItem(item)" class="absolute bottom-3 right-3 w-9 h-9 bg-white text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white shadow-md transition-colors border border-blue-200 z-20">
+                            <i class="fa-solid fa-pen text-sm"></i>
+                        </button>
+                    </div>
 
-                        <!-- 航班專屬卡片 -->
-                        <div v-if="item.category === 'flight'" class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-3xl p-5 border border-blue-200 shadow-sm relative group overflow-hidden">
-                            <div class="flex justify-between items-center mb-4 relative z-10">
-                                <span class="text-[10px] font-bold bg-blue-500 text-white px-2 py-1 rounded shadow-sm flex items-center gap-1"><i class="fa-solid fa-plane text-xs"></i> 航班資訊</span>
-                                <div class="flex items-center gap-3">
-                                    <span class="text-sm font-bold text-blue-800 bg-white/60 px-2 py-0.5 rounded">{{ item.startTime }}</span>
-                                    
-                                    <!-- 排序按鈕 -->
-                                    <div class="flex flex-col items-end gap-1">
-                                        <button v-if="idx > 0" @click.stop="moveItem(idx, -1)" class="w-6 h-6 bg-white/50 rounded flex items-center justify-center text-blue-400 hover:text-blue-700 shadow-sm"><i class="fa-solid fa-chevron-up text-[10px]"></i></button>
-                                        <button v-if="idx < currentItinerary.length - 1" @click.stop="moveItem(idx, 1)" class="w-6 h-6 bg-white/50 rounded flex items-center justify-center text-blue-400 hover:text-blue-700 shadow-sm"><i class="fa-solid fa-chevron-down text-[10px]"></i></button>
-                                    </div>
+                    <!-- 一般卡片 -->
+                    <div v-else class="bg-white rounded-3xl p-5 pb-12 card-shadow relative overflow-hidden group">
+                        <div class="flex justify-between items-start mb-3 relative z-10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl text-white shadow-sm flex items-center justify-center text-xl" :class="getCategoryColor(item.category)"><i :class="getCategoryIcon(item.category)"></i></div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{{ getCategoryLabel(item.category) }}</span>
+                                    <div v-if="item.startTime" class="text-sm font-bold text-maple-700 bg-maple-50 px-1.5 py-0.5 rounded mt-0.5 flex items-center gap-1"><i class="fa-regular fa-clock text-[12px]"></i>{{ item.startTime }}</div>
                                 </div>
-                            </div>
-                            <div class="flex justify-between items-center px-2 relative z-10">
-                                <div class="text-center"><div class="text-2xl font-black text-gray-800 tracking-tight">{{ (item.address || 'TPE').split(' ')[0] }}</div></div>
-                                <div class="flex flex-col items-center text-blue-500 px-4 w-full">
-                                    <span class="bg-white px-2 py-0.5 rounded-full shadow-sm border border-blue-100 mb-1 text-[10px] font-bold z-10">{{ item.travelTime || '依航班時刻' }}</span>
-                                    <div class="w-full border-t-2 border-dashed border-blue-300 relative -mt-3"><i class="fa-solid fa-plane absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-50 px-1 text-base"></i></div>
-                                </div>
-                                <div class="text-center"><div class="text-2xl font-black text-gray-800 tracking-tight">{{ (item.name || 'NGO').split(' ')[0] }}</div></div>
-                            </div>
-                            <div v-if="item.note" class="mt-4 text-xs font-bold text-blue-800 bg-white/70 backdrop-blur p-2.5 rounded-xl border border-blue-200/50 relative z-10 shadow-inner flex items-start gap-2">
-                                <i class="fa-solid fa-circle-info text-base mt-0.5"></i><span class="leading-relaxed whitespace-pre-line break-words">{{ item.note }}</span>
                             </div>
                             
-                            <button @click.stop="editItineraryItem(item)" class="absolute bottom-3 right-3 w-9 h-9 bg-white text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white shadow-md transition-colors border border-blue-200 z-20">
-                                <i class="fa-solid fa-pen text-sm"></i>
-                            </button>
-                        </div>
-
-                        <!-- 一般卡片 -->
-                        <div v-else class="bg-white rounded-3xl p-5 pb-12 card-shadow relative overflow-hidden group">
-                            <div class="flex justify-between items-start mb-3 relative z-10">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl text-white shadow-sm flex items-center justify-center text-xl" :class="getCategoryColor(item.category)"><i :class="getCategoryIcon(item.category)"></i></div>
-                                    <div>
-                                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{{ getCategoryLabel(item.category) }}</span>
-                                        <div v-if="item.startTime" class="text-sm font-bold text-maple-700 bg-maple-50 px-1.5 py-0.5 rounded mt-0.5 flex items-center gap-1"><i class="fa-regular fa-clock text-[12px]"></i>{{ item.startTime }}</div>
-                                    </div>
-                                </div>
-                                
-                                <!-- 排序按鈕 -->
-                                <div class="flex flex-col items-end gap-1.5">
-                                    <button v-if="idx > 0" @click.stop="moveItem(idx, -1)" class="w-7 h-7 bg-gray-50 border border-gray-100 rounded flex items-center justify-center text-gray-400 hover:bg-maple-100 hover:text-maple-600 transition-colors shadow-sm"><i class="fa-solid fa-arrow-up text-xs"></i></button>
-                                    <button v-if="idx < currentItinerary.length - 1" @click.stop="moveItem(idx, 1)" class="w-7 h-7 bg-gray-50 border border-gray-100 rounded flex items-center justify-center text-gray-400 hover:bg-maple-100 hover:text-maple-600 transition-colors shadow-sm"><i class="fa-solid fa-arrow-down text-xs"></i></button>
-                                </div>
+                            <!-- 排序按鈕 -->
+                            <div class="flex flex-col items-end gap-1.5">
+                                <button v-if="idx > 0" @click.stop="moveItem(idx, -1)" class="w-7 h-7 bg-gray-50 border border-gray-100 rounded flex items-center justify-center text-gray-400 hover:bg-maple-100 hover:text-maple-600 transition-colors shadow-sm"><i class="fa-solid fa-arrow-up text-xs"></i></button>
+                                <button v-if="idx < currentItinerary.length - 1" @click.stop="moveItem(idx, 1)" class="w-7 h-7 bg-gray-50 border border-gray-100 rounded flex items-center justify-center text-gray-400 hover:bg-maple-100 hover:text-maple-600 transition-colors shadow-sm"><i class="fa-solid fa-arrow-down text-xs"></i></button>
                             </div>
-                            <div class="relative z-10 pr-4">
-                                <div class="flex items-start justify-between gap-2 mb-2">
-                                    <h3 class="text-lg font-bold text-gray-800 leading-tight">{{ item.name }}</h3>
-                                    <button v-if="hasGuide(item.name)" @click.stop="openGuideModal(item.name)" class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-amber-50 text-amber-700 border border-amber-200 shadow-sm hover:bg-amber-100 transition-all active:scale-95">
-                                        <i class="fa-solid fa-compass text-amber-500 animate-pulse"></i> 導遊攻略
-                                    </button>
-                                </div>
-                                <div class="text-xs text-gray-500 space-y-2 mb-3 bg-gray-50 p-3 rounded-xl border border-gray-100" v-if="item.hours || item.price || item.address">
-                                    <p v-if="item.hours" class="flex items-center font-medium"><i class="fa-regular fa-clock w-5 text-center text-maple-500 text-sm"></i> 營業: {{ item.hours }}</p>
-                                    <p v-if="item.price" class="flex items-center font-medium"><i class="fa-solid fa-ticket w-5 text-center text-maple-500 text-sm"></i> 門票: {{ item.price }}</p>
-                                    <p v-if="item.address" class="flex items-start font-medium"><i class="fa-solid fa-location-dot w-5 text-center mt-0.5 text-maple-500 text-sm"></i> <span class="flex-1">{{ item.address }}</span></p>
-                                </div>
-                                <div v-if="item.note" class="text-xs text-gray-700 bg-maple-50 p-3 rounded-xl border-l-4 border-maple-500 shadow-inner">
-                                    <div class="note-content font-medium leading-relaxed whitespace-pre-line break-words">{{ item.note }}</div>
-                                </div>
-                            </div>
-                            <a v-if="item.address || item.name" :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address || item.name)}`" target="_blank" @click.stop class="absolute right-4 top-[80px] w-9 h-9 rounded-full bg-maple-100 text-maple-600 flex items-center justify-center hover:bg-maple-500 hover:text-white transition-all shadow-sm z-20">
-                                <i class="fa-solid fa-location-arrow text-sm"></i>
-                            </a>
-                            <button @click.stop="editItineraryItem(item)" class="absolute bottom-4 right-4 w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center shadow-md border border-blue-200 z-20"><i class="fa-solid fa-pen text-sm"></i></button>
                         </div>
+                        <div class="relative z-10 pr-4">
+                            <div class="flex items-start justify-between gap-2 mb-2">
+                                <h3 class="text-lg font-bold text-gray-800 leading-tight">{{ item.name }}</h3>
+                                <button v-if="hasGuide(item.name)" @click.stop="openGuideModal(item.name)" class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-amber-50 text-amber-700 border border-amber-200 shadow-sm hover:bg-amber-100 transition-all active:scale-95">
+                                    <i class="fa-solid fa-compass text-amber-500 animate-pulse"></i> 導遊攻略
+                                </button>
+                            </div>
+                            <div class="text-xs text-gray-500 space-y-2 mb-3 bg-gray-50 p-3 rounded-xl border border-gray-100" v-if="item.hours || item.price || item.address">
+                                <p v-if="item.hours" class="flex items-center font-medium"><i class="fa-regular fa-clock w-5 text-center text-maple-500 text-sm"></i> 營業: {{ item.hours }}</p>
+                                <p v-if="item.price" class="flex items-center font-medium"><i class="fa-solid fa-ticket w-5 text-center text-maple-500 text-sm"></i> 門票: {{ item.price }}</p>
+                                <p v-if="item.address" class="flex items-start font-medium"><i class="fa-solid fa-location-dot w-5 text-center mt-0.5 text-maple-500 text-sm"></i> <span class="flex-1">{{ item.address }}</span></p>
+                            </div>
+                            <div v-if="item.note" class="text-xs text-gray-700 bg-maple-50 p-3 rounded-xl border-l-4 border-maple-500 shadow-inner">
+                                <div class="note-content font-medium leading-relaxed whitespace-pre-line break-words">{{ item.note }}</div>
+                            </div>
+                        </div>
+                        <a v-if="item.address || item.name" :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address || item.name)}`" target="_blank" @click.stop class="absolute right-4 top-[80px] w-9 h-9 rounded-full bg-maple-100 text-maple-600 flex items-center justify-center hover:bg-maple-500 hover:text-white transition-all shadow-sm z-20">
+                            <i class="fa-solid fa-location-arrow text-sm"></i>
+                        </a>
+                        <button @click.stop="editItineraryItem(item)" class="absolute bottom-4 right-4 w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center shadow-md border border-blue-200 z-20"><i class="fa-solid fa-pen text-sm"></i></button>
                     </div>
-                    
-                    <div v-if="currentItinerary.length === 0" class="text-center py-16 bg-white rounded-3xl border border-dashed border-maple-200 card-shadow">
-                        <div class="w-16 h-16 bg-maple-50 rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-map-location-dot text-3xl text-maple-300"></i></div>
-                        <p class="text-sm font-bold text-gray-600">本日尚無行程</p>
-                    </div>
+                </div>
+                
+                <div v-if="currentItinerary.length === 0" class="text-center py-16 bg-white rounded-3xl border border-dashed border-maple-200 card-shadow">
+                    <div class="w-16 h-16 bg-maple-50 rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-map-location-dot text-3xl text-maple-300"></i></div>
+                    <p class="text-sm font-bold text-gray-600">本日尚無行程</p>
                 </div>
             </div>
         </div>
@@ -487,7 +465,7 @@
                 <div class="flex items-center justify-between mb-3 relative z-10">
                     <span class="text-xs font-bold text-maple-200 uppercase tracking-wider flex items-center gap-1">
                         <i class="fa-solid fa-chart-pie text-sm"></i> 
-                        {{ expenseFilterPayer === 'All' ? '全部花費總計' : (expenseFilterPayer + ' 的墊付花費加總') }}
+                        {{ expenseFilterPayer === 'All' ? '全部花費加總' : (expenseFilterPayer + ' 的專屬墊付加總') }}
                     </span>
                     <span class="text-[10px] bg-black/20 px-2 py-0.5 rounded-full backdrop-blur">共 {{ filteredExpenses.length }} 筆</span>
                 </div>
@@ -861,6 +839,7 @@
         '榮區逛街': { title: '時尚潮流旗艦・名古屋榮商圈', intro: '名古屋最繁華購物心臟，國際精品旗艦店、PARCO 與高檔甜點聚集。', mustEat: ['🍰 LOUANGE TOKYO法式千層派'], mustBuy: ['🌿 FUEGUIA 1833香水', '🍵 福壽園抹茶粉'], mustVisit: ['🗼 MIRAI TOWER 名古屋電視塔夜景', '🛸 Oasis 21 水之宇宙船'], tips: '退稅通常於 19:30 截止，請務必隨身攜帶護照！' }
     };
 
+    // 所有飯店指南完整資料
     const hotelGuides = {
         'FAV LUX HIDATAKAYAMA': { title: 'FAV LUX Hida Takayama', intro: '2023 全新開幕高質感設計旅宿，步行至高山車站僅 3 分鐘。', facilities: ['♨️ 舒適大浴場與半露天溫泉設施', '🛋️ 客房備有客廳、微波爐與大冰箱', '🛜 全館高速 Wi-Fi 與自助洗衣'], convenience: ['🏪 7-Eleven 高山花里町店 (步行2分)', '🏪 全家高山站前店 (步行3分)', '🛒 松本清藥妝店 (步行5分)'], nightNearby: ['🏮 高山車站周邊居酒屋街', '🌉 宮川沿岸夜景與中橋點燈'], tips: '飯店距離車站非常近，隔天搭巴士去上高地極為方便！' },
         'Henn na Hotel Nagoya': { title: 'Henn na Hotel Nagoya (名古屋機器人飯店)', intro: '恐龍機器人接待特色科技旅宿，位於伏見站旁，交通四通八達。', facilities: ['🤖 恐龍全息投影櫃檯接待', '👖 全客房配備 LG Styler 智慧蒸氣電子衣櫥', '🛜 免費 Wi-Fi 與自助行李置物櫃'], convenience: ['🏪 Lawson 伏見站南店 (步行1分)', '🏪 7-Eleven 名古屋伏見站東店 (步行2分)', '🛒 大型生活超市與藥妝店 (步行4分)'], nightNearby: ['🛍️ 榮商圈綠洲21夜景', '🍜 伏見與榮地下街宵夜美食'], tips: '地鐵伏見站三分鐘即達，去吉卜力與榮商圈免轉車！' }
@@ -937,7 +916,7 @@
 
     const app = createApp({
         setup() {
-            // 掛載成功後，移除原生載入畫面
+            // 掛載成功後移除原生載入畫面
             onMounted(() => {
                 const fallback = document.getElementById('loading-fallback');
                 if(fallback) fallback.style.display = 'none';
@@ -964,7 +943,6 @@
             const exchangeRate = ref(0.215);
             const jpyInput = ref(10000);
             const twdInput = ref(2150);
-            const rateLoading = ref(false);
 
             const updateFromJpy = () => { twdInput.value = Math.round(jpyInput.value * exchangeRate.value); };
             const updateFromTwd = () => { jpyInput.value = Math.round(twdInput.value / exchangeRate.value); };
@@ -1056,23 +1034,22 @@
                 } catch(e) {}
             };
 
-            const SYNC_URL = 'https://api.jsonbin.io/v3/b/66eb8adfac3f335b991a7e28';
-            const MASTER_KEY = '$2a$10$tZc4x/fR79r4kG00f1B1ye2t2sC60k9hR3r8V6C67i0O4XzM2mOha';
+            const SYNC_URL = 'https://kvdb.io/AnV9H7mC5uL8iK2wPx4s1Q/japan2026_sync_v7';
 
             const fetchCloudData = () => {
                 try {
-                    fetch(`${SYNC_URL}/latest`, { headers: { 'X-Master-Key': MASTER_KEY } })
+                    fetch(SYNC_URL, { cache: 'no-store' })
                         .then(r => r.ok ? r.json() : null)
                         .then(json => {
-                            if (json && json.record && json.record.itinerary && Array.isArray(json.record.itinerary) && json.record.itinerary.length > 0) {
-                                if (JSON.stringify(itineraryData.value) !== JSON.stringify(json.record.itinerary)) {
-                                    itineraryData.value = json.record.itinerary;
+                            if (json && json.itinerary && Array.isArray(json.itinerary) && json.itinerary.length > 0) {
+                                if (JSON.stringify(itineraryData.value) !== JSON.stringify(json.itinerary)) {
+                                    itineraryData.value = json.itinerary;
                                 }
-                                if (json.record.shopping && Array.isArray(json.record.shopping) && JSON.stringify(shoppingList.value) !== JSON.stringify(json.record.shopping)) {
-                                    shoppingList.value = json.record.shopping;
+                                if (json.shopping && JSON.stringify(shoppingList.value) !== JSON.stringify(json.shopping)) {
+                                    shoppingList.value = json.shopping;
                                 }
-                                if (json.record.expenses && Array.isArray(json.record.expenses) && JSON.stringify(expenses.value) !== JSON.stringify(json.record.expenses)) {
-                                    expenses.value = json.record.expenses;
+                                if (json.expenses && JSON.stringify(expenses.value) !== JSON.stringify(json.expenses)) {
+                                    expenses.value = json.expenses;
                                 }
                                 saveLocal();
                             }
@@ -1086,9 +1063,9 @@
                 saveLocal();
                 try {
                     fetch(SYNC_URL, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY },
-                        body: JSON.stringify({ itinerary: itineraryData.value, shopping: shoppingList.value, expenses: expenses.value })
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ itinerary: itineraryData.value, shopping: shoppingList.value, expenses: expenses.value, last_update: Date.now() })
                     })
                     .then(() => { syncStatus.value = 'online'; })
                     .catch(() => { syncStatus.value = 'online'; });
@@ -1268,7 +1245,7 @@
             return {
                 currentTab, selectedDateIndex, selectedRegionIndex, syncStatus,
                 dates, weatherRegionsData, currentDayRegions, currentWeather, dailyOverviews, currentOverview,
-                itineraryData, currentItinerary, shoppingList, expenses, hotels, rateLoading,
+                itineraryData, currentItinerary, shoppingList, expenses, hotels,
                 exchangeRate, jpyInput, twdInput, updateFromJpy, updateFromTwd,
                 filteredExpensesJPY, filteredExpensesTWD, uniquePayers, expenseFilterPayer, filteredExpenses,
                 formatNumber, getCategoryColor, getCategoryIcon, getCategoryLabel, getWeatherIcon, getHourlyWeatherIcon, getWeatherDescription, getTransportIcon,
