@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v18)</title>
+    <title>Japan Trip 2026 (v19 穩定版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 拖曳套件 -->
+    <!-- 拖曳排序套件 -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuedraggable@4.1.0/dist/vuedraggable.umd.min.js"></script>
 
@@ -80,7 +80,7 @@
 
 <div id="vue-error-logger" style="display:none; position:fixed; top:0; left:0; width:100%; background:rgba(220,38,38,0.95); color:white; z-index:9999; padding:20px; font-size:14px; word-break:break-all; min-height:100vh;">
     <h3 style="font-size:18px; font-weight:bold; margin-bottom:10px;"><i class="fa-solid fa-triangle-exclamation"></i> 系統啟動異常</h3>
-    <p>抱歉！網頁載入發生錯誤，這表示手機還在讀取舊快取，請強制重新整理：</p>
+    <p>抱歉！網頁載入發生錯誤，請清除瀏覽器快取或使用無痕模式開啟：</p>
     <div id="error-text" style="background:rgba(0,0,0,0.5); padding:15px; border-radius:8px; margin-top:10px; font-family:monospace; font-size:12px; white-space:pre-wrap;"></div>
 </div>
 
@@ -101,7 +101,7 @@
 <!-- ========================================================================= -->
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v18 (雲端解鎖)
+        ✅ 版本: v19
     </div>
 
     <div class="banner-wrapper"></div>
@@ -114,13 +114,14 @@
         <button @click="currentTab = 'expenses'" title="花費" :class="{'active': currentTab === 'expenses'}" class="tab-button"><i class="fa-solid fa-coins"></i></button>
     </div>
     
+    <!-- 手動同步控制列 -->
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : 'bg-green-50 border-green-100'">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : 'text-green-600'">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '雲端資料處理中...' : '同步完成 (無縫對接)' }}
+            {{ syncStatus === 'syncing' ? '雲端連線中...' : '資料已更新至最新' }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
-            <i class="fa-solid fa-cloud-arrow-down text-maple-500"></i> 手動同步
+            <i class="fa-solid fa-cloud-arrow-down text-maple-500"></i> 強制同步
         </button>
     </div>
 
@@ -195,12 +196,11 @@
                 <div class="flex flex-wrap gap-1.5"><span v-for="tag in currentOverview.highlights" :key="tag" class="text-[10px] font-bold text-maple-700 bg-white/90 border border-maple-200 px-2 py-0.5 rounded-lg shadow-2xs"># {{ tag }}</span></div>
             </div>
 
-            <!-- 行程清單拖曳 -->
+            <!-- 行程清單 (拖曳排序功能) -->
             <div class="space-y-4 pb-8">
                 <draggable v-model="currentItinerary" item-key="id" handle=".drag-handle" ghost-class="ghost-card" animation="200" @end="triggerSync">
                     <template #item="{element: item, index: idx}">
                         <div class="relative group">
-                            <!-- 交通連接線 -->
                             <div v-if="idx > 0" class="flex items-center justify-center gap-2 py-1 text-xs text-gray-400 font-medium mb-3">
                                 <div class="w-px h-6 bg-maple-200"></div>
                                 <div class="bg-white border border-maple-100 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
@@ -331,7 +331,9 @@
                         <div class="flex justify-between items-start mb-2">
                             <span class="text-[10px] font-bold text-white bg-indigo-500 px-2.5 py-0.5 rounded-full shadow-sm">{{ hotel.date }}</span>
                             <div class="flex items-center gap-1.5">
-                                <button @click.stop="openHotelGuide(hotel.name)" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm hover:bg-indigo-100 transition-all"><i class="fa-solid fa-hotel text-indigo-500"></i> 飯店設施指南</button>
+                                <button @click.stop="openHotelGuide(hotel.name)" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm hover:bg-indigo-100 transition-all">
+                                    <i class="fa-solid fa-hotel text-indigo-500"></i> 飯店設施指南
+                                </button>
                                 <button @click.stop="openMap(hotel.name)" class="w-8 h-8 rounded-full bg-gray-50 text-gray-500 flex items-center justify-center hover:bg-indigo-500 hover:text-white transition-all shadow-sm"><i class="fa-solid fa-location-arrow text-xs"></i></button>
                             </div>
                         </div>
@@ -426,7 +428,6 @@
                 </div>
             </div>
 
-            <!-- 代墊人篩選列 -->
             <div class="flex overflow-x-auto hide-scrollbar gap-2 mb-4 px-1">
                 <button v-for="payer in uniquePayers" :key="payer" @click="expenseFilterPayer = payer" class="px-4 py-1.5 rounded-full text-xs font-bold border transition-all whitespace-nowrap" :class="expenseFilterPayer === payer ? 'bg-maple-500 text-white border-maple-500 shadow-md scale-105' : 'bg-white text-gray-500 border-gray-200 hover:border-maple-300'">
                     {{ payer === 'All' ? '全部' : (payer || '未指定') }}
@@ -622,7 +623,9 @@
         </div>
     </div>
 </div>
-<!-- 結束核心區塊 -->
+<!-- ========================================================================= -->
+<!-- 核心 Vue 應用程式區塊結束 -->
+<!-- ========================================================================= -->
 
 <script>
     const { createApp, ref, computed, onMounted, watch } = Vue;
@@ -716,9 +719,7 @@
     ];
 
     const app = createApp({
-        components: {
-            draggable: window.vuedraggable
-        },
+        components: { draggable: window.vuedraggable },
         setup() {
             onMounted(() => {
                 const fallback = document.getElementById('loading-fallback');
@@ -757,33 +758,15 @@
             ]);
 
             const weatherRegionsData = ref([
-                [
-                    { region: '高山', condition: 'sunny', temp: '16/7', feel: '14', pop: 10, hourly: makeHourly(7, 16, 'sunny') },
-                    { region: '名古屋', condition: 'sunny', temp: '19/11', feel: '18', pop: 10, hourly: makeHourly(11, 19, 'sunny') }
-                ],
-                [
-                    { region: '上高地', condition: 'cloudy', temp: '12/3', feel: '9', pop: 30, hourly: makeHourly(3, 12, 'cloudy') },
-                    { region: '高山', condition: 'sunny', temp: '15/6', feel: '13', pop: 10, hourly: makeHourly(6, 15, 'sunny') }
-                ],
-                [
-                    { region: '白川鄉', condition: 'sunny', temp: '14/5', feel: '12', pop: 10, hourly: makeHourly(5, 14, 'sunny') },
-                    { region: '名古屋', condition: 'sunny', temp: '19/10', feel: '18', pop: 10, hourly: makeHourly(10, 19, 'sunny') }
-                ],
-                [
-                    { region: '吉卜力公園', condition: 'sunny', temp: '18/10', feel: '17', pop: 10, hourly: makeHourly(10, 18, 'sunny') },
-                    { region: '名古屋', condition: 'sunny', temp: '19/11', feel: '18', pop: 10, hourly: makeHourly(11, 19, 'sunny') }
-                ],
-                [
-                    { region: '犬山', condition: 'cloudy', temp: '17/9', feel: '15', pop: 30, hourly: makeHourly(9, 17, 'cloudy') },
-                    { region: '名古屋', condition: 'cloudy', temp: '18/10', feel: '16', pop: 30, hourly: makeHourly(10, 18, 'cloudy') }
-                ],
-                [
-                    { region: '名古屋', condition: 'rain', temp: '16/10', feel: '14', pop: 80, hourly: makeHourly(10, 16, 'rain') }
-                ]
+                [ { region: '高山', condition: 'sunny', temp: '16/7', feel: '14', pop: 10, hourly: makeHourly(7, 16, 'sunny') }, { region: '名古屋', condition: 'sunny', temp: '19/11', feel: '18', pop: 10, hourly: makeHourly(11, 19, 'sunny') } ],
+                [ { region: '上高地', condition: 'cloudy', temp: '12/3', feel: '9', pop: 30, hourly: makeHourly(3, 12, 'cloudy') }, { region: '高山', condition: 'sunny', temp: '15/6', feel: '13', pop: 10, hourly: makeHourly(6, 15, 'sunny') } ],
+                [ { region: '白川鄉', condition: 'sunny', temp: '14/5', feel: '12', pop: 10, hourly: makeHourly(5, 14, 'sunny') }, { region: '名古屋', condition: 'sunny', temp: '19/10', feel: '18', pop: 10, hourly: makeHourly(10, 19, 'sunny') } ],
+                [ { region: '吉卜力公園', condition: 'sunny', temp: '18/10', feel: '17', pop: 10, hourly: makeHourly(10, 18, 'sunny') }, { region: '名古屋', condition: 'sunny', temp: '19/11', feel: '18', pop: 10, hourly: makeHourly(11, 19, 'sunny') } ],
+                [ { region: '犬山', condition: 'cloudy', temp: '17/9', feel: '15', pop: 30, hourly: makeHourly(9, 17, 'cloudy') }, { region: '名古屋', condition: 'cloudy', temp: '18/10', feel: '16', pop: 30, hourly: makeHourly(10, 18, 'cloudy') } ],
+                [ { region: '名古屋', condition: 'rain', temp: '16/10', feel: '14', pop: 80, hourly: makeHourly(10, 16, 'rain') } ]
             ]);
 
             watch(selectedDateIndex, () => { selectedRegionIndex.value = 0; });
-
             const currentDayRegions = computed(() => weatherRegionsData.value[selectedDateIndex.value] || []);
             const currentWeather = computed(() => currentDayRegions.value[selectedRegionIndex.value] || currentDayRegions.value[0]);
 
@@ -803,10 +786,8 @@
                 { name: '福壽園 抹茶粉', checked: false }
             ]);
             const expenses = ref([
-                { name: 'Klook 高山車票', amount: 4780, category: 'transport', date: '2026-10-29', payment: 'card', payer: '甯', currency: 'TWD' },
-                { name: '飛驒牛 SUKIYAKI', amount: 6500, category: 'food', date: '2026-10-29', payment: 'cash', payer: '王', currency: 'JPY' }
+                { name: 'Klook 高山車票', amount: 4780, category: 'transport', date: '2026-10-29', payment: 'card', payer: '甯', currency: 'TWD' }
             ]);
-            
             const hotels = ref([
                 { name: 'FAV LUX HIDATAKAYAMA', date: '10/29 - 10/31', address: '高山市花里町', phone: '0577-33-xxxx' },
                 { name: 'Henn na Hotel Nagoya', date: '10/31 - 11/03', address: '名古屋市中區錦', phone: '052-223-xxxx' }
@@ -830,9 +811,7 @@
             const saveLocal = () => {
                 try {
                     localStorage.setItem('japan_trip_local_v2026', JSON.stringify({
-                        itinerary: itineraryData.value,
-                        shopping: shoppingList.value,
-                        expenses: expenses.value
+                        itinerary: itineraryData.value, shopping: shoppingList.value, expenses: expenses.value
                     }));
                 } catch(e) {}
             };
@@ -862,19 +841,19 @@
                                 }
                                 saveLocal();
                                 syncStatus.value = 'online';
-                                if(isManual) alert(isUpdated ? '✅ 手動同步成功！已載入最新資料。' : '✅ 雲端連線成功！目前已是最新資料。');
+                                if(isManual) alert(isUpdated ? '✅ 手動同步成功！已載入最新資料。' : '✅ 同步完成！目前已是最新資料。');
                             } else {
                                 syncStatus.value = 'online';
-                                if(isManual) alert('⚠️ 讀取成功，但雲端目前無資料，請先新增資料。');
+                                if(isManual) alert('⚠️ 雲端目前無資料，請先新增一筆資料來觸發上傳！');
                             }
                         })
                         .catch(() => { 
                             syncStatus.value = 'online'; 
-                            if(isManual) alert('❌ 網路連線錯誤，請確認網路狀態。');
+                            if(isManual) alert('❌ 網路連線錯誤或流量超載，請稍後再試。');
                         });
                 } catch(e) {
                     syncStatus.value = 'online';
-                    if(isManual) alert('❌ 發生未知錯誤。');
+                    if(isManual) alert('❌ 發生未知連線錯誤。');
                 }
             };
 
@@ -901,15 +880,12 @@
                     const local = localStorage.getItem('japan_trip_local_v2026');
                     if (local) {
                         const parsed = JSON.parse(local);
-                        if (parsed.itinerary && Array.isArray(parsed.itinerary) && parsed.itinerary.length > 0) {
-                            itineraryData.value = parsed.itinerary;
-                        }
+                        if (parsed.itinerary && Array.isArray(parsed.itinerary)) itineraryData.value = parsed.itinerary;
                         if (parsed.shopping && Array.isArray(parsed.shopping)) shoppingList.value = parsed.shopping;
                         if (parsed.expenses && Array.isArray(parsed.expenses)) expenses.value = parsed.expenses;
                     }
                 } catch(e) {}
                 fetchCloudData();
-                setInterval(() => { fetchCloudData(false) }, 10000);
             });
 
             const currentItinerary = computed({
@@ -1056,7 +1032,7 @@
             return {
                 currentTab, selectedDateIndex, selectedRegionIndex, syncStatus,
                 dates, weatherRegionsData, currentDayRegions, currentWeather, dailyOverviews, currentOverview,
-                itineraryData, currentItinerary, shoppingList, expenses, hotels,
+                itineraryData, currentItinerary, shoppingList, expenses, hotels, rateLoading,
                 exchangeRate, jpyInput, twdInput, updateFromJpy, updateFromTwd,
                 filteredExpensesJPY, filteredExpensesTWD, uniquePayers, expenseFilterPayer, filteredExpenses,
                 formatNumber, getCategoryColor, getCategoryIcon, getCategoryLabel, getWeatherIcon, getHourlyWeatherIcon, getWeatherDescription, getTransportIcon,
