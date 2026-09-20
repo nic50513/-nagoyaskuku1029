@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v11)</title>
+    <title>Japan Trip 2026 (v12)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -74,7 +74,7 @@
 
 <div id="vue-error-logger" style="display:none; position:fixed; top:0; left:0; width:100%; background:rgba(220,38,38,0.95); color:white; z-index:9999; padding:20px; font-size:14px; word-break:break-all; min-height:100vh;">
     <h3 style="font-size:18px; font-weight:bold; margin-bottom:10px;"><i class="fa-solid fa-triangle-exclamation"></i> 系統啟動異常</h3>
-    <p>抱歉！網頁載入發生錯誤，這表示手機還在讀取舊快取，請清除瀏覽器快取或使用無痕模式：</p>
+    <p>抱歉！網頁載入發生錯誤，請將下方程式碼截圖給開發者：</p>
     <div id="error-text" style="background:rgba(0,0,0,0.5); padding:15px; border-radius:8px; margin-top:10px; font-family:monospace; font-size:12px; white-space:pre-wrap;"></div>
 </div>
 
@@ -92,9 +92,9 @@
         <p class="text-xs text-gray-400 mt-2">正在初始化您的日本之旅，請稍候。</p>
     </div>
 
-    <!-- 終極防呆版本標籤：確認是否有更新成功 -->
+    <!-- 終極防呆版本標籤 -->
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v11
+        ✅ 系統版本: v12
     </div>
 
     <div v-cloak>
@@ -242,6 +242,7 @@
                                 <span class="text-[10px] font-bold bg-blue-500 text-white px-2 py-1 rounded shadow-sm flex items-center gap-1"><i class="fa-solid fa-plane text-xs"></i> 航班資訊</span>
                                 <div class="flex items-center gap-3">
                                     <span class="text-sm font-bold text-blue-800 bg-white/60 px-2 py-0.5 rounded">{{ item.startTime }}</span>
+                                    
                                     <!-- 排序按鈕 -->
                                     <div class="flex flex-col items-end gap-1">
                                         <button v-if="idx > 0" @click.stop="moveItem(idx, -1)" class="w-6 h-6 bg-white/50 rounded flex items-center justify-center text-blue-400 hover:text-blue-700 shadow-sm"><i class="fa-solid fa-chevron-up text-[10px]"></i></button>
