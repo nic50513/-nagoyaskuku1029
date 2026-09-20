@@ -111,7 +111,7 @@
             </button>
         </div>
         
-        <!-- 雲端同步狀態列與手動同步按鈕 (徹底修復強制破除快取機制) -->
+        <!-- 雲端同步狀態列與手動同步按鈕 (使用真 KVDB) -->
         <div class="flex justify-between items-center px-4 py-1 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : 'bg-green-50 border-green-100'">
             <div class="text-[10px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : 'text-green-500'">
                 <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
@@ -216,7 +216,7 @@
                     </div>
                 </div>
 
-                <!-- 行程清單 (完全移除容易報錯的套件，改用原生排序) -->
+                <!-- 行程清單 (原生排序，完全防護) -->
                 <div class="space-y-4 pb-8">
                     <div v-for="(item, idx) in currentItinerary" :key="item.id || idx" class="relative group">
                         
@@ -235,6 +235,7 @@
                                 <span class="text-[10px] font-bold bg-blue-500 text-white px-2 py-1 rounded shadow-sm flex items-center gap-1"><i class="fa-solid fa-plane text-xs"></i> 航班資訊</span>
                                 <div class="flex items-center gap-3">
                                     <span class="text-sm font-bold text-blue-800 bg-white/60 px-2 py-0.5 rounded">{{ item.startTime }}</span>
+                                    
                                     <!-- 排序按鈕 -->
                                     <div class="flex flex-col items-end gap-1">
                                         <button v-if="idx > 0" @click.stop="moveItem(idx, -1)" class="w-6 h-6 bg-white/50 rounded flex items-center justify-center text-blue-400 hover:text-blue-700 shadow-sm"><i class="fa-solid fa-chevron-up text-[10px]"></i></button>
@@ -370,7 +371,7 @@
                                 <span class="text-[10px] font-bold text-white bg-indigo-500 px-2.5 py-0.5 rounded-full shadow-sm">{{ hotel.date }}</span>
                                 <div class="flex items-center gap-1.5">
                                     <button @click.stop="openHotelGuide(hotel.name)" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm hover:bg-indigo-100 transition-all">
-                                        <i class="fa-solid fa-hotel text-indigo-500"></i> 飯店設施與周邊
+                                        <i class="fa-solid fa-hotel text-indigo-500"></i> 飯店設施指南
                                     </button>
                                     <button @click.stop="openMap(hotel.name)" class="w-8 h-8 rounded-full bg-gray-50 text-gray-500 flex items-center justify-center hover:bg-indigo-500 hover:text-white transition-all shadow-sm"><i class="fa-solid fa-location-arrow text-xs"></i></button>
                                 </div>
@@ -845,7 +846,7 @@
     const { createApp, ref, computed, onMounted, watch } = Vue;
 
     const spotGuides = {
-        '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。' },
+        '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ (つづみそば)', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。' },
         '早餐: かじ橋食堂': { title: '宮川河畔元氣朝食・かじ橋食堂', intro: '清晨 06:00 開門營業的溫馨日式食堂，前往白川鄉前品嚐現煮日式朝食的最佳選擇。', mustEat: ['🍳 日式朝食定食 (烤鮭魚、煎蛋、高山越光米)', '🥩 飛驒牛朴葉味噌定食', '🍜 晨間醬油熱拉麵'], mustBuy: ['🌾 高山小農越光米、朴葉味噌調理包'], mustVisit: ['🪟 靠窗座位可欣賞宮川溪流與老街早起街景'], tips: '營業時間：06:00-14:00。早晨要搭 07:20 巴士去白川鄉，建議 06:00 準時入座。' },
         '飛驒高山老街+高山陣屋': { title: '飛驒高山老街 & 高山陣屋', intro: '完整保留黑色木造格子窗江戶町家建築，陣屋是全日本唯一現存的江戶時代代官所。', mustEat: ['🥩 坂口屋炙燒飛驒牛握壽司', '🍡 三葉五平餅', '🍦 原田酒造大吟釀霜淇淋'], mustBuy: ['🎎 猿寶寶除厄吉祥物', '🍶 船坂酒造深山菊原酒'], mustVisit: ['📸 宮川中橋：紅色朱橋搭配沿岸楓紅', '🏛️ 高山陣屋：參觀百年前的審判所與枯山水'], tips: '老街多數店鋪在傍晚 17:00 前就會陸續打烊，請趁早逛！' },
         '飛騨高山老街+高山陣屋': { title: '飛驒高山老街 & 高山陣屋', intro: '完整保留黑色木造格子窗江戶町家建築，陣屋是全日本唯一現存的江戶時代代官所。', mustEat: ['🥩 坂口屋炙燒飛驒牛握壽司', '🍡 三葉五平餅', '🍦 原田酒造大吟釀霜淇淋'], mustBuy: ['🎎 猿寶寶除厄吉祥物', '🍶 船坂酒造深山菊原酒'], mustVisit: ['📸 宮川中橋：紅色朱橋搭配沿岸楓紅', '🏛️ 高山陣屋：參觀百年前的審判所與枯山水'], tips: '老街多數店鋪在傍晚 17:00 前就會陸續打烊，請趁早逛！' },
@@ -936,6 +937,11 @@
 
     const app = createApp({
         setup() {
+            onMounted(() => {
+                const fallback = document.getElementById('loading-fallback');
+                if(fallback) fallback.style.display = 'none';
+            });
+
             const currentTab = ref('itinerary');
             const selectedDateIndex = ref(0);
             const selectedRegionIndex = ref(0);
@@ -957,7 +963,6 @@
             const exchangeRate = ref(0.215);
             const jpyInput = ref(10000);
             const twdInput = ref(2150);
-            const rateLoading = ref(false);
 
             const updateFromJpy = () => { twdInput.value = Math.round(jpyInput.value * exchangeRate.value); };
             const updateFromTwd = () => { jpyInput.value = Math.round(twdInput.value / exchangeRate.value); };
@@ -1019,11 +1024,6 @@
                 { name: '飛驒牛 SUKIYAKI', amount: 6500, category: 'food', date: '2026-10-29', payment: 'cash', payer: '王', currency: 'JPY' }
             ]);
 
-            const hotels = ref([
-                { name: 'FAV LUX HIDATAKAYAMA', date: '10/29 - 10/31', address: '高山市花里町', phone: '0577-33-xxxx' },
-                { name: 'Henn na Hotel Nagoya', date: '10/31 - 11/03', address: '名古屋市中區錦', phone: '052-223-xxxx' }
-            ]);
-
             const showItineraryModal = ref(false);
             const isEditItineraryMode = ref(false);
             const editingItineraryIndex = ref(-1);
@@ -1052,46 +1052,41 @@
             const SYNC_URL = 'https://api.jsonbin.io/v3/b/66eb8adfac3f335b991a7e28';
             const MASTER_KEY = '$2a$10$tZc4x/fR79r4kG00f1B1ye2t2sC60k9hR3r8V6C67i0O4XzM2mOha';
 
-            // 加入破除手機 Cache 的時間碼與明確的 Alert 提示
             const fetchCloudData = (isManual = false) => {
                 syncStatus.value = 'syncing';
                 try {
-                    fetch(`${SYNC_URL}/latest?t=${Date.now()}`, { 
-                        headers: { 'X-Master-Key': MASTER_KEY, 'Cache-Control': 'no-cache' } 
-                    })
-                    .then(r => r.ok ? r.json() : null)
-                    .then(json => {
-                        if (json && json.record && json.record.itinerary && Array.isArray(json.record.itinerary) && json.record.itinerary.length > 0) {
-                            let updated = false;
-                            if (JSON.stringify(itineraryData.value) !== JSON.stringify(json.record.itinerary)) {
-                                itineraryData.value = json.record.itinerary;
-                                updated = true;
+                    fetch(`${SYNC_URL}/latest?t=${Date.now()}`, { headers: { 'X-Master-Key': MASTER_KEY, 'Cache-Control': 'no-cache' } })
+                        .then(r => r.ok ? r.json() : null)
+                        .then(json => {
+                            if (json && json.record && json.record.itinerary && Array.isArray(json.record.itinerary) && json.record.itinerary.length > 0) {
+                                let isUpdated = false;
+                                if (JSON.stringify(itineraryData.value) !== JSON.stringify(json.record.itinerary)) {
+                                    itineraryData.value = json.record.itinerary;
+                                    isUpdated = true;
+                                }
+                                if (json.record.shopping && Array.isArray(json.record.shopping) && JSON.stringify(shoppingList.value) !== JSON.stringify(json.record.shopping)) {
+                                    shoppingList.value = json.record.shopping;
+                                    isUpdated = true;
+                                }
+                                if (json.record.expenses && Array.isArray(json.record.expenses) && JSON.stringify(expenses.value) !== JSON.stringify(json.record.expenses)) {
+                                    expenses.value = json.record.expenses;
+                                    isUpdated = true;
+                                }
+                                saveLocal();
+                                syncStatus.value = 'online';
+                                if(isManual) alert(isUpdated ? '✅ 手動同步成功！已載入最新資料。' : '✅ 同步完成！目前已是最新資料。');
+                            } else {
+                                syncStatus.value = 'online';
+                                if(isManual) alert('⚠️ 雲端資料庫目前無資料，請先在此設備新增修改一筆資料來觸發上傳！');
                             }
-                            if (json.record.shopping && Array.isArray(json.record.shopping) && JSON.stringify(shoppingList.value) !== JSON.stringify(json.record.shopping)) {
-                                shoppingList.value = json.record.shopping;
-                                updated = true;
-                            }
-                            if (json.record.expenses && Array.isArray(json.record.expenses) && JSON.stringify(expenses.value) !== JSON.stringify(json.record.expenses)) {
-                                expenses.value = json.record.expenses;
-                                updated = true;
-                            }
-                            saveLocal();
-                            syncStatus.value = 'online';
-                            if (isManual) {
-                                alert(updated ? '✅ 手動同步成功！已載入最新資料。' : '✅ 同步完成！目前已是最新資料。');
-                            }
-                        } else {
-                            syncStatus.value = 'online';
-                            if (isManual) alert('❌ 雲端資料格式異常或無資料。');
-                        }
-                    })
-                    .catch(() => { 
-                        syncStatus.value = 'online'; 
-                        if (isManual) alert('❌ 網路連線錯誤，請檢查網路狀態。');
-                    });
+                        })
+                        .catch(() => { 
+                            syncStatus.value = 'online'; 
+                            if(isManual) alert('❌ 網路連線錯誤或流量超載，請稍後再試。');
+                        });
                 } catch(e) {
                     syncStatus.value = 'online';
-                    if (isManual) alert('❌ 發生未知的連線錯誤。');
+                    if(isManual) alert('❌ 發生未知連線錯誤。');
                 }
             };
 
@@ -1101,11 +1096,7 @@
                 try {
                     fetch(SYNC_URL, {
                         method: 'PUT',
-                        headers: { 
-                            'Content-Type': 'application/json', 
-                            'X-Master-Key': MASTER_KEY,
-                            'X-Bin-Versioning': 'false' 
-                        },
+                        headers: { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY, 'X-Bin-Versioning': 'false' },
                         body: JSON.stringify({ itinerary: itineraryData.value, shopping: shoppingList.value, expenses: expenses.value })
                     })
                     .then(() => { syncStatus.value = 'online'; })
@@ -1133,7 +1124,7 @@
                 } catch(e) {}
                 
                 fetchCloudData();
-                setInterval(() => fetchCloudData(false), 10000);
+                setInterval(() => { fetchCloudData(false) }, 10000);
             });
 
             const currentItinerary = computed({
@@ -1290,7 +1281,7 @@
             return {
                 currentTab, selectedDateIndex, selectedRegionIndex, syncStatus,
                 dates, weatherRegionsData, currentDayRegions, currentWeather, dailyOverviews, currentOverview,
-                itineraryData, currentItinerary, shoppingList, expenses, hotels, rateLoading,
+                itineraryData, currentItinerary, shoppingList, expenses, hotels,
                 exchangeRate, jpyInput, twdInput, updateFromJpy, updateFromTwd,
                 filteredExpensesJPY, filteredExpensesTWD, uniquePayers, expenseFilterPayer, filteredExpenses,
                 formatNumber, getCategoryColor, getCategoryIcon, getCategoryLabel, getWeatherIcon, getHourlyWeatherIcon, getWeatherDescription, getTransportIcon,
