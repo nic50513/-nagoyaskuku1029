@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v25)</title>
+    <title>Japan Trip 2026 (v27 奶茶風路線版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -30,7 +30,7 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         html, body {
@@ -49,14 +49,14 @@
             overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); position: relative;
         }
         .nav-tabs-bar {
-            display: flex; justify-content: center; align-items: center; gap: 12px;
-            padding: 14px 16px 8px; background-color: #FFF9F5;
+            display: flex; justify-content: space-evenly; align-items: center; gap: 8px;
+            padding: 14px 12px 8px; background-color: #FFF9F5;
         }
         .tab-button {
-            width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; box-shadow: 0 4px 10px rgba(222, 123, 84, 0.15); transition: all 0.2s ease;
+            width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; box-shadow: 0 4px 10px rgba(222, 123, 84, 0.15); transition: all 0.2s ease;
         }
-        .tab-button.active { background-color: #DE7B54; color: #ffffff; box-shadow: 0 6px 16px rgba(222, 123, 84, 0.45); transform: scale(1.06); }
+        .tab-button.active { background-color: #DE7B54; color: #ffffff; box-shadow: 0 6px 16px rgba(222, 123, 84, 0.45); transform: scale(1.1); }
         .tab-button:not(.active) { background-color: #FFFFFF; border: 1px solid #FCE4D6; color: #DE7B54; }
         .app-main { position: relative; z-index: 20; background-color: #FFF9F5; min-height: calc(100vh - 160px); padding-top: 10px; }
         .date-selector-sticky { background-color: #FFF9F5; border-bottom: 1px solid #FCE4D6; z-index: 20; top: 0; padding-top: 5px; padding-bottom: 10px; }
@@ -75,24 +75,19 @@
         .drag-handle { cursor: grab; }
         .drag-handle:active { cursor: grabbing; color: #DE7B54; }
         
+        /* 路線圖專屬水波紋背景裝飾 */
+        .infographic-bg {
+            background-color: #FAF5F0;
+            background-image: radial-gradient(circle at 10% 20%, rgba(252, 228, 214, 0.6) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(255, 242, 235, 0.8) 0%, transparent 25%),
+                              radial-gradient(circle at 50% 50%, rgba(222, 123, 84, 0.05) 0%, transparent 40%);
+        }
+        
         [v-cloak] { display: none; }
         #loading-fallback { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50vh; color: #DE7B54; padding-top: 5rem; }
     </style>
 </head>
 <body>
-
-<div id="vue-error-logger" style="display:none; position:fixed; top:0; left:0; width:100%; background:rgba(220,38,38,0.95); color:white; z-index:9999; padding:20px; font-size:14px; word-break:break-all; min-height:100vh;">
-    <h3 style="font-size:18px; font-weight:bold; margin-bottom:10px;"><i class="fa-solid fa-triangle-exclamation"></i> 系統啟動異常</h3>
-    <p>抱歉！網頁載入發生錯誤，請清除瀏覽器快取或使用無痕模式重開：</p>
-    <div id="error-text" style="background:rgba(0,0,0,0.5); padding:15px; border-radius:8px; margin-top:10px; font-family:monospace; font-size:12px; white-space:pre-wrap;"></div>
-</div>
-
-<script>
-    window.onerror = function(message, source, lineno, colno, error) {
-        document.getElementById('vue-error-logger').style.display = 'block';
-        document.getElementById('error-text').innerText += '[Global Error] ' + message + '\nLine: ' + lineno + '\n\n';
-    };
-</script>
 
 <div id="loading-fallback">
     <i class="fa-solid fa-spinner fa-spin text-5xl mb-4"></i>
@@ -102,16 +97,17 @@
 <!-- 核心 Vue 應用程式區塊 -->
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v25
+        ✅ 系統版本: v27
     </div>
 
     <div class="banner-wrapper"></div>
     
     <div class="nav-tabs-bar">
         <button @click="currentTab = 'itinerary'" title="行程" :class="{'active': currentTab === 'itinerary'}" class="tab-button"><i class="fa-solid fa-map-location-dot"></i></button>
+        <button @click="currentTab = 'route'" title="路線圖" :class="{'active': currentTab === 'route'}" class="tab-button"><i class="fa-solid fa-route"></i></button>
         <button @click="currentTab = 'info'" title="資訊" :class="{'active': currentTab === 'info'}" class="tab-button"><i class="fa-solid fa-circle-info"></i></button>
         <button @click="currentTab = 'transit'" title="交通" :class="{'active': currentTab === 'transit'}" class="tab-button"><i class="fa-solid fa-train-subway"></i></button>
-        <button @click="currentTab = 'shopping'" title="購物" :class="{'active': currentTab === 'shopping'}" class="tab-button"><i class="fa-solid fa-basket-shopping"></i></button>
+        <button @click="currentTab = 'list'" title="清單" :class="{'active': currentTab === 'list'}" class="tab-button"><i class="fa-solid fa-clipboard-list"></i></button>
         <button @click="currentTab = 'expenses'" title="花費" :class="{'active': currentTab === 'expenses'}" class="tab-button"><i class="fa-solid fa-coins"></i></button>
     </div>
     
@@ -119,14 +115,70 @@
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : (syncStatus === 'error' ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100')">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : (syncStatus === 'error' ? 'text-red-500' : 'text-green-600')">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '上傳資料中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v25即時對接)') }}
+            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v27 即時對接)') }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
             <i class="fa-solid fa-cloud-arrow-up text-maple-500"></i> 強制推送
         </button>
     </div>
 
-    <main class="px-4 app-main">
+    <main class="px-4 app-main" :class="{'!p-0 !bg-[#FAF5F0]': currentTab === 'route'}">
+        
+        <!-- Tab 0: IG奶茶風 懶人包路線圖 -->
+        <div v-show="currentTab === 'route'" class="animate-fade-in infographic-bg min-h-screen relative pb-20">
+            <!-- 頂部大標題裝飾 -->
+            <div class="pt-8 pb-6 px-6 text-center relative z-10">
+                <div class="inline-block bg-white px-4 py-1.5 rounded-full shadow-sm border border-maple-100 mb-3">
+                    <span class="text-maple-500 font-black tracking-widest text-xs">JAPAN TRIP 2026</span>
+                </div>
+                <h2 class="text-3xl font-black text-gray-800 tracking-tight leading-tight">中部北陸<br>六天五夜 行程總覽</h2>
+                <p class="text-gray-500 text-xs font-medium mt-2"><i class="fa-solid fa-location-dot text-maple-400"></i> 高山 ➔ 上高地 ➔ 白川鄉 ➔ 名古屋</p>
+            </div>
+
+            <!-- 時間軸路線設計 -->
+            <div class="px-6 relative z-10">
+                <!-- 左側虛線主幹 -->
+                <div class="absolute left-10 top-0 bottom-8 border-l-2 border-dashed border-maple-300 z-0"></div>
+
+                <div class="space-y-8 relative z-10">
+                    <div v-for="(overview, idx) in dailyOverviews" :key="idx" class="relative pl-12 group">
+                        <!-- 節點 Icon (可愛立體感) -->
+                        <div class="absolute left-[-17px] top-1 w-10 h-10 rounded-full bg-white shadow-md border-4 border-[#FAF5F0] flex items-center justify-center text-maple-500 text-lg z-10 transition-transform group-hover:scale-110">
+                            <i v-if="idx===0" class="fa-solid fa-train"></i>
+                            <i v-if="idx===1" class="fa-solid fa-mountain"></i>
+                            <i v-if="idx===2" class="fa-solid fa-house-chimney-window"></i>
+                            <i v-if="idx===3" class="fa-brands fa-envira"></i>
+                            <i v-if="idx===4" class="fa-brands fa-fort-awesome"></i>
+                            <i v-if="idx===5" class="fa-solid fa-bag-shopping"></i>
+                        </div>
+
+                        <!-- 圓角卡片 -->
+                        <div class="bg-white/80 backdrop-blur-md rounded-[1.5rem] p-5 shadow-sm border border-white hover:shadow-md transition-shadow relative overflow-hidden">
+                            <!-- Day 貼紙 -->
+                            <div class="absolute -right-2 -top-2 bg-maple-500 text-white font-black text-[10px] px-3 py-1.5 rounded-bl-xl rounded-tr-[1.5rem] shadow-sm transform -rotate-2">
+                                DAY {{ idx + 1 }}
+                            </div>
+                            
+                            <h3 class="text-base font-black text-gray-800 leading-snug mb-2 pr-8">{{ overview.title }}</h3>
+                            <p class="text-xs text-gray-500 font-medium leading-relaxed mb-3">{{ overview.desc }}</p>
+                            
+                            <div class="flex flex-wrap gap-1.5">
+                                <span v-for="tag in overview.highlights" :key="tag" class="text-[10px] font-bold text-maple-700 bg-maple-50 px-2.5 py-1 rounded-lg border border-maple-100"># {{ tag }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 終點圖示 -->
+                    <div class="relative pl-12 pt-2">
+                        <div class="absolute left-[-13px] top-2 w-8 h-8 rounded-full bg-maple-500 shadow-md border-4 border-[#FAF5F0] flex items-center justify-center text-white text-sm z-10">
+                            <i class="fa-solid fa-plane-departure"></i>
+                        </div>
+                        <div class="text-xs font-black text-maple-500 uppercase tracking-widest pt-3">Safe Flight</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Tab 1: 行程 -->
         <div v-show="currentTab === 'itinerary'" class="animate-fade-in">
             <div class="flex overflow-x-auto hide-scrollbar space-x-3 pb-2 snap-x sticky date-selector-sticky -mx-4 px-4">
@@ -185,16 +237,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div v-if="currentOverview" class="mb-4 bg-gradient-to-br from-white to-maple-50/40 rounded-2xl p-4 border border-maple-200/70 card-shadow relative overflow-hidden">
-                <div class="absolute -right-3 -bottom-3 text-maple-500 opacity-5 text-7xl font-black select-none pointer-events-none">DAY {{ selectedDateIndex + 1 }}</div>
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-maple-500 text-white shadow-sm flex items-center gap-1"><i class="fa-solid fa-flag"></i> DAY {{ selectedDateIndex + 1 }} 焦點</span>
-                    <h3 class="text-sm font-black text-gray-800 leading-tight">{{ currentOverview.title }}</h3>
-                </div>
-                <p class="text-xs text-gray-600 leading-relaxed mb-3">{{ currentOverview.desc }}</p>
-                <div class="flex flex-wrap gap-1.5"><span v-for="tag in currentOverview.highlights" :key="tag" class="text-[10px] font-bold text-maple-700 bg-white/90 border border-maple-200 px-2 py-0.5 rounded-lg shadow-2xs"># {{ tag }}</span></div>
             </div>
 
             <!-- 行程清單拖曳 -->
@@ -357,17 +399,17 @@
             <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
                 <i class="fa-solid fa-train-subway absolute -right-4 -bottom-4 text-[100px] opacity-10"></i>
                 <h3 class="font-bold text-xl mb-1 relative z-10 flex items-center gap-2"><i class="fa-solid fa-map-location-dot"></i> 交通路線指南</h3>
-                <p class="text-blue-100 text-xs relative z-10">名古屋鐵道 & 地鐵時刻表參考</p>
+                <p class="text-blue-100 text-xs relative z-10">名古屋鐵道、地鐵與高速巴士時刻表</p>
             </div>
 
             <div class="bg-white rounded-3xl p-5 card-shadow">
-                <h4 class="font-bold text-gray-800 mb-4 flex items-center"><i class="fa-solid fa-map text-blue-500 mr-2 bg-blue-50 p-1.5 rounded-lg"></i> 名古屋路線圖</h4>
+                <h4 class="font-bold text-gray-800 mb-4 flex items-center"><i class="fa-solid fa-map text-blue-500 mr-2 bg-blue-50 p-1.5 rounded-lg"></i> 路線圖</h4>
                 <div class="grid grid-cols-2 gap-3">
                     <a href="https://www.kotsu.city.nagoya.jp/rp/subway/routemap.html" target="_blank" class="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-2 hover:bg-blue-50 hover:border-blue-200 transition-colors">
-                        <i class="fa-solid fa-train-subway text-3xl text-blue-400"></i><span class="text-xs font-bold text-gray-700">市營地下鐵<br>路線圖 (官網)</span>
+                        <i class="fa-solid fa-train-subway text-3xl text-blue-400"></i><span class="text-xs font-bold text-gray-700">市營地下鐵<br>路線圖</span>
                     </a>
                     <a href="https://www.meitetsu.co.jp/chs/train/route/map/index.html" target="_blank" class="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-2 hover:bg-red-50 hover:border-red-200 transition-colors">
-                        <i class="fa-solid fa-train text-3xl text-red-400"></i><span class="text-xs font-bold text-gray-700">名鐵線<br>路線圖 (官網)</span>
+                        <i class="fa-solid fa-train text-3xl text-red-400"></i><span class="text-xs font-bold text-gray-700">名鐵線<br>路線圖</span>
                     </a>
                 </div>
             </div>
@@ -376,41 +418,120 @@
                 <h4 class="font-bold text-gray-800 mb-4 flex items-center"><i class="fa-regular fa-clock text-indigo-500 mr-2 bg-indigo-50 p-1.5 rounded-lg"></i> 常用時刻表資訊</h4>
                 <div class="space-y-4">
                     <div class="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
-                        <div class="flex items-center gap-2 mb-2"><span class="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">名鐵特急 / µ-SKY</span><span class="text-sm font-bold text-gray-800">機場 ➔ 名古屋車站</span></div>
-                        <div class="text-xs text-gray-500 space-y-1 mt-2"><p><i class="fa-regular fa-clock text-[12px] text-gray-400 mr-1"></i>車程約 28~35 分鐘</p><p><i class="fa-solid fa-coins text-[12px] text-gray-400 mr-1"></i>特急券加價 ¥360</p></div>
+                        <div class="flex items-center gap-2 mb-2"><span class="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">名鐵特急 / µ-SKY</span><span class="text-sm font-bold text-gray-800">機場 ➔ 名古屋</span></div>
+                        <div class="text-xs text-gray-500 space-y-1 mt-2"><p><i class="fa-regular fa-clock text-[12px] text-gray-400 mr-1"></i>車程約 28~35 分鐘</p></div>
                         <a href="https://trainbus.meitetsu.co.jp/meitetsu-transfer-zh-tw/pc/diagram/TrainDiagram?startId=00009406&linkId=00001057&direction=up&rule=&datetime=2026-10-29" target="_blank" class="mt-3 w-full bg-white border border-gray-200 text-gray-700 py-2 rounded-xl text-xs font-bold flex items-center justify-center hover:bg-gray-100 transition-colors">查詢 10/29 時刻表 <i class="fa-solid fa-arrow-up-right-from-square text-[14px] ml-1"></i></a>
                     </div>
                     <div class="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
                         <div class="flex items-center gap-2 mb-2"><span class="bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">JR 飛驒特急</span><span class="text-sm font-bold text-gray-800">名古屋 ➔ 高山</span></div>
-                        <div class="text-xs text-gray-500 space-y-1 mt-2"><p><i class="fa-regular fa-clock text-[12px] text-gray-400 mr-1"></i>車程約 2小時20分鐘</p><p><i class="fa-solid fa-circle-info text-[12px] text-gray-400 mr-1"></i>建議提前劃位指定席</p></div>
+                        <div class="text-xs text-gray-500 space-y-1 mt-2"><p><i class="fa-regular fa-clock text-[12px] text-gray-400 mr-1"></i>車程約 2小時20分鐘</p></div>
                         <a href="https://japantravel.navitime.com/zh-tw/booking/jr/search?_gl=1%2A1a16onc%2A_ga%2AMTEwMDk2MzA5NC4xNzkwMDAyNzY5%2A_ga_83JS94BXX5%2AczE3OTAwMDI3NjckbzEkZzEkdDE3OTAwMDI5MDYkajYwJGwwJGgzODM3NzA0MzgkZEhlcTVFcDNkOVZLTEtwN3pNY1E0dDhJT3A0TmMtblRhNHc.%2A_gcl_aw%2AR0NMLjE3OTAwMDI3NjkuQ2p3S0NBandxOFBWQmhBS0Vpd0EyaTNTSFhvR0tWVVFOWkRFa3ozRkJnczl5WVZYLWJ4ZkVuVktzNTJsM29NTlk5RFVZQVJOZUdhVWdob0NyZThRQXZEX0J3RQ..%2A_gcl_au%2ANDA4ODA5MjgwLjE3OTAwMDI3Njc.&adult=1&arrival=00002571&arvStationName=%E9%AB%98%E5%B1%B1&child=0&cid=japanbullettrain.ads.pc&date=20261029&depStationName=%E5%90%8D%E5%8F%A4%E5%B1%8B&departure=00008576&searchType=one-way&sortType=departure&time=8" target="_blank" class="mt-3 w-full bg-white border border-gray-200 text-gray-700 py-2 rounded-xl text-xs font-bold flex items-center justify-center hover:bg-gray-100 transition-colors">查詢 10/29 時刻表 <i class="fa-solid fa-arrow-up-right-from-square text-[14px] ml-1"></i></a>
+                    </div>
+                    <div class="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
+                        <div class="flex items-center gap-2 mb-2"><span class="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">濃飛巴士</span><span class="text-sm font-bold text-gray-800">高山 ➔ 平湯溫泉</span></div>
+                        <div class="text-xs text-gray-500 space-y-1 mt-2"><p><i class="fa-regular fa-clock text-[12px] text-gray-400 mr-1"></i>車程約 60 分鐘</p></div>
+                        <a href="https://www-nouhibus-co-jp.translate.goog/route_bus/shinhotaka-line-en/?_x_tr_sl=en&_x_tr_tl=zh-TW&_x_tr_hl=zh-TW" target="_blank" class="mt-3 w-full bg-white border border-gray-200 text-gray-700 py-2 rounded-xl text-xs font-bold flex items-center justify-center hover:bg-gray-100 transition-colors">查詢時刻表 <i class="fa-solid fa-arrow-up-right-from-square text-[14px] ml-1"></i></a>
+                    </div>
+                    <div class="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
+                        <div class="flex items-center gap-2 mb-2"><span class="bg-teal-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">上高地線</span><span class="text-sm font-bold text-gray-800">平湯溫泉 ➔ 上高地</span></div>
+                        <div class="text-xs text-gray-500 space-y-1 mt-2"><p><i class="fa-regular fa-clock text-[12px] text-gray-400 mr-1"></i>車程約 25 分鐘</p></div>
+                        <a href="https://www-nouhibus-co-jp.translate.goog/route_bus/kamikochi-line-en/?_x_tr_sl=en&_x_tr_tl=zh-TW&_x_tr_hl=zh-TW" target="_blank" class="mt-3 w-full bg-white border border-gray-200 text-gray-700 py-2 rounded-xl text-xs font-bold flex items-center justify-center hover:bg-gray-100 transition-colors">查詢時刻表 <i class="fa-solid fa-arrow-up-right-from-square text-[14px] ml-1"></i></a>
+                    </div>
+                    <div class="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
+                        <div class="flex items-center gap-2 mb-2"><span class="bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">濃飛巴士</span><span class="text-sm font-bold text-gray-800">高山 ➔ 白川鄉</span></div>
+                        <div class="text-xs text-gray-500 space-y-1 mt-2"><p><i class="fa-regular fa-clock text-[12px] text-gray-400 mr-1"></i>車程約 50 分鐘</p><p><i class="fa-solid fa-ticket text-[12px] text-gray-400 mr-1"></i>部分班次需事前預約</p></div>
+                        <a href="https://www-nouhibus-co-jp.translate.goog/route_bus/shirakawago_en/?_x_tr_sl=en&_x_tr_tl=zh-TW&_x_tr_hl=zh-TW" target="_blank" class="mt-3 w-full bg-white border border-gray-200 text-gray-700 py-2 rounded-xl text-xs font-bold flex items-center justify-center hover:bg-gray-100 transition-colors">查詢時刻表 <i class="fa-solid fa-arrow-up-right-from-square text-[14px] ml-1"></i></a>
+                    </div>
+                    <div class="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
+                        <div class="flex items-center gap-2 mb-2"><span class="bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">高速巴士</span><span class="text-sm font-bold text-gray-800">白川鄉 ➔ 名古屋</span></div>
+                        <div class="text-xs text-gray-500 space-y-1 mt-2"><p><i class="fa-regular fa-clock text-[12px] text-gray-400 mr-1"></i>車程約 2小時50分鐘</p><p><i class="fa-solid fa-ticket text-[12px] text-gray-400 mr-1"></i>全車指定席需預約</p></div>
+                        <a href="https://www.highwaybus.com/gp/inbound/inbTimeTbl?lineId=665&upDownKbn=1&action=update&year=2026&month=10&day=31&fromTime=00&toTime=24#direction" target="_blank" class="mt-3 w-full bg-white border border-gray-200 text-gray-700 py-2 rounded-xl text-xs font-bold flex items-center justify-center hover:bg-gray-100 transition-colors">查詢 10/31 時刻表 <i class="fa-solid fa-arrow-up-right-from-square text-[14px] ml-1"></i></a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tab 3: 購物 -->
-        <div v-show="currentTab === 'shopping'" class="animate-fade-in">
-            <div class="grid grid-cols-2 gap-3">
-                <div v-for="(item, idx) in shoppingList" :key="idx" class="bg-white rounded-2xl p-2.5 card-shadow relative group cursor-pointer border border-gray-100" @click="item.checked = !item.checked; triggerSync()">
-                    <div class="aspect-square bg-gray-50 rounded-xl mb-3 overflow-hidden relative flex items-center justify-center">
-                        <img v-if="item.image" :src="item.image" class="w-full h-full object-cover">
-                        <div v-else class="text-gray-300 flex flex-col items-center"><i class="fa-solid fa-image text-4xl mb-1 opacity-50"></i></div>
-                        <div class="absolute top-2 left-2 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all shadow-sm z-20" :class="item.checked ? 'border-maple-500 bg-maple-500 text-white' : 'border-gray-300 bg-white/90 backdrop-blur text-transparent'"><i class="fa-solid fa-check text-base font-bold"></i></div>
-                        <div v-if="item.checked" class="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-10"></div>
-                        <div class="absolute bottom-2 right-2 flex gap-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button @click.stop="editShoppingItem(item, idx)" class="bg-blue-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-blue-600"><i class="fa-solid fa-pen text-sm"></i></button>
-                            <button @click.stop="removeShoppingItem(idx)" class="bg-red-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-red-600"><i class="fa-solid fa-trash-can text-sm"></i></button>
+        <!-- Tab 3: 三大清單 (購物/行李/票券) -->
+        <div v-show="currentTab === 'list'" class="animate-fade-in space-y-4">
+            
+            <!-- 購物清單區塊 -->
+            <div>
+                <button @click="toggleList('shopping')" class="w-full flex items-center justify-between bg-maple-50 border border-maple-100 p-3 rounded-2xl shadow-sm text-maple-700 font-bold mb-2 transition-colors hover:bg-maple-100">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-basket-shopping text-lg w-6"></i> 購物清單 <span class="text-[10px] bg-white px-2 py-0.5 rounded-full text-maple-500 border border-maple-200">{{ categorizedLists.shopping.length }}</span></span>
+                    <i class="fa-solid transition-transform duration-300 text-maple-400" :class="listCollapse.shopping ? 'fa-chevron-down' : 'fa-chevron-up -rotate-180'"></i>
+                </button>
+                <div v-show="listCollapse.shopping" class="grid grid-cols-2 gap-3 pl-1 pr-1 pb-2">
+                    <div v-for="item in categorizedLists.shopping" :key="item.id" class="bg-white rounded-2xl p-2.5 card-shadow relative group cursor-pointer border border-gray-100" @click="item.checked = !item.checked; triggerSync()">
+                        <div class="aspect-square bg-gray-50 rounded-xl mb-3 overflow-hidden relative flex items-center justify-center">
+                            <img v-if="item.image" :src="item.image" class="w-full h-full object-cover">
+                            <div v-else class="text-gray-300 flex flex-col items-center"><i class="fa-solid fa-image text-4xl mb-1 opacity-50"></i></div>
+                            <div class="absolute top-2 left-2 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all shadow-sm z-20" :class="item.checked ? 'border-maple-500 bg-maple-500 text-white' : 'border-gray-300 bg-white/90 backdrop-blur text-transparent'"><i class="fa-solid fa-check text-base font-bold"></i></div>
+                            <div v-if="item.checked" class="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-10"></div>
+                            <div class="absolute bottom-2 right-2 flex gap-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button @click.stop="editShoppingItem(item)" class="bg-blue-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-blue-600"><i class="fa-solid fa-pen text-sm"></i></button>
+                                <button @click.stop="removeShoppingItem(item)" class="bg-red-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-red-600"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                            </div>
                         </div>
+                        <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
                     </div>
-                    <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
-                </div>
-                <div v-if="shoppingList.length % 2 !== 0" class="h-0 invisible"></div>
-                <div v-if="shoppingList.length === 0" class="col-span-2 text-center py-16 bg-white rounded-3xl border border-dashed border-gray-300 card-shadow">
-                    <div class="w-16 h-16 bg-maple-50 rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-basket-shopping text-3xl text-gray-300"></i></div>
-                    <p class="text-sm font-bold text-gray-600">購物清單空白</p><p class="text-xs text-gray-400 mt-1">請點擊右下角新增想買的物品</p>
+                    <div v-if="categorizedLists.shopping.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200">
+                        <p class="text-xs font-bold text-gray-400">目前沒有購物清單</p>
+                    </div>
                 </div>
             </div>
+
+            <!-- 行李清單區塊 -->
+            <div>
+                <button @click="toggleList('luggage')" class="w-full flex items-center justify-between bg-blue-50 border border-blue-100 p-3 rounded-2xl shadow-sm text-blue-700 font-bold mb-2 transition-colors hover:bg-blue-100">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-suitcase-rolling text-lg w-6"></i> 行李清單 <span class="text-[10px] bg-white px-2 py-0.5 rounded-full text-blue-500 border border-blue-200">{{ categorizedLists.luggage.length }}</span></span>
+                    <i class="fa-solid transition-transform duration-300 text-blue-400" :class="listCollapse.luggage ? 'fa-chevron-down' : 'fa-chevron-up -rotate-180'"></i>
+                </button>
+                <div v-show="listCollapse.luggage" class="grid grid-cols-2 gap-3 pl-1 pr-1 pb-2">
+                    <div v-for="item in categorizedLists.luggage" :key="item.id" class="bg-white rounded-2xl p-2.5 card-shadow relative group cursor-pointer border border-gray-100" @click="item.checked = !item.checked; triggerSync()">
+                        <div class="aspect-square bg-gray-50 rounded-xl mb-3 overflow-hidden relative flex items-center justify-center">
+                            <img v-if="item.image" :src="item.image" class="w-full h-full object-cover">
+                            <div v-else class="text-gray-300 flex flex-col items-center"><i class="fa-solid fa-shirt text-4xl mb-1 opacity-50"></i></div>
+                            <div class="absolute top-2 left-2 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all shadow-sm z-20" :class="item.checked ? 'border-blue-500 bg-blue-500 text-white' : 'border-gray-300 bg-white/90 backdrop-blur text-transparent'"><i class="fa-solid fa-check text-base font-bold"></i></div>
+                            <div v-if="item.checked" class="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-10"></div>
+                            <div class="absolute bottom-2 right-2 flex gap-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button @click.stop="editShoppingItem(item)" class="bg-blue-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-blue-600"><i class="fa-solid fa-pen text-sm"></i></button>
+                                <button @click.stop="removeShoppingItem(item)" class="bg-red-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-red-600"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                            </div>
+                        </div>
+                        <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
+                    </div>
+                    <div v-if="categorizedLists.luggage.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200">
+                        <p class="text-xs font-bold text-gray-400">目前沒有行李清單</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 票券清單區塊 -->
+            <div>
+                <button @click="toggleList('ticket')" class="w-full flex items-center justify-between bg-emerald-50 border border-emerald-100 p-3 rounded-2xl shadow-sm text-emerald-700 font-bold mb-2 transition-colors hover:bg-emerald-100">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-ticket text-lg w-6"></i> 票券清單 <span class="text-[10px] bg-white px-2 py-0.5 rounded-full text-emerald-500 border border-emerald-200">{{ categorizedLists.ticket.length }}</span></span>
+                    <i class="fa-solid transition-transform duration-300 text-emerald-400" :class="listCollapse.ticket ? 'fa-chevron-down' : 'fa-chevron-up -rotate-180'"></i>
+                </button>
+                <div v-show="listCollapse.ticket" class="grid grid-cols-2 gap-3 pl-1 pr-1 pb-2">
+                    <div v-for="item in categorizedLists.ticket" :key="item.id" class="bg-white rounded-2xl p-2.5 card-shadow relative group cursor-pointer border border-gray-100" @click="item.checked = !item.checked; triggerSync()">
+                        <div class="aspect-square bg-gray-50 rounded-xl mb-3 overflow-hidden relative flex items-center justify-center">
+                            <img v-if="item.image" :src="item.image" class="w-full h-full object-cover">
+                            <div v-else class="text-gray-300 flex flex-col items-center"><i class="fa-solid fa-qrcode text-4xl mb-1 opacity-50"></i></div>
+                            <div class="absolute top-2 left-2 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all shadow-sm z-20" :class="item.checked ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-gray-300 bg-white/90 backdrop-blur text-transparent'"><i class="fa-solid fa-check text-base font-bold"></i></div>
+                            <div v-if="item.checked" class="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-10"></div>
+                            <div class="absolute bottom-2 right-2 flex gap-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button @click.stop="editShoppingItem(item)" class="bg-blue-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-blue-600"><i class="fa-solid fa-pen text-sm"></i></button>
+                                <button @click.stop="removeShoppingItem(item)" class="bg-red-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-red-600"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                            </div>
+                        </div>
+                        <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
+                    </div>
+                    <div v-if="categorizedLists.ticket.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200">
+                        <p class="text-xs font-bold text-gray-400">目前沒有票券清單</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Tab 4: 花費 -->
@@ -467,7 +588,7 @@
     </main>
 
     <!-- 懸浮新增按鈕 -->
-    <button v-if="currentTab !== 'info' && currentTab !== 'transit'" @click="handleAddClick" class="fab-btn"><i class="fa-solid fa-plus font-bold"></i></button>
+    <button v-if="currentTab !== 'info' && currentTab !== 'transit' && currentTab !== 'route'" @click="handleAddClick" class="fab-btn"><i class="fa-solid fa-plus font-bold"></i></button>
 
     <!-- Modal: 飯店設施指南 -->
     <div v-if="showHotelGuideModal && activeHotelGuide" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
@@ -566,16 +687,24 @@
         </div>
     </div>
 
-    <!-- Modal: 編輯購物清單彈窗 -->
+    <!-- Modal: 編輯清單項目彈窗 -->
     <div v-if="showShoppingModal" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="absolute inset-0" @click="showShoppingModal = false"></div>
         <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black text-gray-800 flex items-center gap-2"><i class="fa-solid fa-basket-shopping text-maple-500"></i> {{ isEditShoppingMode ? '編輯商品' : '新增購物清單' }}</h3>
+                <h3 class="text-xl font-black text-gray-800 flex items-center gap-2"><i class="fa-solid fa-clipboard-list text-maple-500"></i> {{ isEditShoppingMode ? '編輯清單' : '新增至清單' }}</h3>
                 <button @click="showShoppingModal = false" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 transition-colors flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-4">
-                <div><label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">商品名稱</label><input v-model="newShoppingItem.name" type="text" placeholder="輸入名稱" class="w-full bg-white border border-gray-200 rounded-xl p-4 text-sm font-bold outline-none focus:border-maple-500 shadow-sm"></div>
+                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                    <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">選擇分類</label>
+                    <div class="flex gap-2">
+                        <button @click="newShoppingItem.category='shopping'" :class="newShoppingItem.category==='shopping'?'bg-maple-500 text-white shadow':'bg-white text-gray-500 border border-gray-200'" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all"><i class="fa-solid fa-basket-shopping"></i> 購物</button>
+                        <button @click="newShoppingItem.category='luggage'" :class="newShoppingItem.category==='luggage'?'bg-blue-500 text-white shadow':'bg-white text-gray-500 border border-gray-200'" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all"><i class="fa-solid fa-suitcase-rolling"></i> 行李</button>
+                        <button @click="newShoppingItem.category='ticket'" :class="newShoppingItem.category==='ticket'?'bg-emerald-500 text-white shadow':'bg-white text-gray-500 border border-gray-200'" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all"><i class="fa-solid fa-ticket"></i> 票券</button>
+                    </div>
+                </div>
+                <div><label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">項目名稱</label><input v-model="newShoppingItem.name" type="text" placeholder="輸入名稱" class="w-full bg-white border border-gray-200 rounded-xl p-4 text-sm font-bold outline-none focus:border-maple-500 shadow-sm"></div>
                 <div>
                     <label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">上傳照片 (選填)</label><input type="file" @change="handleImageUpload" class="hidden" id="fileInput">
                     <label for="fileInput" class="w-full h-36 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center cursor-pointer text-gray-400 hover:bg-gray-100 transition-all overflow-hidden relative group">
@@ -629,7 +758,7 @@
 </div>
 
 <script>
-    // 🔥 Firebase 金鑰與資料庫連結 🔥
+    // 🔥 Firebase 金鑰 🔥
     const firebaseConfig = {
         apiKey: "AIzaSyAA3zhcmH0dW33vpVwarTn4rY_BJ_9fnbo",
         authDomain: "nagoya1029-d7c27.firebaseapp.com",
@@ -764,10 +893,14 @@
                 });
             });
 
-            const currentTab = ref('itinerary');
+            const currentTab = ref('route'); // 預設打開超美的懶人包路線
             const selectedDateIndex = ref(0);
             const selectedRegionIndex = ref(0);
             const syncStatus = ref('online');
+
+            // 清單收合狀態控制
+            const listCollapse = ref({ shopping: true, luggage: true, ticket: true });
+            const toggleList = (type) => { listCollapse.value[type] = !listCollapse.value[type]; };
 
             const showGuideModal = ref(false);
             const activeGuide = ref(null);
@@ -810,22 +943,37 @@
             const currentWeather = computed(() => currentDayRegions.value[selectedRegionIndex.value] || currentDayRegions.value[0]);
 
             const dailyOverviews = ref([
-                { title: '飛驒高山・江戶老街漫步與極致和牛', desc: '抵達日本後直奔飛驒小京都「高山」，享用飛驒牛壽喜燒與三町通老街。', highlights: ['飛驒牛', '老街', '高山陣屋'] },
-                { title: '神之故鄉・上高地金秋絕景大健行', desc: '全日沉浸在阿爾卑斯仙境「上高地」，欣賞梓川與明神池神聖美景。', highlights: ['上高地', '梓川', '河童橋'] },
-                { title: '童話合掌村與名古屋繁華購物夜', desc: '前往世界遺產「白川鄉合掌村」，午後返回名古屋大啖鰻魚三吃。', highlights: ['合掌村', '城山展望台', '鰻魚飯'] },
-                { title: '童心沉浸・宮崎駿吉卜力公園夢幻日', desc: '朝聖愛知「吉卜力公園」，傍晚在榮商圈品嚐純炭火居酒屋。', highlights: ['吉卜力大倉庫', '魔女之谷', '地雞燒鳥'] },
-                { title: '國寶犬山城・城下町洗錢結緣散策', desc: '登頂國寶犬山城360度迴廊，體驗三光稻荷洗錢儀式與城下町小吃。', highlights: ['國寶犬山城', '三光稻荷洗錢', '獅子丸拉麵'] },
-                { title: '榮商圈精品甜點巡禮・滿載回台', desc: '榮商圈朝聖精品小眾香氛與法式甜點，滿載戰利品賦歸。', highlights: ['榮商圈精品', '法式甜點', '中部國際機場'] }
+                { title: '高山老街・極致飛驒牛', desc: '抵達日本後直奔飛驒小京都「高山」，享用飛驒牛壽喜燒與三町通老街散策。', highlights: ['飛驒牛', '高山老街', '高山陣屋'] },
+                { title: '神之故鄉・上高地金秋健行', desc: '全日沉浸在阿爾卑斯仙境「上高地」，欣賞梓川與明神池的絕美神聖秋景。', highlights: ['上高地', '梓川', '河童橋'] },
+                { title: '童話合掌村・名古屋繁華夜', desc: '前往世界遺產「白川鄉合掌村」，午後返回名古屋大啖經典炭烤鰻魚三吃。', highlights: ['合掌村', '城山展望台', '鰻魚飯'] },
+                { title: '宮崎駿實境・吉卜力公園', desc: '朝聖愛知「吉卜力公園」走進動畫森林，傍晚在榮商圈品嚐純炭火居酒屋。', highlights: ['吉卜力大倉庫', '魔女之谷', '地雞燒鳥'] },
+                { title: '國寶犬山城・城下町結緣', desc: '登頂國寶犬山城360度迴廊，體驗三光稻荷洗錢儀式與超人氣城下町小吃。', highlights: ['國寶犬山城', '洗錢神社', '獅子丸拉麵'] },
+                { title: '榮商圈精品・滿載回台', desc: '榮商圈朝聖精品小眾香氛與法式甜點，帶著滿滿的戰利品與回憶前往機場。', highlights: ['榮商圈', '法式甜點', '中部國際機場'] }
             ]);
             const currentOverview = computed(() => dailyOverviews.value[selectedDateIndex.value]);
 
             const itineraryData = ref(JSON.parse(JSON.stringify(defaultItineraryData)));
+            
+            // 清單總資料
             const shoppingList = ref([
-                { name: 'COCOTOMO FARM 玄米年輪蛋糕', checked: false }
+                { id: 1, name: 'COCOTOMO FARM 玄米年輪蛋糕', checked: false, category: 'shopping' },
+                { id: 2, name: '護照 / 日幣現鈔', checked: false, category: 'luggage' },
+                { id: 3, name: '昇龍道巴士券', checked: false, category: 'ticket' }
             ]);
+
+            // 自動將清單分類的 Computed (舊資料若無 category 預設為 shopping)
+            const categorizedLists = computed(() => {
+                return {
+                    shopping: shoppingList.value.filter(i => (i.category || 'shopping') === 'shopping'),
+                    luggage: shoppingList.value.filter(i => i.category === 'luggage'),
+                    ticket: shoppingList.value.filter(i => i.category === 'ticket')
+                };
+            });
+
             const expenses = ref([
                 { name: 'Klook 高山車票', amount: 4780, category: 'transport', date: '2026-10-29', payment: 'card', payer: '甯', currency: 'TWD' }
             ]);
+
             const hotels = ref([
                 { name: 'FAV LUX HIDATAKAYAMA', date: '10/29 - 10/31', address: '高山市花里町', phone: '0577-33-xxxx' },
                 { name: 'Henn na Hotel Nagoya', date: '10/31 - 11/03', address: '名古屋市中區錦', phone: '052-223-xxxx' }
@@ -838,8 +986,8 @@
 
             const showShoppingModal = ref(false);
             const isEditShoppingMode = ref(false);
-            const editingShoppingIndex = ref(-1);
-            const newShoppingItem = ref({ name: '', image: null, checked: false });
+            const editingShoppingItemRef = ref(null);
+            const newShoppingItem = ref({ id: null, name: '', image: null, checked: false, category: 'shopping' });
 
             const showExpenseModal = ref(false);
             const isEditExpenseMode = ref(false);
@@ -877,9 +1025,6 @@
                 get: () => itineraryData.value[selectedDateIndex.value] || [],
                 set: (val) => { itineraryData.value[selectedDateIndex.value] = val; }
             });
-
-            // 以防萬一，保留空的 moveItem 以免 template 殘留觸發報錯
-            const moveItem = () => {};
 
             const uniquePayers = computed(() => {
                 const payers = new Set(expenses.value.map(e => e.payer).filter(Boolean));
@@ -939,9 +1084,9 @@
                     isEditItineraryMode.value = false;
                     newItinerary.value = { id: Date.now(), name: '', startTime: '', travelTime: '', note: '', category: 'sightseeing', transportType: 'walk' };
                     showItineraryModal.value = true;
-                } else if (currentTab.value === 'shopping') {
+                } else if (currentTab.value === 'list') {
                     isEditShoppingMode.value = false;
-                    newShoppingItem.value = { name: '', image: null, checked: false };
+                    newShoppingItem.value = { id: Date.now(), name: '', image: null, checked: false, category: 'shopping' };
                     showShoppingModal.value = true;
                 } else if (currentTab.value === 'expenses') {
                     isEditExpenseMode.value = false;
@@ -950,27 +1095,31 @@
                 }
             };
 
-            const editShoppingItem = (item, idx) => {
+            const editShoppingItem = (item) => {
                 isEditShoppingMode.value = true;
-                editingShoppingIndex.value = idx;
+                editingShoppingItemRef.value = item;
                 newShoppingItem.value = JSON.parse(JSON.stringify(item));
+                if (!newShoppingItem.value.category) newShoppingItem.value.category = 'shopping'; // 防呆
                 showShoppingModal.value = true;
             };
 
             const saveShoppingItem = () => {
                 if (!newShoppingItem.value.name) return alert('請輸入名稱');
-                if (isEditShoppingMode.value && editingShoppingIndex.value > -1) {
-                    shoppingList.value[editingShoppingIndex.value] = { ...newShoppingItem.value };
+                if (isEditShoppingMode.value && editingShoppingItemRef.value) {
+                    const realIdx = shoppingList.value.findIndex(i => i.id === editingShoppingItemRef.value.id || i.name === editingShoppingItemRef.value.name);
+                    if (realIdx > -1) shoppingList.value[realIdx] = { ...newShoppingItem.value };
                 } else {
+                    if(!newShoppingItem.value.id) newShoppingItem.value.id = Date.now();
                     shoppingList.value.push({ ...newShoppingItem.value });
                 }
                 showShoppingModal.value = false;
                 triggerSync();
             };
 
-            const removeShoppingItem = (idx) => {
-                if (confirm('確定刪除此商品？')) {
-                    shoppingList.value.splice(idx, 1);
+            const removeShoppingItem = (item) => {
+                if (confirm('確定刪除此項目？')) {
+                    const realIdx = shoppingList.value.findIndex(i => i.id === item.id || i.name === item.name);
+                    if (realIdx > -1) shoppingList.value.splice(realIdx, 1);
                     triggerSync();
                 }
             };
@@ -1020,12 +1169,12 @@
             return {
                 currentTab, selectedDateIndex, selectedRegionIndex, syncStatus,
                 dates, weatherRegionsData, currentDayRegions, currentWeather, dailyOverviews, currentOverview,
-                itineraryData, currentItinerary, moveItem, shoppingList, expenses, hotels, rateLoading,
+                itineraryData, currentItinerary, shoppingList, categorizedLists, listCollapse, toggleList, expenses, hotels, rateLoading,
                 exchangeRate, jpyInput, twdInput, updateFromJpy, updateFromTwd,
                 filteredExpensesJPY, filteredExpensesTWD, uniquePayers, expenseFilterPayer, filteredExpenses,
                 formatNumber, getCategoryColor, getCategoryIcon, getCategoryLabel, getWeatherIcon, getHourlyWeatherIcon, getWeatherDescription, getTransportIcon,
                 showItineraryModal, isEditItineraryMode, editingItineraryIndex, newItinerary, editItineraryItem, saveItineraryItem, removeItineraryItem,
-                showShoppingModal, isEditShoppingMode, editingShoppingIndex, newShoppingItem, editShoppingItem, saveShoppingItem, removeShoppingItem, handleImageUpload,
+                showShoppingModal, isEditShoppingMode, newShoppingItem, editShoppingItem, saveShoppingItem, removeShoppingItem, handleImageUpload,
                 showExpenseModal, isEditExpenseMode, editingExpenseIndex, newExpense, editExpenseItem, saveExpenseItem, deleteExpense,
                 showGuideModal, activeGuide, openGuideModal, hasGuide,
                 showHotelGuideModal, activeHotelGuide, openHotelGuide,
