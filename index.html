@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v27 奶茶風路線版)</title>
+    <title>Japan Trip 2026 (v28 繪本路線版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -75,12 +75,13 @@
         .drag-handle { cursor: grab; }
         .drag-handle:active { cursor: grabbing; color: #DE7B54; }
         
-        /* 路線圖專屬水波紋背景裝飾 */
-        .infographic-bg {
-            background-color: #FAF5F0;
-            background-image: radial-gradient(circle at 10% 20%, rgba(252, 228, 214, 0.6) 0%, transparent 20%),
-                              radial-gradient(circle at 90% 80%, rgba(255, 242, 235, 0.8) 0%, transparent 25%),
-                              radial-gradient(circle at 50% 50%, rgba(222, 123, 84, 0.05) 0%, transparent 40%);
+        /* 繪本風地圖專屬 CSS */
+        .map-water-bg { background-color: #E2EFF5; }
+        .map-land-shape { 
+            background-color: #FDFBF5; 
+            border-radius: 40px; 
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.8), 0 10px 25px rgba(180, 200, 210, 0.5);
+            border: 3px solid #F0EBE0;
         }
         
         [v-cloak] { display: none; }
@@ -88,6 +89,19 @@
     </style>
 </head>
 <body>
+
+<div id="vue-error-logger" style="display:none; position:fixed; top:0; left:0; width:100%; background:rgba(220,38,38,0.95); color:white; z-index:9999; padding:20px; font-size:14px; word-break:break-all; min-height:100vh;">
+    <h3 style="font-size:18px; font-weight:bold; margin-bottom:10px;"><i class="fa-solid fa-triangle-exclamation"></i> 系統啟動異常</h3>
+    <p>抱歉！網頁載入發生錯誤，請清除瀏覽器快取或使用無痕模式重開：</p>
+    <div id="error-text" style="background:rgba(0,0,0,0.5); padding:15px; border-radius:8px; margin-top:10px; font-family:monospace; font-size:12px; white-space:pre-wrap;"></div>
+</div>
+
+<script>
+    window.onerror = function(message, source, lineno, colno, error) {
+        document.getElementById('vue-error-logger').style.display = 'block';
+        document.getElementById('error-text').innerText += '[Global Error] ' + message + '\nLine: ' + lineno + '\n\n';
+    };
+</script>
 
 <div id="loading-fallback">
     <i class="fa-solid fa-spinner fa-spin text-5xl mb-4"></i>
@@ -97,11 +111,12 @@
 <!-- 核心 Vue 應用程式區塊 -->
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v27
+        ✅ 系統版本: v28
     </div>
 
     <div class="banner-wrapper"></div>
     
+    <!-- 導覽列 -->
     <div class="nav-tabs-bar">
         <button @click="currentTab = 'itinerary'" title="行程" :class="{'active': currentTab === 'itinerary'}" class="tab-button"><i class="fa-solid fa-map-location-dot"></i></button>
         <button @click="currentTab = 'route'" title="路線圖" :class="{'active': currentTab === 'route'}" class="tab-button"><i class="fa-solid fa-route"></i></button>
@@ -115,68 +130,114 @@
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : (syncStatus === 'error' ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100')">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : (syncStatus === 'error' ? 'text-red-500' : 'text-green-600')">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v27 即時對接)') }}
+            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v28 即時對接)') }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
             <i class="fa-solid fa-cloud-arrow-up text-maple-500"></i> 強制推送
         </button>
     </div>
 
-    <main class="px-4 app-main" :class="{'!p-0 !bg-[#FAF5F0]': currentTab === 'route'}">
+    <!-- 主畫面內容 -->
+    <!-- 注意：如果是 route，取消預設 padding，讓水波紋滿版 -->
+    <main class="app-main" :class="currentTab === 'route' ? '!p-0' : 'px-4'">
         
-        <!-- Tab 0: IG奶茶風 懶人包路線圖 -->
-        <div v-show="currentTab === 'route'" class="animate-fade-in infographic-bg min-h-screen relative pb-20">
-            <!-- 頂部大標題裝飾 -->
-            <div class="pt-8 pb-6 px-6 text-center relative z-10">
-                <div class="inline-block bg-white px-4 py-1.5 rounded-full shadow-sm border border-maple-100 mb-3">
-                    <span class="text-maple-500 font-black tracking-widest text-xs">JAPAN TRIP 2026</span>
+        <!-- Tab 0: IG繪本地圖路線 -->
+        <div v-show="currentTab === 'route'" class="animate-fade-in map-water-bg min-h-[900px] relative p-3 pb-24 overflow-hidden">
+            <!-- 陸地區塊 -->
+            <div class="map-land-shape absolute inset-4 top-6 bottom-20 relative z-10 w-full h-[950px] mx-auto overflow-visible mt-2" style="max-width: 94%;">
+                
+                <div class="text-center pt-8 pb-4 relative z-20">
+                    <span class="inline-block bg-white/90 backdrop-blur text-[#C19B76] px-4 py-1 rounded-full text-[10px] font-black tracking-widest shadow-sm border border-[#EBE3D5] mb-2"><i class="fa-solid fa-earth-asia"></i> JAPAN TRIP 2026</span>
+                    <h2 class="text-2xl font-black text-[#5C4A3D] tracking-tight">中部北陸 探險地圖</h2>
                 </div>
-                <h2 class="text-3xl font-black text-gray-800 tracking-tight leading-tight">中部北陸<br>六天五夜 行程總覽</h2>
-                <p class="text-gray-500 text-xs font-medium mt-2"><i class="fa-solid fa-location-dot text-maple-400"></i> 高山 ➔ 上高地 ➔ 白川鄉 ➔ 名古屋</p>
-            </div>
 
-            <!-- 時間軸路線設計 -->
-            <div class="px-6 relative z-10">
-                <!-- 左側虛線主幹 -->
-                <div class="absolute left-10 top-0 bottom-8 border-l-2 border-dashed border-maple-300 z-0"></div>
+                <!-- 虛線路線 SVG -->
+                <svg class="absolute top-0 left-0 w-full h-full z-0 pointer-events-none" viewBox="0 0 400 900" preserveAspectRatio="none">
+                    <!-- 從 Day 1 到 Day 6 的 S 型曲線 -->
+                    <path d="M 120 180 C 220 180, 280 230, 280 300 C 280 400, 120 400, 120 500 C 120 600, 280 600, 280 700 C 280 780, 120 800, 150 850" 
+                          stroke="#CBA88A" stroke-width="4" stroke-dasharray="8,8" fill="none" stroke-linecap="round"/>
+                </svg>
 
-                <div class="space-y-8 relative z-10">
-                    <div v-for="(overview, idx) in dailyOverviews" :key="idx" class="relative pl-12 group">
-                        <!-- 節點 Icon (可愛立體感) -->
-                        <div class="absolute left-[-17px] top-1 w-10 h-10 rounded-full bg-white shadow-md border-4 border-[#FAF5F0] flex items-center justify-center text-maple-500 text-lg z-10 transition-transform group-hover:scale-110">
-                            <i v-if="idx===0" class="fa-solid fa-train"></i>
-                            <i v-if="idx===1" class="fa-solid fa-mountain"></i>
-                            <i v-if="idx===2" class="fa-solid fa-house-chimney-window"></i>
-                            <i v-if="idx===3" class="fa-brands fa-envira"></i>
-                            <i v-if="idx===4" class="fa-brands fa-fort-awesome"></i>
-                            <i v-if="idx===5" class="fa-solid fa-bag-shopping"></i>
-                        </div>
-
-                        <!-- 圓角卡片 -->
-                        <div class="bg-white/80 backdrop-blur-md rounded-[1.5rem] p-5 shadow-sm border border-white hover:shadow-md transition-shadow relative overflow-hidden">
-                            <!-- Day 貼紙 -->
-                            <div class="absolute -right-2 -top-2 bg-maple-500 text-white font-black text-[10px] px-3 py-1.5 rounded-bl-xl rounded-tr-[1.5rem] shadow-sm transform -rotate-2">
-                                DAY {{ idx + 1 }}
-                            </div>
-                            
-                            <h3 class="text-base font-black text-gray-800 leading-snug mb-2 pr-8">{{ overview.title }}</h3>
-                            <p class="text-xs text-gray-500 font-medium leading-relaxed mb-3">{{ overview.desc }}</p>
-                            
-                            <div class="flex flex-wrap gap-1.5">
-                                <span v-for="tag in overview.highlights" :key="tag" class="text-[10px] font-bold text-maple-700 bg-maple-50 px-2.5 py-1 rounded-lg border border-maple-100"># {{ tag }}</span>
-                            </div>
-                        </div>
-                    </div>
+                <!-- 地圖節點 (運用絕對定位對齊 S 型曲線) -->
+                <div class="absolute w-full h-full top-0 left-0 z-10">
                     
-                    <!-- 終點圖示 -->
-                    <div class="relative pl-12 pt-2">
-                        <div class="absolute left-[-13px] top-2 w-8 h-8 rounded-full bg-maple-500 shadow-md border-4 border-[#FAF5F0] flex items-center justify-center text-white text-sm z-10">
-                            <i class="fa-solid fa-plane-departure"></i>
+                    <!-- Day 1: 高山 -->
+                    <div class="absolute w-[220px]" style="top: 15%; left: 10%;">
+                        <div class="flex flex-col items-center group cursor-pointer hover:-translate-y-1 transition-transform">
+                            <div class="w-12 h-12 bg-white rounded-full shadow-md border-4 border-[#FDFBF5] flex items-center justify-center text-[#B33A3A] text-xl z-10 mb-[-15px]">
+                                <i class="fa-solid fa-house-chimney-window"></i>
+                            </div>
+                            <div class="bg-white/90 backdrop-blur rounded-2xl p-3 shadow-sm border border-[#EBE3D5] text-center w-full relative">
+                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#B33A3A] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">Day 1</span>
+                                <h4 class="font-black text-[#5C4A3D] text-sm mt-1">高山老街・飛驒牛</h4>
+                                <p class="text-[10px] text-gray-500 font-medium mt-1 leading-snug">飛驒小京都，大啖壽喜燒與町家散策。</p>
+                            </div>
                         </div>
-                        <div class="text-xs font-black text-maple-500 uppercase tracking-widest pt-3">Safe Flight</div>
                     </div>
+
+                    <!-- Day 2: 上高地 -->
+                    <div class="absolute w-[220px]" style="top: 28%; left: 40%;">
+                        <div class="flex flex-col items-center group cursor-pointer hover:-translate-y-1 transition-transform">
+                            <div class="w-12 h-12 bg-white rounded-full shadow-md border-4 border-[#FDFBF5] flex items-center justify-center text-[#2E5C3A] text-xl z-10 mb-[-15px]">
+                                <i class="fa-solid fa-mountain-sun"></i>
+                            </div>
+                            <div class="bg-white/90 backdrop-blur rounded-2xl p-3 shadow-sm border border-[#EBE3D5] text-center w-full relative">
+                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#2E5C3A] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">Day 2</span>
+                                <h4 class="font-black text-[#5C4A3D] text-sm mt-1">神之故鄉・上高地</h4>
+                                <p class="text-[10px] text-gray-500 font-medium mt-1 leading-snug">秋季仙境健行，絕美梓川與河童橋。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Day 3: 白川鄉 -->
+                    <div class="absolute w-[220px]" style="top: 50%; left: 5%;">
+                        <div class="flex flex-col items-center group cursor-pointer hover:-translate-y-1 transition-transform">
+                            <div class="w-12 h-12 bg-white rounded-full shadow-md border-4 border-[#FDFBF5] flex items-center justify-center text-[#D98E6C] text-xl z-10 mb-[-15px]">
+                                <i class="fa-solid fa-tree-city"></i>
+                            </div>
+                            <div class="bg-white/90 backdrop-blur rounded-2xl p-3 shadow-sm border border-[#EBE3D5] text-center w-full relative">
+                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#D98E6C] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">Day 3</span>
+                                <h4 class="font-black text-[#5C4A3D] text-sm mt-1">童話村・白川鄉</h4>
+                                <p class="text-[10px] text-gray-500 font-medium mt-1 leading-snug">世界遺產合掌造聚落，返回名古屋吃鰻魚。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Day 4: 吉卜力 -->
+                    <div class="absolute w-[220px]" style="top: 68%; left: 40%;">
+                        <div class="flex flex-col items-center group cursor-pointer hover:-translate-y-1 transition-transform">
+                            <div class="w-12 h-12 bg-white rounded-full shadow-md border-4 border-[#FDFBF5] flex items-center justify-center text-[#6C8D74] text-xl z-10 mb-[-15px]">
+                                <i class="fa-brands fa-envira"></i>
+                            </div>
+                            <div class="bg-white/90 backdrop-blur rounded-2xl p-3 shadow-sm border border-[#EBE3D5] text-center w-full relative">
+                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#6C8D74] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">Day 4</span>
+                                <h4 class="font-black text-[#5C4A3D] text-sm mt-1">宮崎駿・吉卜力公園</h4>
+                                <p class="text-[10px] text-gray-500 font-medium mt-1 leading-snug">走進大倉庫與魔女之谷的動畫實境。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Day 5: 犬山城 -->
+                    <div class="absolute w-[220px]" style="top: 88%; left: 10%;">
+                        <div class="flex flex-col items-center group cursor-pointer hover:-translate-y-1 transition-transform">
+                            <div class="w-12 h-12 bg-white rounded-full shadow-md border-4 border-[#FDFBF5] flex items-center justify-center text-[#3A5CB3] text-xl z-10 mb-[-15px]">
+                                <i class="fa-brands fa-fort-awesome"></i>
+                            </div>
+                            <div class="bg-white/90 backdrop-blur rounded-2xl p-3 shadow-sm border border-[#EBE3D5] text-center w-full relative">
+                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#3A5CB3] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">Day 5</span>
+                                <h4 class="font-black text-[#5C4A3D] text-sm mt-1">國寶犬山城・洗錢</h4>
+                                <p class="text-[10px] text-gray-500 font-medium mt-1 leading-snug">天守閣絕景與三光稻荷神社洗錢儀式。</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+            
+            <!-- 海上的小裝飾 -->
+            <i class="fa-solid fa-sailboat absolute top-[20%] right-[10%] text-blue-300 text-2xl opacity-50 transform rotate-12"></i>
+            <i class="fa-solid fa-cloud absolute top-[10%] left-[5%] text-white text-3xl opacity-60"></i>
+            <i class="fa-solid fa-cloud absolute top-[40%] right-[5%] text-white text-2xl opacity-60"></i>
         </div>
 
         <!-- Tab 1: 行程 -->
