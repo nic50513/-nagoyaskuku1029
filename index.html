@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v28 繪本路線版)</title>
+    <title>Japan Trip 2026 (v30 童話地圖版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -75,13 +75,34 @@
         .drag-handle { cursor: grab; }
         .drag-handle:active { cursor: grabbing; color: #DE7B54; }
         
-        /* 繪本風地圖專屬 CSS */
-        .map-water-bg { background-color: #E2EFF5; }
-        .map-land-shape { 
-            background-color: #FDFBF5; 
-            border-radius: 40px; 
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.8), 0 10px 25px rgba(180, 200, 210, 0.5);
-            border: 3px solid #F0EBE0;
+        /* 🔥 童話風地圖專屬 CSS 🔥 */
+        .fairytale-ocean {
+            background-color: #C6E0EE;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255,255,255,0.3) 0%, transparent 10%),
+                radial-gradient(circle at 90% 80%, rgba(255,255,255,0.2) 0%, transparent 15%);
+        }
+        .fairytale-island {
+            background-color: #F8F4E6;
+            border-radius: 60px 40px 50px 60px;
+            box-shadow: inset 0 0 30px rgba(255,255,255,0.9), 0 10px 25px rgba(130, 160, 180, 0.3);
+            border: 4px solid #F0EAD6;
+        }
+        .cute-bubble {
+            background: #FFFFFF;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(188, 170, 164, 0.2);
+            border: 1.5px solid #EBE3D5;
+        }
+        .pill-tag {
+            background: #A08C82;
+            color: #FFFFFF;
+            border-radius: 12px;
+            padding: 2px 10px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 6px rgba(160, 140, 130, 0.3);
         }
         
         [v-cloak] { display: none; }
@@ -111,7 +132,7 @@
 <!-- 核心 Vue 應用程式區塊 -->
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v28
+        ✅ 系統版本: v30
     </div>
 
     <div class="banner-wrapper"></div>
@@ -130,7 +151,7 @@
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : (syncStatus === 'error' ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100')">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : (syncStatus === 'error' ? 'text-red-500' : 'text-green-600')">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v28 即時對接)') }}
+            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v30 即時對接)') }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
             <i class="fa-solid fa-cloud-arrow-up text-maple-500"></i> 強制推送
@@ -138,106 +159,125 @@
     </div>
 
     <!-- 主畫面內容 -->
-    <!-- 注意：如果是 route，取消預設 padding，讓水波紋滿版 -->
     <main class="app-main" :class="currentTab === 'route' ? '!p-0' : 'px-4'">
         
-        <!-- Tab 0: IG繪本地圖路線 -->
-        <div v-show="currentTab === 'route'" class="animate-fade-in map-water-bg min-h-[900px] relative p-3 pb-24 overflow-hidden">
+        <!-- Tab 0: IG 奶茶童話風 路線地圖 -->
+        <div v-show="currentTab === 'route'" class="animate-fade-in fairytale-ocean min-h-[1100px] relative p-3 pb-24 overflow-hidden">
+            <!-- 海洋裝飾元素 -->
+            <div class="absolute top-[8%] left-[5%] text-white text-3xl opacity-50">☁️</div>
+            <div class="absolute top-[18%] right-[8%] text-2xl opacity-80 transform rotate-12">⛵</div>
+            <div class="absolute top-[45%] left-[6%] text-xl opacity-60 transform -rotate-12">🦆</div>
+            <div class="absolute top-[75%] right-[10%] text-white text-4xl opacity-50">☁️</div>
+            <div class="absolute bottom-[10%] left-[12%] text-2xl opacity-70">⛵</div>
+
             <!-- 陸地區塊 -->
-            <div class="map-land-shape absolute inset-4 top-6 bottom-20 relative z-10 w-full h-[950px] mx-auto overflow-visible mt-2" style="max-width: 94%;">
+            <div class="fairytale-island relative z-10 w-[94%] h-[1050px] mx-auto mt-6 overflow-visible">
                 
+                <!-- 頂部標題裝飾 -->
                 <div class="text-center pt-8 pb-4 relative z-20">
-                    <span class="inline-block bg-white/90 backdrop-blur text-[#C19B76] px-4 py-1 rounded-full text-[10px] font-black tracking-widest shadow-sm border border-[#EBE3D5] mb-2"><i class="fa-solid fa-earth-asia"></i> JAPAN TRIP 2026</span>
-                    <h2 class="text-2xl font-black text-[#5C4A3D] tracking-tight">中部北陸 探險地圖</h2>
+                    <span class="inline-block bg-white/90 backdrop-blur text-[#A08C82] px-5 py-1.5 rounded-full text-xs font-black tracking-widest shadow-sm border border-[#EBE3D5] mb-2"><i class="fa-solid fa-plane"></i> 中部北陸・六日遊</span>
                 </div>
 
                 <!-- 虛線路線 SVG -->
-                <svg class="absolute top-0 left-0 w-full h-full z-0 pointer-events-none" viewBox="0 0 400 900" preserveAspectRatio="none">
-                    <!-- 從 Day 1 到 Day 6 的 S 型曲線 -->
-                    <path d="M 120 180 C 220 180, 280 230, 280 300 C 280 400, 120 400, 120 500 C 120 600, 280 600, 280 700 C 280 780, 120 800, 150 850" 
-                          stroke="#CBA88A" stroke-width="4" stroke-dasharray="8,8" fill="none" stroke-linecap="round"/>
+                <svg class="absolute top-0 left-0 w-full h-full z-0 pointer-events-none" viewBox="0 0 350 1050" preserveAspectRatio="none">
+                    <!-- S型蜿蜒路線 -->
+                    <path d="M 80 120 C 180 120, 260 180, 260 280 C 260 380, 80 400, 80 490 C 80 580, 260 600, 260 690 C 260 780, 90 800, 90 880 C 90 960, 220 960, 220 1000" 
+                          stroke="#BCAAA4" stroke-width="3" stroke-dasharray="6,6" fill="none" stroke-linecap="round"/>
                 </svg>
 
-                <!-- 地圖節點 (運用絕對定位對齊 S 型曲線) -->
+                <!-- 地圖節點 (絕對定位) -->
                 <div class="absolute w-full h-full top-0 left-0 z-10">
                     
                     <!-- Day 1: 高山 -->
-                    <div class="absolute w-[220px]" style="top: 15%; left: 10%;">
-                        <div class="flex flex-col items-center group cursor-pointer hover:-translate-y-1 transition-transform">
-                            <div class="w-12 h-12 bg-white rounded-full shadow-md border-4 border-[#FDFBF5] flex items-center justify-center text-[#B33A3A] text-xl z-10 mb-[-15px]">
-                                <i class="fa-solid fa-house-chimney-window"></i>
+                    <div class="absolute w-[200px]" style="top: 80px; left: 20px;">
+                        <div class="flex flex-col items-start group cursor-pointer">
+                            <div class="flex items-center gap-2 mb-1.5 pl-2">
+                                <span class="pill-tag transform -rotate-3">Day 1</span>
+                                <span class="text-2xl drop-shadow-md">🏯</span>
                             </div>
-                            <div class="bg-white/90 backdrop-blur rounded-2xl p-3 shadow-sm border border-[#EBE3D5] text-center w-full relative">
-                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#B33A3A] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">Day 1</span>
-                                <h4 class="font-black text-[#5C4A3D] text-sm mt-1">高山老街・飛驒牛</h4>
-                                <p class="text-[10px] text-gray-500 font-medium mt-1 leading-snug">飛驒小京都，大啖壽喜燒與町家散策。</p>
+                            <div class="cute-bubble p-3 w-full relative">
+                                <h4 class="font-black text-[#5C4A3D] text-sm mb-1">高山老街散策</h4>
+                                <p class="text-[10px] text-gray-500 font-medium leading-snug">飛驒小京都，大啖壽喜燒與飛驒牛握壽司。</p>
+                                <div class="absolute -right-3 -bottom-3 text-lg drop-shadow-sm">🥩</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Day 2: 上高地 -->
-                    <div class="absolute w-[220px]" style="top: 28%; left: 40%;">
-                        <div class="flex flex-col items-center group cursor-pointer hover:-translate-y-1 transition-transform">
-                            <div class="w-12 h-12 bg-white rounded-full shadow-md border-4 border-[#FDFBF5] flex items-center justify-center text-[#2E5C3A] text-xl z-10 mb-[-15px]">
-                                <i class="fa-solid fa-mountain-sun"></i>
+                    <div class="absolute w-[200px]" style="top: 250px; left: 130px;">
+                        <div class="flex flex-col items-end group cursor-pointer text-right">
+                            <div class="flex items-center gap-2 mb-1.5 pr-2 flex-row-reverse">
+                                <span class="pill-tag transform rotate-3">Day 2</span>
+                                <span class="text-2xl drop-shadow-md">⛰️</span>
                             </div>
-                            <div class="bg-white/90 backdrop-blur rounded-2xl p-3 shadow-sm border border-[#EBE3D5] text-center w-full relative">
-                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#2E5C3A] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">Day 2</span>
-                                <h4 class="font-black text-[#5C4A3D] text-sm mt-1">神之故鄉・上高地</h4>
-                                <p class="text-[10px] text-gray-500 font-medium mt-1 leading-snug">秋季仙境健行，絕美梓川與河童橋。</p>
+                            <div class="cute-bubble p-3 w-full relative text-left">
+                                <h4 class="font-black text-[#5C4A3D] text-sm mb-1">上高地金秋健行</h4>
+                                <p class="text-[10px] text-gray-500 font-medium leading-snug">漫步河童橋與明神池，品嚐五千尺蘋果派。</p>
+                                <div class="absolute -left-3 -bottom-3 text-lg drop-shadow-sm">🚶</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Day 3: 白川鄉 -->
-                    <div class="absolute w-[220px]" style="top: 50%; left: 5%;">
-                        <div class="flex flex-col items-center group cursor-pointer hover:-translate-y-1 transition-transform">
-                            <div class="w-12 h-12 bg-white rounded-full shadow-md border-4 border-[#FDFBF5] flex items-center justify-center text-[#D98E6C] text-xl z-10 mb-[-15px]">
-                                <i class="fa-solid fa-tree-city"></i>
+                    <div class="absolute w-[200px]" style="top: 450px; left: 20px;">
+                        <div class="flex flex-col items-start group cursor-pointer">
+                            <div class="flex items-center gap-2 mb-1.5 pl-2">
+                                <span class="pill-tag transform -rotate-3">Day 3</span>
+                                <span class="text-2xl drop-shadow-md">🛖</span>
                             </div>
-                            <div class="bg-white/90 backdrop-blur rounded-2xl p-3 shadow-sm border border-[#EBE3D5] text-center w-full relative">
-                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#D98E6C] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">Day 3</span>
-                                <h4 class="font-black text-[#5C4A3D] text-sm mt-1">童話村・白川鄉</h4>
-                                <p class="text-[10px] text-gray-500 font-medium mt-1 leading-snug">世界遺產合掌造聚落，返回名古屋吃鰻魚。</p>
+                            <div class="cute-bubble p-3 w-full relative">
+                                <h4 class="font-black text-[#5C4A3D] text-sm mb-1">童話村・白川鄉</h4>
+                                <p class="text-[10px] text-gray-500 font-medium leading-snug">探訪合掌造聚落，午後返回名古屋吃鰻魚。</p>
+                                <div class="absolute -right-3 -bottom-3 text-lg drop-shadow-sm">🍱</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Day 4: 吉卜力 -->
-                    <div class="absolute w-[220px]" style="top: 68%; left: 40%;">
-                        <div class="flex flex-col items-center group cursor-pointer hover:-translate-y-1 transition-transform">
-                            <div class="w-12 h-12 bg-white rounded-full shadow-md border-4 border-[#FDFBF5] flex items-center justify-center text-[#6C8D74] text-xl z-10 mb-[-15px]">
-                                <i class="fa-brands fa-envira"></i>
+                    <div class="absolute w-[200px]" style="top: 650px; left: 130px;">
+                        <div class="flex flex-col items-end group cursor-pointer text-right">
+                            <div class="flex items-center gap-2 mb-1.5 pr-2 flex-row-reverse">
+                                <span class="pill-tag transform rotate-3">Day 4</span>
+                                <span class="text-2xl drop-shadow-md">🎡</span>
                             </div>
-                            <div class="bg-white/90 backdrop-blur rounded-2xl p-3 shadow-sm border border-[#EBE3D5] text-center w-full relative">
-                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#6C8D74] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">Day 4</span>
-                                <h4 class="font-black text-[#5C4A3D] text-sm mt-1">宮崎駿・吉卜力公園</h4>
-                                <p class="text-[10px] text-gray-500 font-medium mt-1 leading-snug">走進大倉庫與魔女之谷的動畫實境。</p>
+                            <div class="cute-bubble p-3 w-full relative text-left">
+                                <h4 class="font-black text-[#5C4A3D] text-sm mb-1">吉卜力夢幻公園</h4>
+                                <p class="text-[10px] text-gray-500 font-medium leading-snug">走進大倉庫與魔女之谷的動畫實境。</p>
+                                <div class="absolute -left-3 -bottom-3 text-lg drop-shadow-sm">🌲</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Day 5: 犬山城 -->
-                    <div class="absolute w-[220px]" style="top: 88%; left: 10%;">
-                        <div class="flex flex-col items-center group cursor-pointer hover:-translate-y-1 transition-transform">
-                            <div class="w-12 h-12 bg-white rounded-full shadow-md border-4 border-[#FDFBF5] flex items-center justify-center text-[#3A5CB3] text-xl z-10 mb-[-15px]">
-                                <i class="fa-brands fa-fort-awesome"></i>
+                    <div class="absolute w-[200px]" style="top: 840px; left: 20px;">
+                        <div class="flex flex-col items-start group cursor-pointer">
+                            <div class="flex items-center gap-2 mb-1.5 pl-2">
+                                <span class="pill-tag transform -rotate-3">Day 5</span>
+                                <span class="text-2xl drop-shadow-md">⛩️</span>
                             </div>
-                            <div class="bg-white/90 backdrop-blur rounded-2xl p-3 shadow-sm border border-[#EBE3D5] text-center w-full relative">
-                                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#3A5CB3] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">Day 5</span>
-                                <h4 class="font-black text-[#5C4A3D] text-sm mt-1">國寶犬山城・洗錢</h4>
-                                <p class="text-[10px] text-gray-500 font-medium mt-1 leading-snug">天守閣絕景與三光稻荷神社洗錢儀式。</p>
+                            <div class="cute-bubble p-3 w-full relative">
+                                <h4 class="font-black text-[#5C4A3D] text-sm mb-1">犬山城・結緣洗錢</h4>
+                                <p class="text-[10px] text-gray-500 font-medium leading-snug">登頂天守閣絕景，城下町品嚐可愛串物。</p>
+                                <div class="absolute -right-3 -bottom-3 text-lg drop-shadow-sm">🍡</div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- 終點裝飾 -->
+                    <div class="absolute" style="top: 980px; left: 210px;">
+                        <div class="text-3xl drop-shadow-md transform -rotate-12">✈️</div>
+                        <div class="text-[10px] font-black text-[#A08C82] mt-1 ml-2">NGO</div>
+                    </div>
+
+                    <!-- 島嶼上的隨機小森林與裝飾 -->
+                    <div class="absolute top-[180px] left-[30px] text-sm opacity-60">🌲</div>
+                    <div class="absolute top-[200px] left-[50px] text-xs opacity-50">🌲</div>
+                    <div class="absolute top-[380px] right-[40px] text-sm opacity-60">🌲</div>
+                    <div class="absolute top-[580px] left-[40px] text-sm opacity-50">🌲</div>
+                    <div class="absolute top-[780px] right-[50px] text-xs opacity-60">🌲</div>
+
                 </div>
             </div>
-            
-            <!-- 海上的小裝飾 -->
-            <i class="fa-solid fa-sailboat absolute top-[20%] right-[10%] text-blue-300 text-2xl opacity-50 transform rotate-12"></i>
-            <i class="fa-solid fa-cloud absolute top-[10%] left-[5%] text-white text-3xl opacity-60"></i>
-            <i class="fa-solid fa-cloud absolute top-[40%] right-[5%] text-white text-2xl opacity-60"></i>
         </div>
 
         <!-- Tab 1: 行程 -->
@@ -253,8 +293,23 @@
                 </div>
             </div>
 
+            <!-- 🔥 尋回並強化的：每日重點摘要卡片 🔥 -->
+            <div v-if="currentOverview" class="mt-4 mb-4 bg-gradient-to-br from-[#FFF9F5] to-[#FDFCF8] rounded-2xl p-5 border-2 border-[#FCE4D6] shadow-sm relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 text-[#DE7B54] opacity-5 text-8xl font-black select-none pointer-events-none">D{{ selectedDateIndex + 1 }}</div>
+                <div class="flex items-center gap-2 mb-3 relative z-10">
+                    <span class="bg-[#DE7B54] text-white text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-star"></i> DAY {{ selectedDateIndex + 1 }} 重點
+                    </span>
+                    <h3 class="text-[15px] font-black text-[#7A3218] leading-tight">{{ currentOverview.title }}</h3>
+                </div>
+                <p class="text-[12px] text-gray-600 font-medium leading-relaxed mb-3 relative z-10">{{ currentOverview.desc }}</p>
+                <div class="flex flex-wrap gap-1.5 relative z-10">
+                    <span v-for="tag in currentOverview.highlights" :key="tag" class="text-[10px] font-bold text-[#DE7B54] bg-[#FFF2EB] px-2.5 py-1 rounded-lg border border-[#FCE4D6]"># {{ tag }}</span>
+                </div>
+            </div>
+
             <!-- 天氣區塊 -->
-            <div v-if="currentWeather" class="mt-4 mb-5 bg-white border border-maple-100 rounded-2xl p-4 card-shadow">
+            <div v-if="currentWeather" class="mb-5 bg-white border border-maple-100 rounded-2xl p-4 card-shadow">
                 <div v-if="currentDayRegions.length > 1" class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-gray-100">
                     <span class="text-[11px] font-bold text-gray-400 flex items-center gap-1"><i class="fa-solid fa-location-dot text-maple-500"></i> 地區天氣：</span>
                     <div class="flex gap-1.5 bg-gray-50 p-1 rounded-xl border border-gray-100">
@@ -346,7 +401,6 @@
                                         </div>
                                     </div>
                                     <div class="flex flex-col items-end gap-2">
-                                        <!-- 上下箭頭已拔除，只保留拖曳把手 -->
                                         <i class="fa-solid fa-grip-lines drag-handle text-gray-300 hover:text-maple-500 p-1 text-xl cursor-grab bg-gray-50 rounded"></i>
                                     </div>
                                 </div>
@@ -517,9 +571,9 @@
             
             <!-- 購物清單區塊 -->
             <div>
-                <button @click="toggleList('shopping')" class="w-full flex items-center justify-between bg-maple-50 border border-maple-100 p-3 rounded-2xl shadow-sm text-maple-700 font-bold mb-2 transition-colors hover:bg-maple-100">
-                    <span class="flex items-center gap-2"><i class="fa-solid fa-basket-shopping text-lg w-6"></i> 購物清單 <span class="text-[10px] bg-white px-2 py-0.5 rounded-full text-maple-500 border border-maple-200">{{ categorizedLists.shopping.length }}</span></span>
-                    <i class="fa-solid transition-transform duration-300 text-maple-400" :class="listCollapse.shopping ? 'fa-chevron-down' : 'fa-chevron-up -rotate-180'"></i>
+                <button @click="toggleList('shopping')" class="w-full flex items-center justify-between bg-[#FDFCF8] border border-maple-200 p-3.5 rounded-2xl shadow-sm text-[#5C4A3D] font-black mb-2 transition-colors hover:bg-maple-50">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-basket-shopping text-maple-500 text-lg w-6"></i> 購物清單 <span class="text-[10px] bg-white px-2 py-0.5 rounded-full text-maple-600 border border-maple-200 shadow-sm">{{ categorizedLists.shopping.length }}</span></span>
+                    <i class="fa-solid transition-transform duration-300 text-maple-300" :class="listCollapse.shopping ? 'fa-chevron-down' : 'fa-chevron-up -rotate-180'"></i>
                 </button>
                 <div v-show="listCollapse.shopping" class="grid grid-cols-2 gap-3 pl-1 pr-1 pb-2">
                     <div v-for="item in categorizedLists.shopping" :key="item.id" class="bg-white rounded-2xl p-2.5 card-shadow relative group cursor-pointer border border-gray-100" @click="item.checked = !item.checked; triggerSync()">
@@ -535,7 +589,7 @@
                         </div>
                         <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
                     </div>
-                    <div v-if="categorizedLists.shopping.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200">
+                    <div v-if="categorizedLists.shopping.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200 shadow-sm">
                         <p class="text-xs font-bold text-gray-400">目前沒有購物清單</p>
                     </div>
                 </div>
@@ -543,9 +597,9 @@
 
             <!-- 行李清單區塊 -->
             <div>
-                <button @click="toggleList('luggage')" class="w-full flex items-center justify-between bg-blue-50 border border-blue-100 p-3 rounded-2xl shadow-sm text-blue-700 font-bold mb-2 transition-colors hover:bg-blue-100">
-                    <span class="flex items-center gap-2"><i class="fa-solid fa-suitcase-rolling text-lg w-6"></i> 行李清單 <span class="text-[10px] bg-white px-2 py-0.5 rounded-full text-blue-500 border border-blue-200">{{ categorizedLists.luggage.length }}</span></span>
-                    <i class="fa-solid transition-transform duration-300 text-blue-400" :class="listCollapse.luggage ? 'fa-chevron-down' : 'fa-chevron-up -rotate-180'"></i>
+                <button @click="toggleList('luggage')" class="w-full flex items-center justify-between bg-[#FDFCF8] border border-blue-200 p-3.5 rounded-2xl shadow-sm text-[#5C4A3D] font-black mb-2 transition-colors hover:bg-blue-50">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-suitcase-rolling text-blue-500 text-lg w-6"></i> 行李清單 <span class="text-[10px] bg-white px-2 py-0.5 rounded-full text-blue-600 border border-blue-200 shadow-sm">{{ categorizedLists.luggage.length }}</span></span>
+                    <i class="fa-solid transition-transform duration-300 text-blue-300" :class="listCollapse.luggage ? 'fa-chevron-down' : 'fa-chevron-up -rotate-180'"></i>
                 </button>
                 <div v-show="listCollapse.luggage" class="grid grid-cols-2 gap-3 pl-1 pr-1 pb-2">
                     <div v-for="item in categorizedLists.luggage" :key="item.id" class="bg-white rounded-2xl p-2.5 card-shadow relative group cursor-pointer border border-gray-100" @click="item.checked = !item.checked; triggerSync()">
@@ -561,7 +615,7 @@
                         </div>
                         <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
                     </div>
-                    <div v-if="categorizedLists.luggage.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200">
+                    <div v-if="categorizedLists.luggage.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200 shadow-sm">
                         <p class="text-xs font-bold text-gray-400">目前沒有行李清單</p>
                     </div>
                 </div>
@@ -569,9 +623,9 @@
 
             <!-- 票券清單區塊 -->
             <div>
-                <button @click="toggleList('ticket')" class="w-full flex items-center justify-between bg-emerald-50 border border-emerald-100 p-3 rounded-2xl shadow-sm text-emerald-700 font-bold mb-2 transition-colors hover:bg-emerald-100">
-                    <span class="flex items-center gap-2"><i class="fa-solid fa-ticket text-lg w-6"></i> 票券清單 <span class="text-[10px] bg-white px-2 py-0.5 rounded-full text-emerald-500 border border-emerald-200">{{ categorizedLists.ticket.length }}</span></span>
-                    <i class="fa-solid transition-transform duration-300 text-emerald-400" :class="listCollapse.ticket ? 'fa-chevron-down' : 'fa-chevron-up -rotate-180'"></i>
+                <button @click="toggleList('ticket')" class="w-full flex items-center justify-between bg-[#FDFCF8] border border-emerald-200 p-3.5 rounded-2xl shadow-sm text-[#5C4A3D] font-black mb-2 transition-colors hover:bg-emerald-50">
+                    <span class="flex items-center gap-2.5"><i class="fa-solid fa-ticket text-emerald-500 text-lg w-6"></i> 票券清單 <span class="text-[10px] bg-white px-2 py-0.5 rounded-full text-emerald-600 border border-emerald-200 shadow-sm">{{ categorizedLists.ticket.length }}</span></span>
+                    <i class="fa-solid transition-transform duration-300 text-emerald-300" :class="listCollapse.ticket ? 'fa-chevron-down' : 'fa-chevron-up -rotate-180'"></i>
                 </button>
                 <div v-show="listCollapse.ticket" class="grid grid-cols-2 gap-3 pl-1 pr-1 pb-2">
                     <div v-for="item in categorizedLists.ticket" :key="item.id" class="bg-white rounded-2xl p-2.5 card-shadow relative group cursor-pointer border border-gray-100" @click="item.checked = !item.checked; triggerSync()">
@@ -587,7 +641,7 @@
                         </div>
                         <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
                     </div>
-                    <div v-if="categorizedLists.ticket.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200">
+                    <div v-if="categorizedLists.ticket.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200 shadow-sm">
                         <p class="text-xs font-bold text-gray-400">目前沒有票券清單</p>
                     </div>
                 </div>
@@ -753,7 +807,7 @@
         <div class="absolute inset-0" @click="showShoppingModal = false"></div>
         <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black text-gray-800 flex items-center gap-2"><i class="fa-solid fa-clipboard-list text-maple-500"></i> {{ isEditShoppingMode ? '編輯清單' : '新增至清單' }}</h3>
+                <h3 class="text-xl font-black text-gray-800 flex items-center gap-2"><i class="fa-solid fa-clipboard-list text-maple-500"></i> {{ isEditShoppingMode ? '編輯清單項目' : '新增至清單' }}</h3>
                 <button @click="showShoppingModal = false" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 transition-colors flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-4">
@@ -959,7 +1013,6 @@
             const selectedRegionIndex = ref(0);
             const syncStatus = ref('online');
 
-            // 清單收合狀態控制
             const listCollapse = ref({ shopping: true, luggage: true, ticket: true });
             const toggleList = (type) => { listCollapse.value[type] = !listCollapse.value[type]; };
 
@@ -1015,14 +1068,12 @@
 
             const itineraryData = ref(JSON.parse(JSON.stringify(defaultItineraryData)));
             
-            // 清單總資料
             const shoppingList = ref([
                 { id: 1, name: 'COCOTOMO FARM 玄米年輪蛋糕', checked: false, category: 'shopping' },
                 { id: 2, name: '護照 / 日幣現鈔', checked: false, category: 'luggage' },
                 { id: 3, name: '昇龍道巴士券', checked: false, category: 'ticket' }
             ]);
 
-            // 自動將清單分類的 Computed (舊資料若無 category 預設為 shopping)
             const categorizedLists = computed(() => {
                 return {
                     shopping: shoppingList.value.filter(i => (i.category || 'shopping') === 'shopping'),
@@ -1160,7 +1211,7 @@
                 isEditShoppingMode.value = true;
                 editingShoppingItemRef.value = item;
                 newShoppingItem.value = JSON.parse(JSON.stringify(item));
-                if (!newShoppingItem.value.category) newShoppingItem.value.category = 'shopping'; // 防呆
+                if (!newShoppingItem.value.category) newShoppingItem.value.category = 'shopping';
                 showShoppingModal.value = true;
             };
 
