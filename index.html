@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v32 圖文對照版)</title>
+    <title>Japan Trip 2026 (v33 遊記連結版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -134,7 +134,7 @@
 <!-- 核心 Vue 應用程式區塊 -->
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v32
+        ✅ 系統版本: v33
     </div>
 
     <div class="banner-wrapper"></div>
@@ -153,7 +153,7 @@
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : (syncStatus === 'error' ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100')">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : (syncStatus === 'error' ? 'text-red-500' : 'text-green-600')">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v32 即時對接)') }}
+            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v33 即時對接)') }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
             <i class="fa-solid fa-cloud-arrow-up text-maple-500"></i> 強制推送
@@ -175,6 +175,7 @@
             <!-- 陸地區塊 -->
             <div class="fairytale-island relative z-10 w-[94%] h-[1050px] mx-auto mt-6 overflow-visible">
                 
+                <!-- 頂部標題裝飾 -->
                 <div class="text-center pt-8 pb-2 relative z-20 flex justify-center">
                     <div class="bg-white/80 backdrop-blur border-[3px] border-[#D4C4B7] px-6 py-2.5 rounded-[30px] shadow-sm transform -rotate-2 relative">
                         <div class="absolute -top-3 -left-3 text-3xl drop-shadow-md">✈️</div>
@@ -192,7 +193,7 @@
                           stroke="#BCAAA4" stroke-width="3" stroke-dasharray="6,6" fill="none" stroke-linecap="round"/>
                 </svg>
 
-                <!-- 地圖節點 (綁定點擊事件，彈出超美亮點圖) -->
+                <!-- 地圖節點 -->
                 <div class="absolute w-full h-full top-0 left-0 z-10">
                     
                     <!-- Day 1: 高山 -->
@@ -204,7 +205,7 @@
                             </div>
                             <div class="cute-bubble p-3 w-full relative">
                                 <h4 class="font-black text-[#5C4A3D] text-[13px] mb-1">{{ dailyOverviews[0].title.split('・')[0] }}</h4>
-                                <p class="text-[9px] font-bold text-maple-600 bg-maple-50 inline-block px-1.5 py-0.5 rounded shadow-sm border border-maple-100"><i class="fa-solid fa-hand-pointer animate-pulse"></i> 點擊看亮點</p>
+                                <p class="text-[9px] font-bold text-maple-600 bg-maple-50 inline-block px-1.5 py-0.5 rounded shadow-sm border border-maple-100"><i class="fa-solid fa-hand-pointer animate-pulse"></i> 點擊看景點</p>
                                 <div class="absolute -right-3 -bottom-3 text-2xl drop-shadow-sm">🥩</div>
                             </div>
                         </div>
@@ -219,7 +220,7 @@
                             </div>
                             <div class="cute-bubble p-3 w-full relative text-left">
                                 <h4 class="font-black text-[#5C4A3D] text-[13px] mb-1">{{ dailyOverviews[1].title.split('・')[0] }}</h4>
-                                <p class="text-[9px] font-bold text-maple-600 bg-maple-50 inline-block px-1.5 py-0.5 rounded shadow-sm border border-maple-100"><i class="fa-solid fa-hand-pointer animate-pulse"></i> 點擊看亮點</p>
+                                <p class="text-[9px] font-bold text-maple-600 bg-maple-50 inline-block px-1.5 py-0.5 rounded shadow-sm border border-maple-100"><i class="fa-solid fa-hand-pointer animate-pulse"></i> 點擊看景點</p>
                                 <div class="absolute -left-3 -bottom-3 text-2xl drop-shadow-sm">🚶</div>
                             </div>
                         </div>
@@ -234,8 +235,8 @@
                             </div>
                             <div class="cute-bubble p-3 w-full relative">
                                 <h4 class="font-black text-[#5C4A3D] text-[13px] mb-1">{{ dailyOverviews[2].title.split('・')[0] }}</h4>
-                                <p class="text-[9px] font-bold text-maple-600 bg-maple-50 inline-block px-1.5 py-0.5 rounded shadow-sm border border-maple-100"><i class="fa-solid fa-hand-pointer animate-pulse"></i> 點擊看亮點</p>
-                                <div class="absolute -right-3 -bottom-3 text-2xl drop-shadow-sm">🍱</div>
+                                <p class="text-[9px] font-bold text-maple-600 bg-maple-50 inline-block px-1.5 py-0.5 rounded shadow-sm border border-maple-100"><i class="fa-solid fa-hand-pointer animate-pulse"></i> 點擊看景點</p>
+                                <div class="absolute -right-3 -bottom-3 text-2xl drop-shadow-sm">🍁</div>
                             </div>
                         </div>
                     </div>
@@ -249,7 +250,7 @@
                             </div>
                             <div class="cute-bubble p-3 w-full relative text-left">
                                 <h4 class="font-black text-[#5C4A3D] text-[13px] mb-1">{{ dailyOverviews[3].title.split('・')[0] }}</h4>
-                                <p class="text-[9px] font-bold text-maple-600 bg-maple-50 inline-block px-1.5 py-0.5 rounded shadow-sm border border-maple-100"><i class="fa-solid fa-hand-pointer animate-pulse"></i> 點擊看亮點</p>
+                                <p class="text-[9px] font-bold text-maple-600 bg-maple-50 inline-block px-1.5 py-0.5 rounded shadow-sm border border-maple-100"><i class="fa-solid fa-hand-pointer animate-pulse"></i> 點擊看景點</p>
                                 <div class="absolute -left-3 -bottom-3 text-2xl drop-shadow-sm">🌲</div>
                             </div>
                         </div>
@@ -264,7 +265,7 @@
                             </div>
                             <div class="cute-bubble p-3 w-full relative">
                                 <h4 class="font-black text-[#5C4A3D] text-[13px] mb-1">{{ dailyOverviews[4].title.split('・')[0] }}</h4>
-                                <p class="text-[9px] font-bold text-maple-600 bg-maple-50 inline-block px-1.5 py-0.5 rounded shadow-sm border border-maple-100"><i class="fa-solid fa-hand-pointer animate-pulse"></i> 點擊看亮點</p>
+                                <p class="text-[9px] font-bold text-maple-600 bg-maple-50 inline-block px-1.5 py-0.5 rounded shadow-sm border border-maple-100"><i class="fa-solid fa-hand-pointer animate-pulse"></i> 點擊看景點</p>
                                 <div class="absolute -right-3 -bottom-3 text-2xl drop-shadow-sm">🍡</div>
                             </div>
                         </div>
@@ -287,7 +288,7 @@
             </div>
         </div>
 
-        <!-- 🌸 全新進化：圖文並茂的「左圖右文」多筆亮點卡片 Modal 🌸 -->
+        <!-- 🌸 全新進化：純文字卡片 ＋ 外部遊記連結 Modal 🌸 -->
         <div v-if="showHighlightModal && activeHighlight" class="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
             <div class="absolute inset-0" @click="showHighlightModal = false"></div>
             <!-- Modal 容器 -->
@@ -302,18 +303,21 @@
                 <!-- Modal 內容區 (可滾動) -->
                 <div class="p-4 overflow-y-auto flex-1 space-y-4 bg-[#FAF5F0] no-scrollbar">
                     
-                    <!-- 迴圈印出每天的多個景點 (左圖右文) -->
-                    <div v-for="(spot, idx) in activeHighlight.spots" :key="idx" class="flex bg-white rounded-2xl shadow-sm border border-[#F2EBE1] overflow-hidden group hover:shadow-md transition-shadow">
-                        <!-- 左邊：圖片區塊 (40% 寬度) -->
-                        <div class="w-[40%] shrink-0 relative overflow-hidden bg-gray-100">
-                            <!-- 使用 onerror 確保圖片失效時顯示預設替代色塊 -->
-                            <img :src="spot.image" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" :alt="spot.title" onerror="this.src='https://placehold.co/400x400/FFF2EB/DE7B54?text=Japan+Trip';">
+                    <!-- 迴圈印出每天的多個景點 (純文字+外部按鈕) -->
+                    <div v-for="(spot, idx) in activeHighlight.spots" :key="idx" class="bg-white rounded-2xl p-4 shadow-sm border border-[#F2EBE1] overflow-hidden group hover:shadow-md transition-shadow relative">
+                        <!-- 裝飾小 Icon -->
+                        <div class="absolute right-3 top-3 text-maple-100 text-4xl opacity-50 z-0">
+                            <i class="fa-solid fa-location-dot"></i>
                         </div>
                         
-                        <!-- 右邊：文字區塊 (60% 寬度) -->
-                        <div class="w-[60%] p-3.5 flex flex-col justify-center">
-                            <h4 class="font-black text-[#5C4A3D] text-[13px] mb-1.5 leading-tight">{{ spot.title }}</h4>
-                            <p class="text-[11px] text-gray-500 font-medium leading-relaxed">{{ spot.desc }}</p>
+                        <div class="relative z-10">
+                            <h4 class="font-black text-[#5C4A3D] text-[15px] mb-2 border-l-4 border-maple-500 pl-2 leading-tight">{{ spot.title }}</h4>
+                            <p class="text-[12px] text-gray-600 font-medium leading-relaxed mb-3">{{ spot.desc }}</p>
+                            
+                            <!-- 外部部落格/遊記連結按鈕 -->
+                            <a :href="spot.link" target="_blank" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-white bg-maple-500 px-3.5 py-2 rounded-xl shadow-sm hover:bg-maple-600 transition-colors">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> 查看詳細遊記/介紹
+                            </a>
                         </div>
                     </div>
 
@@ -1114,16 +1118,16 @@
             const currentDayRegions = computed(() => weatherRegionsData.value[selectedDateIndex.value] || []);
             const currentWeather = computed(() => currentDayRegions.value[selectedRegionIndex.value] || currentDayRegions.value[0]);
 
-            // 🔥 每日重點加入「多個景點 + 高清穩定的圖庫連結」 🔥
+            // 🔥 每日重點加入「多個景點 + 外部遊記連結」 🔥
             const dailyOverviews = ref([
                 { 
                     title: '高山老街・極致飛驒牛', 
                     desc: '抵達日本後直奔飛驒小京都「高山」，享用入口即化的飛驒牛壽喜燒與三町通老街散策。', 
                     highlights: ['飛驒牛', '高山老街', '高山陣屋'],
                     spots: [
-                        { title: '高山老街 (三町通)', desc: '江戶時代完整町家建築，兩側林立百年釀酒廠與飛驒牛小吃。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Takayama_Sanmachi_Suji.jpg/640px-Takayama_Sanmachi_Suji.jpg' },
-                        { title: '飛驒牛握壽司', desc: '老街必吃美食，炙燒A5飛驒牛放上仙貝托盤，油花入口即化。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Hida_beef_nigirizushi_by_t-mizo.jpg/640px-Hida_beef_nigirizushi_by_t-mizo.jpg' },
-                        { title: '高山陣屋', desc: '日本唯一現存的江戶時代代官所，可參觀審判所與日式枯山水。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Takayama_Jinya.jpg/640px-Takayama_Jinya.jpg' }
+                        { title: '高山老街 (三町通)', desc: '江戶時代完整町家建築，兩側林立百年釀酒廠與飛驒牛小吃。', link: 'https://www.google.com/search?q=%E9%AB%98%E5%B1%B1%E8%80%81%E8%A1%97+%E9%81%8A%E8%A8%98' },
+                        { title: '飛驒牛握壽司', desc: '老街必吃美食，炙燒A5飛驒牛放上仙貝托盤，油花入口即化。', link: 'https://www.google.com/search?q=%E9%AB%98%E5%B1%B1+%E9%A3%9B%E9%A9%8A%E7%89%9B%E6%8F%A1%E5%A3%BD%E5%8F%B8+%E9%81%8A%E8%A8%98' },
+                        { title: '高山陣屋', desc: '日本唯一現存的江戶時代代官所，可參觀審判所與日式枯山水。', link: 'https://www.google.com/search?q=%E9%AB%98%E5%B1%B1%E9%99%A3%E5%B1%8B+%E9%81%8A%E8%A8%98' }
                     ]
                 },
                 { 
@@ -1131,26 +1135,28 @@
                     desc: '全日沉浸在阿爾卑斯仙境「上高地」，欣賞梓川與明神池的絕美神聖秋景。', 
                     highlights: ['上高地', '梓川', '河童橋'],
                     spots: [
-                        { title: '河童橋', desc: '上高地的象徵，站在橋上可遠眺壯麗的穗高連峰與清澈見底的梓川。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Kamikochi_Kappa_Bridge.jpg/640px-Kamikochi_Kappa_Bridge.jpg' },
-                        { title: '明神池', desc: '被針葉林環繞的神聖池水，秋季時水面倒映著金黃色的絕美景色。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Myojin_Pond_Kamikochi.jpg/640px-Myojin_Pond_Kamikochi.jpg' }
+                        { title: '河童橋', desc: '上高地的象徵，站在橋上可遠眺壯麗的穗高連峰與清澈見底的梓川。', link: 'https://www.google.com/search?q=%E4%B8%8A%E9%AB%98%E5%9C%B0+%E6%B2%B3%E7%AB%A5%E6%A9%8B+%E9%81%8A%E8%A8%98' },
+                        { title: '明神池', desc: '被針葉林環繞的神聖池水，秋季時水面倒映著金黃色的絕美景色。', link: 'https://www.google.com/search?q=%E4%B8%8A%E9%AB%98%E5%9C%B0+%E6%98%8E%E7%A5%9E%E6%B1%A0+%E9%81%8A%E8%A8%98' }
                     ]
                 },
                 { 
-                    title: '童話合掌村・名古屋繁華夜', 
-                    desc: '前往世界遺產「白川鄉合掌村」，午後返回名古屋大啖經典炭烤鰻魚三吃。', 
-                    highlights: ['合掌村', '城山展望台', '鰻魚飯'],
+                    title: '童話合掌村', 
+                    desc: '專注遊覽世界遺產「白川鄉合掌村」，彷彿走入與世隔絕的童話世界。', 
+                    highlights: ['合掌造聚落', '城山展望台', '和田家'],
                     spots: [
-                        { title: '白川鄉 合掌造聚落', desc: '童話般的茅草屋頂聚落，秋季四周被金黃稻田與紅葉環繞。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Shirakawa-go_Gassho-zukuri_Village_2019.jpg/640px-Shirakawa-go_Gassho-zukuri_Village_2019.jpg' },
-                        { title: '名古屋 鰻魚三吃', desc: '備長炭高溫烤到外酥內嫩的經典美食，搭配高湯做成茶泡飯最對味。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Hitsumabushi_by_t-mizo_in_Nagoya.jpg/640px-Hitsumabushi_by_t-mizo_in_Nagoya.jpg' }
+                        { title: '城山天守閣展望台', desc: '絕佳拍照點！從高處俯瞰如童話般的合掌造聚落全景，秋冬絕美。', link: 'https://www.google.com/search?q=%E7%99%BD%E5%B7%9D%E9%84%89+%E5%9F%8E%E5%B1%B1%E5%B1%95%E6%9C%9B%E5%8F%B0+%E9%81%8A%E8%A8%98' },
+                        { title: '和田家', desc: '村內規模最大的合掌造建築，可入內參觀傳統生活格局與養蠶器具。', link: 'https://www.google.com/search?q=%E7%99%BD%E5%B7%9D%E9%84%89+%E5%92%8C%E7%94%B0%E5%AE%B6+%E9%81%8A%E8%A8%98' },
+                        { title: '落人咖啡', desc: '隱身在百年合掌造中的超人氣咖啡店，必喝炭火熬煮的紅豆湯。', link: 'https://www.google.com/search?q=%E7%99%BD%E5%B7%9D%E9%84%89+%E8%90%BD%E4%BA%BA%E5%92%96%E5%95%A1+%E9%81%8A%E8%A8%98' }
                     ]
                 },
                 { 
                     title: '宮崎駿實境・吉卜力公園', 
-                    desc: '朝聖愛知「吉卜力公園」走進動畫森林，傍晚在榮商圈品嚐純炭火居酒屋。', 
-                    highlights: ['吉卜力大倉庫', '魔女之谷', '地雞燒鳥'],
+                    desc: '全日朝聖愛知「吉卜力公園」，走進動畫森林，尋找龍貓與霍爾的蹤跡。', 
+                    highlights: ['吉卜力大倉庫', '魔女之谷', '青春之丘'],
                     spots: [
-                        { title: '吉卜力大倉庫', desc: '完美還原宮崎駿動畫世界的奇幻空間，每個角落都藏滿童年回憶。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Aichi_Earth_Expo_Memorial_Park.jpg/640px-Aichi_Earth_Expo_Memorial_Park.jpg' },
-                        { title: '炭火地雞燒鳥', desc: '名古屋特產交趾地雞串燒，高溫鎖住肉汁搭配沁涼啤酒最對味。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Yakitori_by_t-mizo.jpg/640px-Yakitori_by_t-mizo.jpg' }
+                        { title: '吉卜力大倉庫', desc: '充滿《神隱少女》、《天空之城》等經典場景的室內奇幻空間。', link: 'https://www.google.com/search?q=%E5%90%89%E5%8D%9C%E5%8A%9B%E5%85%AC%E5%9C%92+%E5%A4%A7%E5%80%89%E5%BA%AB+%E9%81%8A%E8%A8%98' },
+                        { title: '魔女之谷', desc: '完美還原《霍爾的移動城堡》與《魔女宅急便》的歐洲風情小鎮。', link: 'https://www.google.com/search?q=%E5%90%89%E5%8D%9C%E5%8A%9B%E5%85%AC%E5%9C%92+%E9%AD%94%E5%A5%B3%E4%B9%8B%E8%B0%B7+%E9%81%8A%E8%A8%98' },
+                        { title: '青春之丘', desc: '重現《心之谷》的地球屋，還能買到專屬的紀念明信片與郵票。', link: 'https://www.google.com/search?q=%E5%90%89%E5%8D%9C%E5%8A%9B%E5%85%AC%E5%9C%92+%E9%9D%92%E6%98%A5%E4%B9%8B%E4%B8%98+%E9%81%8A%E8%A8%98' }
                     ]
                 },
                 { 
@@ -1158,8 +1164,8 @@
                     desc: '登頂國寶犬山城360度迴廊，體驗三光稻荷洗錢儀式與超人氣城下町小吃。', 
                     highlights: ['國寶犬山城', '洗錢神社', '獅子丸拉麵'],
                     spots: [
-                        { title: '國寶 犬山城', desc: '日本現存最古老木造天守閣，登頂可360度俯瞰木曾川與城下町。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Inuyama_Castle_2019.jpg/640px-Inuyama_Castle_2019.jpg' },
-                        { title: '三光稻荷神社', desc: '超人氣結緣與洗錢聖地，粉色愛心繪馬與加倍奉還洗錢池必訪。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Sanko_Inari_Shrine_Torii.jpg/640px-Sanko_Inari_Shrine_Torii.jpg' }
+                        { title: '國寶 犬山城', desc: '日本現存最古老木造天守閣，登頂可360度俯瞰木曾川與城下町。', link: 'https://www.google.com/search?q=%E7%8A%AC%E5%B1%B1%E5%9F%8E+%E9%81%8A%E8%A8%98' },
+                        { title: '三光稻荷神社', desc: '超人氣結緣與洗錢聖地，粉色愛心繪馬與加倍奉還洗錢池必訪。', link: 'https://www.google.com/search?q=%E4%B8%89%E5%85%89%E7%A8%BB%E8%8D%B7%E7%A5%9E%E7%A4%BE+%E6%B4%97%E9%8C%A2+%E9%81%8A%E8%A8%98' }
                     ]
                 },
                 { 
@@ -1167,8 +1173,8 @@
                     desc: '榮商圈朝聖精品小眾香氛與法式甜點，帶著滿滿的戰利品與回憶前往機場。', 
                     highlights: ['榮商圈', '法式甜點', '中部國際機場'],
                     spots: [
-                        { title: '綠洲21 (Oasis 21)', desc: '位於榮商圈的宇宙船造型建築，周邊集結各大精品百貨與甜點。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Oasis_21_in_Nagoya.jpg/640px-Oasis_21_in_Nagoya.jpg' },
-                        { title: '中部電視塔', desc: '名古屋市區最美地標，夜晚點燈後漫步於下方公園非常浪漫。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Nagoya_TV_Tower_2020.jpg/640px-Nagoya_TV_Tower_2020.jpg' }
+                        { title: '綠洲21 (Oasis 21)', desc: '位於榮商圈的宇宙船造型建築，周邊集結各大精品百貨與甜點。', link: 'https://www.google.com/search?q=%E5%90%8D%E5%8F%A4%E5%B1%8B+%E7%B6%A0%E6%B4%B221+%E9%81%8A%E8%A8%98' },
+                        { title: '中部電視塔', desc: '名古屋市區最美地標，夜晚點燈後漫步於下方公園非常浪漫。', link: 'https://www.google.com/search?q=%E5%90%8D%E5%8F%A4%E5%B1%8B%E9%9B%BB%E8%A6%96%E5%A1%94+%E9%81%8A%E8%A8%98' }
                     ]
                 }
             ]);
