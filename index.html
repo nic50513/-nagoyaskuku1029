@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v31)</title>
+    <title>Japan Trip 2026 (v32 圖文對照版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -134,7 +134,7 @@
 <!-- 核心 Vue 應用程式區塊 -->
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v31
+        ✅ 系統版本: v32
     </div>
 
     <div class="banner-wrapper"></div>
@@ -153,7 +153,7 @@
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : (syncStatus === 'error' ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100')">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : (syncStatus === 'error' ? 'text-red-500' : 'text-green-600')">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v31 即時對接)') }}
+            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v32 即時對接)') }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
             <i class="fa-solid fa-cloud-arrow-up text-maple-500"></i> 強制推送
@@ -175,7 +175,6 @@
             <!-- 陸地區塊 -->
             <div class="fairytale-island relative z-10 w-[94%] h-[1050px] mx-auto mt-6 overflow-visible">
                 
-                <!-- 移除無聊的文字標題，改用精緻的機票/郵戳感裝飾 -->
                 <div class="text-center pt-8 pb-2 relative z-20 flex justify-center">
                     <div class="bg-white/80 backdrop-blur border-[3px] border-[#D4C4B7] px-6 py-2.5 rounded-[30px] shadow-sm transform -rotate-2 relative">
                         <div class="absolute -top-3 -left-3 text-3xl drop-shadow-md">✈️</div>
@@ -288,25 +287,41 @@
             </div>
         </div>
 
-        <!-- 🌸 全新彈出視窗：當日亮點介紹 Modal 🌸 -->
-        <div v-if="showHighlightModal && activeHighlight" class="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-5 backdrop-blur-sm">
+        <!-- 🌸 全新進化：圖文並茂的「左圖右文」多筆亮點卡片 Modal 🌸 -->
+        <div v-if="showHighlightModal && activeHighlight" class="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
             <div class="absolute inset-0" @click="showHighlightModal = false"></div>
-            <div class="bg-[#FDFCF8] w-full max-w-sm rounded-[30px] shadow-2xl relative z-10 overflow-hidden border-[4px] border-white transform transition-all scale-100">
-                <button @click="showHighlightModal = false" class="absolute top-4 right-4 w-8 h-8 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors flex items-center justify-center z-20 backdrop-blur"><i class="fa-solid fa-xmark"></i></button>
+            <!-- Modal 容器 -->
+            <div class="bg-[#FDFCF8] w-full max-w-[400px] rounded-[24px] shadow-2xl relative z-10 flex flex-col max-h-[85vh] overflow-hidden border-[4px] border-white">
                 
-                <div class="h-[260px] relative w-full overflow-hidden bg-gray-100">
-                    <img :src="activeHighlight.highlightImage" class="w-full h-full object-cover">
-                    <!-- 漸層遮罩讓文字清楚 -->
-                    <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/90 to-transparent"></div>
-                    <div class="absolute bottom-5 left-6 right-6">
-                        <span class="bg-maple-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-sm mb-2 inline-block border border-maple-400">✨ 必逛亮點推薦</span>
-                        <h3 class="text-2xl font-black text-white leading-tight drop-shadow-md">{{ activeHighlight.highlightSpotTitle }}</h3>
-                    </div>
+                <!-- Modal 標題列 -->
+                <div class="bg-[#DE7B54] text-white p-4 flex justify-between items-center shrink-0">
+                    <h3 class="font-black text-base drop-shadow-sm">✨ {{ activeHighlight.title.split('・')[0] }} 必逛精選</h3>
+                    <button @click="showHighlightModal = false" class="w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 
-                <div class="p-6">
-                    <p class="text-[13px] text-gray-700 font-medium leading-relaxed mb-6">{{ activeHighlight.highlightSpotDesc }}</p>
-                    <button @click="showHighlightModal = false" class="w-full py-3.5 rounded-2xl font-black text-sm text-[#8A6B52] bg-[#F4EFE6] hover:bg-[#EBE3D5] shadow-sm transition-colors border border-[#D4C4B7]">收起卡片</button>
+                <!-- Modal 內容區 (可滾動) -->
+                <div class="p-4 overflow-y-auto flex-1 space-y-4 bg-[#FAF5F0] no-scrollbar">
+                    
+                    <!-- 迴圈印出每天的多個景點 (左圖右文) -->
+                    <div v-for="(spot, idx) in activeHighlight.spots" :key="idx" class="flex bg-white rounded-2xl shadow-sm border border-[#F2EBE1] overflow-hidden group hover:shadow-md transition-shadow">
+                        <!-- 左邊：圖片區塊 (40% 寬度) -->
+                        <div class="w-[40%] shrink-0 relative overflow-hidden bg-gray-100">
+                            <!-- 使用 onerror 確保圖片失效時顯示預設替代色塊 -->
+                            <img :src="spot.image" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" :alt="spot.title" onerror="this.src='https://placehold.co/400x400/FFF2EB/DE7B54?text=Japan+Trip';">
+                        </div>
+                        
+                        <!-- 右邊：文字區塊 (60% 寬度) -->
+                        <div class="w-[60%] p-3.5 flex flex-col justify-center">
+                            <h4 class="font-black text-[#5C4A3D] text-[13px] mb-1.5 leading-tight">{{ spot.title }}</h4>
+                            <p class="text-[11px] text-gray-500 font-medium leading-relaxed">{{ spot.desc }}</p>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <!-- 底部按鈕 -->
+                <div class="p-4 bg-white border-t border-[#F2EBE1] shrink-0">
+                    <button @click="showHighlightModal = false" class="w-full py-3 rounded-xl font-black text-sm text-[#8A6B52] bg-[#F4EFE6] hover:bg-[#EBE3D5] shadow-sm transition-colors border border-[#D4C4B7]">收起卡片</button>
                 </div>
             </div>
         </div>
@@ -372,7 +387,7 @@
             </div>
 
             <!-- 🔥 尋回並強化的：每日重點摘要卡片 🔥 -->
-            <div v-if="currentOverview" class="mt-4 mb-4 bg-gradient-to-br from-[#FFF9F5] to-[#FDFCF8] rounded-2xl p-5 border border-maple-100 shadow-sm relative overflow-hidden">
+            <div v-if="currentOverview" class="mt-4 mb-4 bg-gradient-to-br from-[#FFF9F5] to-[#FDFCF8] rounded-2xl p-5 border-2 border-[#FCE4D6] shadow-sm relative overflow-hidden">
                 <div class="absolute -right-4 -bottom-4 text-[#DE7B54] opacity-5 text-8xl font-black select-none pointer-events-none">D{{ selectedDateIndex + 1 }}</div>
                 <div class="flex items-center gap-2 mb-3 relative z-10">
                     <span class="bg-[#DE7B54] text-white text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
@@ -386,7 +401,7 @@
                 </div>
             </div>
 
-            <!-- 🔥 防誤觸的行程解鎖系統 🔥 -->
+            <!-- 防誤觸的行程解鎖系統 -->
             <div class="flex justify-between items-center mb-3 mt-5 px-1 border-t border-gray-200 pt-4">
                 <h3 class="font-bold text-gray-700 text-sm flex items-center gap-1.5"><i class="fa-solid fa-list-ul text-maple-500"></i> 行程明細</h3>
                 <button @click="isReorderMode = !isReorderMode" class="text-[11px] px-3 py-1.5 rounded-full font-bold transition-all shadow-sm flex items-center gap-1.5 border" :class="isReorderMode ? 'bg-maple-500 text-white border-maple-600 shadow-md animate-pulse' : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'">
@@ -394,7 +409,7 @@
                 </button>
             </div>
 
-            <!-- 行程清單拖曳 (加入 isReorderMode 判斷) -->
+            <!-- 行程清單拖曳 -->
             <div class="space-y-4 pb-8">
                 <draggable v-model="currentItinerary" item-key="id" handle=".drag-handle" ghost-class="ghost-card" animation="200" @end="triggerSync" :disabled="!isReorderMode">
                     <template #item="{element: item, index: idx}">
@@ -413,7 +428,6 @@
                                     <span class="text-[10px] font-bold bg-blue-500 text-white px-2 py-1 rounded shadow-sm flex items-center gap-1"><i class="fa-solid fa-plane text-xs"></i> 航班資訊</span>
                                     <div class="flex items-center gap-3">
                                         <span class="text-sm font-bold text-blue-800 bg-white/60 px-2 py-0.5 rounded">{{ item.startTime }}</span>
-                                        <!-- 只有解鎖時才顯示把手 -->
                                         <i v-show="isReorderMode" class="fa-solid fa-grip-lines drag-handle text-blue-500 p-1 text-xl cursor-grab bg-blue-100 rounded"></i>
                                     </div>
                                 </div>
@@ -441,7 +455,6 @@
                                         </div>
                                     </div>
                                     <div class="flex flex-col items-end gap-2">
-                                        <!-- 只有解鎖時才顯示把手 -->
                                         <i v-show="isReorderMode" class="fa-solid fa-grip-lines drag-handle text-maple-500 p-1 text-xl cursor-grab bg-maple-50 rounded"></i>
                                     </div>
                                 </div>
@@ -1101,55 +1114,62 @@
             const currentDayRegions = computed(() => weatherRegionsData.value[selectedDateIndex.value] || []);
             const currentWeather = computed(() => currentDayRegions.value[selectedRegionIndex.value] || currentDayRegions.value[0]);
 
-            // 🔥 每日重點加入高畫質亮點圖 & 彈窗設定 🔥
+            // 🔥 每日重點加入「多個景點 + 高清穩定的圖庫連結」 🔥
             const dailyOverviews = ref([
                 { 
                     title: '高山老街・極致飛驒牛', 
                     desc: '抵達日本後直奔飛驒小京都「高山」，享用入口即化的飛驒牛壽喜燒與三町通老街散策。', 
                     highlights: ['飛驒牛', '高山老街', '高山陣屋'],
-                    highlightSpotTitle: '高山老街 (三町通)',
-                    highlightSpotDesc: '保留了江戶時代完整町家建築的古老街道，兩側林立著百年釀酒廠、味噌店與飛驒牛小吃，穿梭其中彷彿時光倒流。',
-                    highlightImage: 'https://images.unsplash.com/photo-1570459027562-4a916cc6113f?q=80&w=800&auto=format&fit=crop'
+                    spots: [
+                        { title: '高山老街 (三町通)', desc: '江戶時代完整町家建築，兩側林立百年釀酒廠與飛驒牛小吃。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Takayama_Sanmachi_Suji.jpg/640px-Takayama_Sanmachi_Suji.jpg' },
+                        { title: '飛驒牛握壽司', desc: '老街必吃美食，炙燒A5飛驒牛放上仙貝托盤，油花入口即化。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Hida_beef_nigirizushi_by_t-mizo.jpg/640px-Hida_beef_nigirizushi_by_t-mizo.jpg' },
+                        { title: '高山陣屋', desc: '日本唯一現存的江戶時代代官所，可參觀審判所與日式枯山水。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Takayama_Jinya.jpg/640px-Takayama_Jinya.jpg' }
+                    ]
                 },
                 { 
                     title: '神之故鄉・上高地金秋健行', 
                     desc: '全日沉浸在阿爾卑斯仙境「上高地」，欣賞梓川與明神池的絕美神聖秋景。', 
                     highlights: ['上高地', '梓川', '河童橋'],
-                    highlightSpotTitle: '上高地 河童橋',
-                    highlightSpotDesc: '被譽為神降臨之地的絕景！河童橋是上高地的象徵，站在橋上可遠眺壯麗的穗高連峰與清澈見底的梓川。',
-                    highlightImage: 'https://images.unsplash.com/photo-1624253328227-2cce536f97f8?q=80&w=800&auto=format&fit=crop'
+                    spots: [
+                        { title: '河童橋', desc: '上高地的象徵，站在橋上可遠眺壯麗的穗高連峰與清澈見底的梓川。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Kamikochi_Kappa_Bridge.jpg/640px-Kamikochi_Kappa_Bridge.jpg' },
+                        { title: '明神池', desc: '被針葉林環繞的神聖池水，秋季時水面倒映著金黃色的絕美景色。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Myojin_Pond_Kamikochi.jpg/640px-Myojin_Pond_Kamikochi.jpg' }
+                    ]
                 },
                 { 
                     title: '童話合掌村・名古屋繁華夜', 
                     desc: '前往世界遺產「白川鄉合掌村」，午後返回名古屋大啖經典炭烤鰻魚三吃。', 
                     highlights: ['合掌村', '城山展望台', '鰻魚飯'],
-                    highlightSpotTitle: '白川鄉 合掌造聚落',
-                    highlightSpotDesc: '世界文化遺產！如童話般的茅草屋頂聚落，秋季時四周被金黃稻田與紅葉環繞，宛如走入與世隔絕的夢幻秘境。',
-                    highlightImage: 'https://images.unsplash.com/photo-1601622359495-201ea1eb07d2?q=80&w=800&auto=format&fit=crop'
+                    spots: [
+                        { title: '白川鄉 合掌造聚落', desc: '童話般的茅草屋頂聚落，秋季四周被金黃稻田與紅葉環繞。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Shirakawa-go_Gassho-zukuri_Village_2019.jpg/640px-Shirakawa-go_Gassho-zukuri_Village_2019.jpg' },
+                        { title: '名古屋 鰻魚三吃', desc: '備長炭高溫烤到外酥內嫩的經典美食，搭配高湯做成茶泡飯最對味。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Hitsumabushi_by_t-mizo_in_Nagoya.jpg/640px-Hitsumabushi_by_t-mizo_in_Nagoya.jpg' }
+                    ]
                 },
                 { 
                     title: '宮崎駿實境・吉卜力公園', 
                     desc: '朝聖愛知「吉卜力公園」走進動畫森林，傍晚在榮商圈品嚐純炭火居酒屋。', 
                     highlights: ['吉卜力大倉庫', '魔女之谷', '地雞燒鳥'],
-                    highlightSpotTitle: '吉卜力公園 大倉庫',
-                    highlightSpotDesc: '完美還原宮崎駿動畫世界的奇幻空間！走進充滿魔法的場景，每一個角落都藏著滿滿的童年回憶與驚喜。',
-                    highlightImage: 'https://images.unsplash.com/photo-1600172454520-134a542a2255?q=80&w=800&auto=format&fit=crop'
+                    spots: [
+                        { title: '吉卜力大倉庫', desc: '完美還原宮崎駿動畫世界的奇幻空間，每個角落都藏滿童年回憶。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Aichi_Earth_Expo_Memorial_Park.jpg/640px-Aichi_Earth_Expo_Memorial_Park.jpg' },
+                        { title: '炭火地雞燒鳥', desc: '名古屋特產交趾地雞串燒，高溫鎖住肉汁搭配沁涼啤酒最對味。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Yakitori_by_t-mizo.jpg/640px-Yakitori_by_t-mizo.jpg' }
+                    ]
                 },
                 { 
                     title: '國寶犬山城・城下町結緣', 
                     desc: '登頂國寶犬山城360度迴廊，體驗三光稻荷洗錢儀式與超人氣城下町小吃。', 
                     highlights: ['國寶犬山城', '洗錢神社', '獅子丸拉麵'],
-                    highlightSpotTitle: '國寶 犬山城',
-                    highlightSpotDesc: '日本現存最古老的木造天守閣！登頂後可360度俯瞰木曾川與城下町美景，山腳下的神社更是超人氣洗錢結緣聖地。',
-                    highlightImage: 'https://images.unsplash.com/photo-1596401057633-54a8fe8ef647?q=80&w=800&auto=format&fit=crop'
+                    spots: [
+                        { title: '國寶 犬山城', desc: '日本現存最古老木造天守閣，登頂可360度俯瞰木曾川與城下町。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Inuyama_Castle_2019.jpg/640px-Inuyama_Castle_2019.jpg' },
+                        { title: '三光稻荷神社', desc: '超人氣結緣與洗錢聖地，粉色愛心繪馬與加倍奉還洗錢池必訪。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Sanko_Inari_Shrine_Torii.jpg/640px-Sanko_Inari_Shrine_Torii.jpg' }
+                    ]
                 },
                 { 
                     title: '榮商圈精品・滿載回台', 
                     desc: '榮商圈朝聖精品小眾香氛與法式甜點，帶著滿滿的戰利品與回憶前往機場。', 
                     highlights: ['榮商圈', '法式甜點', '中部國際機場'],
-                    highlightSpotTitle: '名古屋 榮商圈',
-                    highlightSpotDesc: '名古屋最繁華的時尚潮流中心！集結了各大百貨、國際精品與超人氣甜點店，最後一天的採買衝刺絕對不能錯過這裡。',
-                    highlightImage: 'https://images.unsplash.com/photo-1581417478175-a9ef18abf529?q=80&w=800&auto=format&fit=crop'
+                    spots: [
+                        { title: '綠洲21 (Oasis 21)', desc: '位於榮商圈的宇宙船造型建築，周邊集結各大精品百貨與甜點。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Oasis_21_in_Nagoya.jpg/640px-Oasis_21_in_Nagoya.jpg' },
+                        { title: '中部電視塔', desc: '名古屋市區最美地標，夜晚點燈後漫步於下方公園非常浪漫。', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Nagoya_TV_Tower_2020.jpg/640px-Nagoya_TV_Tower_2020.jpg' }
+                    ]
                 }
             ]);
             const currentOverview = computed(() => dailyOverviews.value[selectedDateIndex.value]);
