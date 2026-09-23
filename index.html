@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v34 攻略連結版)</title>
+    <title>Japan Trip 2026 (v35 清單擴充版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -134,7 +134,7 @@
 <!-- 核心 Vue 應用程式區塊 -->
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v34
+        ✅ 系統版本: v35
     </div>
 
     <div class="banner-wrapper"></div>
@@ -153,7 +153,7 @@
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : (syncStatus === 'error' ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100')">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : (syncStatus === 'error' ? 'text-red-500' : 'text-green-600')">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v34 即時對接)') }}
+            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v35 即時對接)') }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
             <i class="fa-solid fa-cloud-arrow-up text-maple-500"></i> 強制推送
@@ -643,7 +643,9 @@
                                 <button @click.stop="removeShoppingItem(item)" class="bg-red-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-red-600"><i class="fa-solid fa-trash-can text-sm"></i></button>
                             </div>
                         </div>
-                        <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
+                        <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug mt-1" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
+                        <!-- 🔥 新增的購買地點顯示 🔥 -->
+                        <p v-if="item.location" class="text-[10px] text-maple-600 font-bold px-1 mt-0.5 truncate"><i class="fa-solid fa-location-dot"></i> {{ item.location }}</p>
                     </div>
                     <div v-if="categorizedLists.shopping.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200 shadow-sm">
                         <p class="text-xs font-bold text-gray-400">目前沒有購物清單</p>
@@ -669,7 +671,9 @@
                                 <button @click.stop="removeShoppingItem(item)" class="bg-red-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-red-600"><i class="fa-solid fa-trash-can text-sm"></i></button>
                             </div>
                         </div>
-                        <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
+                        <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug mt-1" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
+                        <!-- 🔥 新增的備註顯示 🔥 -->
+                        <p v-if="item.location" class="text-[10px] text-blue-600 font-bold px-1 mt-0.5 truncate"><i class="fa-regular fa-note-sticky"></i> {{ item.location }}</p>
                     </div>
                     <div v-if="categorizedLists.luggage.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200 shadow-sm">
                         <p class="text-xs font-bold text-gray-400">目前沒有行李清單</p>
@@ -695,7 +699,9 @@
                                 <button @click.stop="removeShoppingItem(item)" class="bg-red-500/80 backdrop-blur text-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:bg-red-600"><i class="fa-solid fa-trash-can text-sm"></i></button>
                             </div>
                         </div>
-                        <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
+                        <p class="font-bold text-sm text-gray-800 line-clamp-2 px-1 leading-snug mt-1" :class="{'line-through text-gray-400': item.checked}">{{ item.name }}</p>
+                        <!-- 🔥 新增的備註顯示 🔥 -->
+                        <p v-if="item.location" class="text-[10px] text-emerald-600 font-bold px-1 mt-0.5 truncate"><i class="fa-regular fa-note-sticky"></i> {{ item.location }}</p>
                     </div>
                     <div v-if="categorizedLists.ticket.length === 0" class="col-span-2 text-center py-6 bg-white rounded-2xl border border-dashed border-gray-200 shadow-sm">
                         <p class="text-xs font-bold text-gray-400">目前沒有票券清單</p>
@@ -761,115 +767,10 @@
     <!-- 懸浮新增按鈕 -->
     <button v-if="currentTab !== 'info' && currentTab !== 'transit' && currentTab !== 'route'" @click="handleAddClick" class="fab-btn"><i class="fa-solid fa-plus font-bold"></i></button>
 
-    <!-- Modal: 飯店設施指南 -->
-    <div v-if="showHotelGuideModal && activeHotelGuide" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="absolute inset-0" @click="showHotelGuideModal = false"></div>
-        <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10 max-h-[88vh] overflow-y-auto">
-            <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-3">
-                <div>
-                    <span class="text-[10px] font-black tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 mb-1.5"><i class="fa-solid fa-hotel"></i> 住宿指南</span>
-                    <h3 class="text-xl font-black text-gray-800 leading-tight">{{ activeHotelGuide.title }}</h3>
-                </div>
-                <button @click="showHotelGuideModal = false" class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 transition-colors flex items-center justify-center shrink-0"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <p class="text-xs font-medium text-gray-600 bg-indigo-50/70 p-3 rounded-2xl border border-indigo-100 leading-relaxed mb-4">{{ activeHotelGuide.intro }}</p>
-            <div class="space-y-3.5">
-                <div v-if="activeHotelGuide.facilities" class="bg-indigo-50/40 rounded-2xl p-3.5 border border-indigo-100/70">
-                    <h4 class="text-xs font-black text-indigo-700 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-bed"></i> 飯店內部設施</h4>
-                    <ul class="space-y-1.5"><li v-for="fac in activeHotelGuide.facilities" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-indigo-400 font-bold">•</span><span>{{ fac }}</span></li></ul>
-                </div>
-                <div v-if="activeHotelGuide.convenience" class="bg-emerald-50/50 rounded-2xl p-3.5 border border-emerald-100/70">
-                    <h4 class="text-xs font-black text-emerald-700 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-store"></i> 周邊超商與藥妝</h4>
-                    <ul class="space-y-1.5"><li v-for="store in activeHotelGuide.convenience" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-emerald-500 font-bold">•</span><span>{{ store }}</span></li></ul>
-                </div>
-                <div v-if="activeHotelGuide.nightNearby" class="bg-amber-50/50 rounded-2xl p-3.5 border border-amber-100/70">
-                    <h4 class="text-xs font-black text-amber-700 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-moon"></i> 夜晚散策與周邊逛街</h4>
-                    <ul class="space-y-1.5"><li v-for="night in activeHotelGuide.nightNearby" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-amber-500 font-bold">•</span><span>{{ night }}</span></li></ul>
-                </div>
-                <div v-if="activeHotelGuide.tips" class="bg-gray-50 rounded-xl p-3 border border-gray-200/70 text-[11px] text-gray-500 font-medium flex items-start gap-2"><i class="fa-solid fa-circle-exclamation text-indigo-500 text-sm mt-0.5 shrink-0"></i><span class="leading-relaxed">{{ activeHotelGuide.tips }}</span></div>
-            </div>
-            <button @click="showHotelGuideModal = false" class="w-full mt-5 py-3.5 rounded-xl font-black text-sm text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition-colors">了解！關閉指南</button>
-        </div>
-    </div>
-
-    <!-- Modal: 景點導遊攻略彈窗 -->
-    <div v-if="showGuideModal && activeGuide" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="absolute inset-0" @click="showGuideModal = false"></div>
-        <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10 max-h-[88vh] overflow-y-auto">
-            <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-3">
-                <div>
-                    <span class="text-[10px] font-black tracking-wider text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mb-1.5"><i class="fa-solid fa-compass"></i> 導遊私房筆記</span>
-                    <h3 class="text-xl font-black text-gray-800 leading-tight">{{ activeGuide.title }}</h3>
-                </div>
-                <button @click="showGuideModal = false" class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 transition-colors flex items-center justify-center shrink-0"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <p class="text-xs font-medium text-gray-600 bg-amber-50/70 p-3 rounded-2xl border border-amber-100 leading-relaxed mb-4">{{ activeGuide.intro }}</p>
-            <div class="space-y-3.5">
-                <div v-if="activeGuide.mustEat" class="bg-red-50/50 rounded-2xl p-3.5 border border-red-100/70">
-                    <h4 class="text-xs font-black text-red-600 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-utensils"></i> 必吃在地美食</h4>
-                    <ul class="space-y-1.5"><li v-for="eat in activeGuide.mustEat" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-red-400 font-bold">•</span><span>{{ eat }}</span></li></ul>
-                </div>
-                <div v-if="activeGuide.mustBuy" class="bg-emerald-50/50 rounded-2xl p-3.5 border border-emerald-100/70">
-                    <h4 class="text-xs font-black text-emerald-700 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-basket-shopping"></i> 必買伴手禮・紀念品</h4>
-                    <ul class="space-y-1.5"><li v-for="buy in activeGuide.mustBuy" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-emerald-500 font-bold">•</span><span>{{ buy }}</span></li></ul>
-                </div>
-                <div v-if="activeGuide.mustVisit" class="bg-blue-50/50 rounded-2xl p-3.5 border border-blue-100/70">
-                    <h4 class="text-xs font-black text-blue-600 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-camera"></i> 必逛拍照亮點</h4>
-                    <ul class="space-y-1.5"><li v-for="spot in activeGuide.mustVisit" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-blue-400 font-bold">•</span><span>{{ spot }}</span></li></ul>
-                </div>
-                <div v-if="activeGuide.tips" class="bg-gray-50 rounded-xl p-3 border border-gray-200/70 text-[11px] text-gray-500 font-medium flex items-start gap-2"><i class="fa-solid fa-circle-exclamation text-amber-500 text-sm mt-0.5 shrink-0"></i><span class="leading-relaxed">{{ activeGuide.tips }}</span></div>
-            </div>
-            
-            <!-- 🔥 新增的外部遊記連結按鈕 🔥 -->
-            <div v-if="activeGuide.link" class="mt-4 mb-2">
-                <a :href="activeGuide.link" target="_blank" class="w-full inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-white bg-[#DE7B54] px-4 py-3.5 rounded-xl shadow-sm hover:bg-[#B85530] transition-colors">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> 查看網路詳細圖文遊記
-                </a>
-            </div>
-
-            <button v-else @click="showGuideModal = false" class="w-full mt-5 py-3.5 rounded-xl font-black text-sm text-white bg-maple-500 hover:bg-maple-600 shadow-md transition-colors">了解！關閉攻略</button>
-        </div>
-    </div>
-
-    <!-- Modal: 編輯行程彈窗 -->
-    <div v-if="showItineraryModal" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="absolute inset-0" @click="showItineraryModal = false"></div>
-        <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black text-gray-800 flex items-center gap-2"><i class="fa-solid fa-pen text-maple-500"></i> {{ isEditItineraryMode ? '編輯行程' : '新增行程' }}</h3>
-                <button @click="showItineraryModal = false" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 transition-colors flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-4">
-                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                    <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-tag text-sm"></i> 分類</label>
-                    <select v-model="newItinerary.category" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-700 outline-none focus:border-maple-500 focus:ring-2 focus:ring-maple-100 transition-all appearance-none">
-                        <option value="sightseeing">景點</option><option value="food">美食</option><option value="shopping">購物</option>
-                        <option value="accommodation">住宿</option><option value="flight">航班</option><option value="transport">交通</option><option value="other">其他</option>
-                    </select>
-                </div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">名稱</label><input type="text" v-model="newItinerary.name" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-800 outline-none focus:border-maple-500 transition-all shadow-sm" placeholder="例如: 高山陣屋"></div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">地址/導航用關鍵字</label><input type="text" v-model="newItinerary.address" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-sm font-medium text-gray-800 outline-none focus:border-maple-500 transition-all shadow-sm" placeholder="用於 Google Maps"></div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">時間</label><input type="text" v-model="newItinerary.startTime" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-800 outline-none focus:border-maple-500 transition-all shadow-sm" placeholder="例如: 08:00-09:00"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">交通方式</label><select v-model="newItinerary.transportType" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-700 outline-none focus:border-maple-500 transition-all shadow-sm appearance-none"><option value="walk">步行</option><option value="car">開車</option><option value="public">大眾運輸</option><option value="bus">巴士</option><option value="flight">飛機</option></select></div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">交通時間</label><input type="text" v-model="newItinerary.travelTime" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-sm font-medium text-gray-800 outline-none focus:border-maple-500 transition-all shadow-sm" placeholder="例: 15分"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">營業時間</label><input type="text" v-model="newItinerary.hours" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-sm font-medium text-gray-800 outline-none focus:border-maple-500 transition-all shadow-sm" placeholder="例: 09:00-17:00"></div>
-                </div>
-                <div><label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">備註 / 特色</label><textarea v-model="newItinerary.note" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 outline-none focus:border-maple-500 transition-all shadow-sm h-24 resize-none" placeholder="輸入預約代碼或必吃美食..."></textarea></div>
-            </div>
-            <div class="mt-8 flex gap-3 pb-safe">
-                <button v-if="isEditItineraryMode" @click="removeItineraryItem" class="flex-1 py-4 rounded-xl font-bold text-red-500 bg-red-50 hover:bg-red-100 border border-red-100 transition-colors flex items-center justify-center gap-2 shadow-sm"><i class="fa-solid fa-trash-can"></i> 刪除</button>
-                <button @click="saveItineraryItem" class="flex-1 py-4 rounded-xl font-bold text-white bg-maple-500 hover:bg-maple-700 shadow-md shadow-maple-500/30 transition-all flex items-center justify-center gap-2"><i class="fa-solid fa-floppy-disk"></i> 儲存</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: 編輯清單項目彈窗 -->
+    <!-- Modal: 編輯清單項目彈窗 (加入地點/備註欄位) -->
     <div v-if="showShoppingModal" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="absolute inset-0" @click="showShoppingModal = false"></div>
-        <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10">
+        <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-black text-gray-800 flex items-center gap-2"><i class="fa-solid fa-clipboard-list text-maple-500"></i> {{ isEditShoppingMode ? '編輯清單項目' : '新增至清單' }}</h3>
                 <button @click="showShoppingModal = false" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 transition-colors flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
@@ -879,11 +780,18 @@
                     <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">選擇分類</label>
                     <div class="flex gap-2">
                         <button @click="newShoppingItem.category='shopping'" :class="newShoppingItem.category==='shopping'?'bg-maple-500 text-white shadow':'bg-white text-gray-500 border border-gray-200'" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all"><i class="fa-solid fa-basket-shopping"></i> 購物</button>
-                        <button @click="newShoppingItem.category='luggage'" :class="newShoppingItem.category==='luggage'?'bg-blue-500 text-white shadow':'bg-white text-gray-500 border border-gray-200'" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all"><i class="fa-solid fa-suitcase-rolling"></i> 行行李</button>
+                        <button @click="newShoppingItem.category='luggage'" :class="newShoppingItem.category==='luggage'?'bg-blue-500 text-white shadow':'bg-white text-gray-500 border border-gray-200'" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all"><i class="fa-solid fa-suitcase-rolling"></i> 行李</button>
                         <button @click="newShoppingItem.category='ticket'" :class="newShoppingItem.category==='ticket'?'bg-emerald-500 text-white shadow':'bg-white text-gray-500 border border-gray-200'" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all"><i class="fa-solid fa-ticket"></i> 票券</button>
                     </div>
                 </div>
                 <div><label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">項目名稱</label><input v-model="newShoppingItem.name" type="text" placeholder="輸入名稱" class="w-full bg-white border border-gray-200 rounded-xl p-4 text-sm font-bold outline-none focus:border-maple-500 shadow-sm"></div>
+                
+                <!-- 🔥 新增的購買地點 / 備註欄位 🔥 -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">{{ newShoppingItem.category === 'shopping' ? '購買地點' : '備註' }}</label>
+                    <input v-model="newShoppingItem.location" type="text" :placeholder="newShoppingItem.category === 'shopping' ? '例如：松本清、榮商圈...' : '輸入備註說明...'" class="w-full bg-white border border-gray-200 rounded-xl p-4 text-sm font-bold outline-none focus:border-maple-500 shadow-sm">
+                </div>
+
                 <div>
                     <label class="block text-xs font-bold text-gray-500 mb-1.5 ml-1">上傳照片 (選填)</label><input type="file" @change="handleImageUpload" class="hidden" id="fileInput">
                     <label for="fileInput" class="w-full h-36 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center cursor-pointer text-gray-400 hover:bg-gray-100 transition-all overflow-hidden relative group">
@@ -956,7 +864,6 @@
 
     const { createApp, ref, computed, onMounted, watch } = Vue;
 
-    // 🔥 導遊攻略加入外部連結 🔥
     const spotGuides = {
         '飛騨牛SUKIYAKI 中橋 WAKACHIYA': { title: '中橋 WAKACHIYA 飛驒牛專賣', intro: '座落於高山著名地標「中橋」旁的絕佳位置，在充滿江戶風情的老宅內享用頂級 A5 飛驒牛壽喜燒。', mustEat: ['🥩 頂級飛驒牛壽喜燒 (入口即化)', '🍣 飛驒牛炙燒握壽司', '🍶 在地飛驒高山清酒'], mustVisit: ['📸 用餐後漫步旁邊的紅色中橋與宮川河畔'], tips: '午餐時段常客滿，請務必準時抵達！壽喜燒的肉片輕涮幾秒帶點粉紅色最好吃。', link: 'https://www.google.com/search?q=%E4%B8%AD%E6%A9%8B+WAKACHIYA+%E9%A3%9B%E9%A9%8A%E7%89%9B+%E9%81%8A%E8%A8%98' },
         '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。', link: 'https://www.google.com/search?q=%E4%B8%AD%E8%8F%AF%E3%81%9D%E3%81%B0+%E3%81%A4%E3%81%A5%E3%81%BF+%E9%AB%98%E5%B1%B1%E6%8B%89%E9%BA%B5+%E9%81%8A%E8%A8%98' },
@@ -1194,10 +1101,11 @@
 
             const itineraryData = ref(JSON.parse(JSON.stringify(defaultItineraryData)));
             
+            // 加入新的 Location 欄位
             const shoppingList = ref([
-                { id: 1, name: 'COCOTOMO FARM 玄米年輪蛋糕', checked: false, category: 'shopping' },
-                { id: 2, name: '護照 / 日幣現鈔', checked: false, category: 'luggage' },
-                { id: 3, name: '昇龍道巴士券', checked: false, category: 'ticket' }
+                { id: 1, name: 'COCOTOMO FARM 玄米年輪蛋糕', checked: false, category: 'shopping', location: '犬山城下町' },
+                { id: 2, name: '護照 / 日幣現鈔', checked: false, category: 'luggage', location: '隨身包包' },
+                { id: 3, name: '昇龍道巴士券', checked: false, category: 'ticket', location: '手機 QR Code' }
             ]);
 
             const categorizedLists = computed(() => {
@@ -1225,7 +1133,7 @@
             const showShoppingModal = ref(false);
             const isEditShoppingMode = ref(false);
             const editingShoppingItemRef = ref(null);
-            const newShoppingItem = ref({ id: null, name: '', image: null, checked: false, category: 'shopping' });
+            const newShoppingItem = ref({ id: null, name: '', image: null, checked: false, category: 'shopping', location: '' });
 
             const showExpenseModal = ref(false);
             const isEditExpenseMode = ref(false);
@@ -1324,7 +1232,7 @@
                     showItineraryModal.value = true;
                 } else if (currentTab.value === 'list') {
                     isEditShoppingMode.value = false;
-                    newShoppingItem.value = { id: Date.now(), name: '', image: null, checked: false, category: 'shopping' };
+                    newShoppingItem.value = { id: Date.now(), name: '', image: null, checked: false, category: 'shopping', location: '' };
                     showShoppingModal.value = true;
                 } else if (currentTab.value === 'expenses') {
                     isEditExpenseMode.value = false;
@@ -1338,6 +1246,7 @@
                 editingShoppingItemRef.value = item;
                 newShoppingItem.value = JSON.parse(JSON.stringify(item));
                 if (!newShoppingItem.value.category) newShoppingItem.value.category = 'shopping';
+                if (!newShoppingItem.value.location) newShoppingItem.value.location = '';
                 showShoppingModal.value = true;
             };
 
