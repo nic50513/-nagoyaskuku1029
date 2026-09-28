@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v38 終極修復版)</title>
+    <title>Japan Trip 2026 (v39 觸控升級版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -134,7 +134,7 @@
 <!-- 核心 Vue 應用程式區塊 -->
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v38
+        ✅ 系統版本: v39
     </div>
 
     <div class="banner-wrapper"></div>
@@ -153,7 +153,7 @@
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : (syncStatus === 'error' ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100')">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : (syncStatus === 'error' ? 'text-red-500' : 'text-green-600')">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v38 即時對接)') }}
+            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v39 即時對接)') }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
             <i class="fa-solid fa-cloud-arrow-up text-maple-500"></i> 強制推送
@@ -411,9 +411,10 @@
                 </button>
             </div>
 
-            <!-- 行程清單拖曳 -->
+            <!-- 🔥 行程清單拖曳：加入整個卡片點擊觸發編輯的功能 🔥 -->
             <div class="space-y-4 pb-8">
-                <draggable v-model="currentItinerary" item-key="id" handle=".drag-handle" ghost-class="ghost-card" animation="200" @end="triggerSync" :disabled="!isReorderMode">
+                <!-- 移除了 disabled 屬性，完全依賴把手的顯示與否來控制拖曳 -->
+                <draggable v-model="currentItinerary" item-key="id" handle=".drag-handle" ghost-class="ghost-card" animation="200" @end="triggerSync">
                     <template #item="{element: item, index: idx}">
                         <div class="relative group">
                             <!-- 交通連接線 -->
@@ -425,7 +426,8 @@
                                 </div>
                             </div>
 
-                            <div v-if="item.category === 'flight'" class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-3xl p-5 border border-blue-200 shadow-sm relative group overflow-hidden" :class="{'ring-2 ring-maple-400': isReorderMode}">
+                            <!-- 航班卡片 (加上 @click) -->
+                            <div v-if="item.category === 'flight'" @click="!isReorderMode && editItineraryItem(item)" class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-3xl p-5 border border-blue-200 shadow-sm relative group overflow-hidden cursor-pointer" :class="{'ring-2 ring-maple-400 cursor-grab': isReorderMode}">
                                 <div class="flex justify-between items-center mb-4 relative z-10">
                                     <span class="text-[10px] font-bold bg-blue-500 text-white px-2 py-1 rounded shadow-sm flex items-center gap-1"><i class="fa-solid fa-plane text-xs"></i> 航班資訊</span>
                                     <div class="flex items-center gap-3">
@@ -444,10 +446,12 @@
                                 <div v-if="item.note" class="mt-4 text-xs font-bold text-blue-800 bg-white/70 backdrop-blur p-2.5 rounded-xl border border-blue-200/50 relative z-10 shadow-inner flex items-start gap-2">
                                     <i class="fa-solid fa-circle-info text-base mt-0.5"></i><span class="leading-relaxed whitespace-pre-line break-words">{{ item.note }}</span>
                                 </div>
-                                <button v-show="!isReorderMode" @click.stop="editItineraryItem(item)" class="absolute bottom-3 right-3 w-9 h-9 bg-white text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white shadow-md transition-colors border border-blue-200 z-20"><i class="fa-solid fa-pen text-sm"></i></button>
+                                <!-- 保留視覺用的小鉛筆 -->
+                                <button v-show="!isReorderMode" class="absolute bottom-3 right-3 w-9 h-9 bg-white text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white shadow-md transition-colors border border-blue-200 z-20"><i class="fa-solid fa-pen text-sm"></i></button>
                             </div>
 
-                            <div v-else class="bg-white rounded-3xl p-5 pb-12 card-shadow relative overflow-hidden group transition-all" :class="{'ring-2 ring-maple-400': isReorderMode}">
+                            <!-- 一般行程卡片 (加上 @click) -->
+                            <div v-else @click="!isReorderMode && editItineraryItem(item)" class="bg-white rounded-3xl p-5 pb-12 card-shadow relative overflow-hidden group transition-all cursor-pointer" :class="{'ring-2 ring-maple-400 cursor-grab': isReorderMode}">
                                 <div class="flex justify-between items-start mb-3 relative z-10">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 rounded-xl text-white shadow-sm flex items-center justify-center text-xl" :class="getCategoryColor(item.category)"><i :class="getCategoryIcon(item.category)"></i></div>
@@ -464,7 +468,7 @@
                                     <div class="flex items-start justify-between gap-2 mb-2">
                                         <h3 class="text-lg font-bold text-gray-800 leading-tight">{{ item.name }}</h3>
                                         
-                                        <!-- 🔥 修復：導遊按鈕永遠顯示，且支援模糊比對 🔥 -->
+                                        <!-- 導遊按鈕：使用 @click.stop 防止觸發父層編輯事件 -->
                                         <button v-if="hasGuide(item.name)" @click.stop="openGuideModal(item.name)" class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-amber-50 text-amber-700 border border-amber-200 shadow-sm hover:bg-amber-100 transition-all active:scale-95">
                                             <i class="fa-solid fa-compass text-amber-500 animate-pulse"></i> 導遊攻略
                                         </button>
@@ -482,7 +486,8 @@
                                 <a v-show="!isReorderMode" v-if="item.address || item.name" :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address || item.name)}`" target="_blank" @click.stop class="absolute right-4 top-[80px] w-9 h-9 rounded-full bg-maple-100 text-maple-600 flex items-center justify-center hover:bg-maple-500 hover:text-white transition-all shadow-sm z-20">
                                     <i class="fa-solid fa-location-arrow text-sm"></i>
                                 </a>
-                                <button v-show="!isReorderMode" @click.stop="editItineraryItem(item)" class="absolute bottom-4 right-4 w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center shadow-md border border-blue-200 z-20"><i class="fa-solid fa-pen text-sm"></i></button>
+                                <!-- 保留視覺用的小鉛筆 -->
+                                <button v-show="!isReorderMode" class="absolute bottom-4 right-4 w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center shadow-md border border-blue-200 z-20"><i class="fa-solid fa-pen text-sm"></i></button>
                             </div>
                         </div>
                     </template>
@@ -806,7 +811,7 @@
     <!-- 懸浮新增按鈕 -->
     <button v-if="currentTab !== 'info' && currentTab !== 'transit' && currentTab !== 'route'" @click="handleAddClick" class="fab-btn"><i class="fa-solid fa-plus font-bold"></i></button>
 
-    <!-- Modal: 編輯清單項目彈窗 (加入地點/備註欄位) -->
+    <!-- Modal: 編輯清單項目彈窗 -->
     <div v-if="showShoppingModal" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="absolute inset-0" @click="showShoppingModal = false"></div>
         <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10 max-h-[90vh] overflow-y-auto">
