@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v37 即時匯率版)</title>
+    <title>Japan Trip 2026 (v38 終極修復版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -134,7 +134,7 @@
 <!-- 核心 Vue 應用程式區塊 -->
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v37 (即時匯率版)
+        ✅ 系統版本: v38
     </div>
 
     <div class="banner-wrapper"></div>
@@ -153,7 +153,7 @@
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : (syncStatus === 'error' ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100')">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : (syncStatus === 'error' ? 'text-red-500' : 'text-green-600')">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v37 即時對接)') }}
+            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v38 即時對接)') }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
             <i class="fa-solid fa-cloud-arrow-up text-maple-500"></i> 強制推送
@@ -464,7 +464,7 @@
                                     <div class="flex items-start justify-between gap-2 mb-2">
                                         <h3 class="text-lg font-bold text-gray-800 leading-tight">{{ item.name }}</h3>
                                         
-                                        <!-- 🔥 導遊按鈕：不再受 isReorderMode 影響，永遠顯示 🔥 -->
+                                        <!-- 🔥 修復：導遊按鈕永遠顯示，且支援模糊比對 🔥 -->
                                         <button v-if="hasGuide(item.name)" @click.stop="openGuideModal(item.name)" class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-amber-50 text-amber-700 border border-amber-200 shadow-sm hover:bg-amber-100 transition-all active:scale-95">
                                             <i class="fa-solid fa-compass text-amber-500 animate-pulse"></i> 導遊攻略
                                         </button>
@@ -492,6 +492,45 @@
                     <div class="w-16 h-16 bg-maple-50 rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-map-location-dot text-3xl text-maple-300"></i></div>
                     <p class="text-sm font-bold text-gray-600">本日尚無行程</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- 導遊私房筆記彈窗 Modal -->
+        <div v-if="showGuideModal && activeGuide" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div class="absolute inset-0" @click="showGuideModal = false"></div>
+            <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10 max-h-[88vh] overflow-y-auto">
+                <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-3">
+                    <div>
+                        <span class="text-[10px] font-black tracking-wider text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mb-1.5"><i class="fa-solid fa-compass"></i> 導遊私房筆記</span>
+                        <h3 class="text-xl font-black text-gray-800 leading-tight">{{ activeGuide.title }}</h3>
+                    </div>
+                    <button @click="showGuideModal = false" class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 transition-colors flex items-center justify-center shrink-0"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <p class="text-xs font-medium text-gray-600 bg-amber-50/70 p-3 rounded-2xl border border-amber-100 leading-relaxed mb-4">{{ activeGuide.intro }}</p>
+                <div class="space-y-3.5">
+                    <div v-if="activeGuide.mustEat" class="bg-red-50/50 rounded-2xl p-3.5 border border-red-100/70">
+                        <h4 class="text-xs font-black text-red-600 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-utensils"></i> 必吃在地美食</h4>
+                        <ul class="space-y-1.5"><li v-for="eat in activeGuide.mustEat" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-red-400 font-bold">•</span><span>{{ eat }}</span></li></ul>
+                    </div>
+                    <div v-if="activeGuide.mustBuy" class="bg-emerald-50/50 rounded-2xl p-3.5 border border-emerald-100/70">
+                        <h4 class="text-xs font-black text-emerald-700 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-basket-shopping"></i> 必買伴手禮・紀念品</h4>
+                        <ul class="space-y-1.5"><li v-for="buy in activeGuide.mustBuy" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-emerald-500 font-bold">•</span><span>{{ buy }}</span></li></ul>
+                    </div>
+                    <div v-if="activeGuide.mustVisit" class="bg-blue-50/50 rounded-2xl p-3.5 border border-blue-100/70">
+                        <h4 class="text-xs font-black text-blue-600 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-camera"></i> 必逛拍照亮點</h4>
+                        <ul class="space-y-1.5"><li v-for="spot in activeGuide.mustVisit" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-blue-400 font-bold">•</span><span>{{ spot }}</span></li></ul>
+                    </div>
+                    <div v-if="activeGuide.tips" class="bg-gray-50 rounded-xl p-3 border border-gray-200/70 text-[11px] text-gray-500 font-medium flex items-start gap-2"><i class="fa-solid fa-circle-exclamation text-amber-500 text-sm mt-0.5 shrink-0"></i><span class="leading-relaxed">{{ activeGuide.tips }}</span></div>
+                </div>
+                
+                <!-- 外部遊記連結按鈕 -->
+                <div v-if="activeGuide.link" class="mt-5 mb-2">
+                    <a :href="activeGuide.link" target="_blank" class="w-full inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-white bg-[#DE7B54] px-4 py-3.5 rounded-xl shadow-md hover:bg-[#B85530] transition-colors">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> 查看網路詳細圖文遊記
+                    </a>
+                </div>
+
+                <button @click="showGuideModal = false" class="w-full mt-2 py-3.5 rounded-xl font-black text-sm text-[#8A6B52] bg-[#F4EFE6] hover:bg-[#EBE3D5] shadow-sm transition-colors border border-[#D4C4B7]">了解！關閉攻略</button>
             </div>
         </div>
 
@@ -767,7 +806,7 @@
     <!-- 懸浮新增按鈕 -->
     <button v-if="currentTab !== 'info' && currentTab !== 'transit' && currentTab !== 'route'" @click="handleAddClick" class="fab-btn"><i class="fa-solid fa-plus font-bold"></i></button>
 
-    <!-- Modal: 編輯清單項目彈窗 -->
+    <!-- Modal: 編輯清單項目彈窗 (加入地點/備註欄位) -->
     <div v-if="showShoppingModal" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="absolute inset-0" @click="showShoppingModal = false"></div>
         <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10 max-h-[90vh] overflow-y-auto">
@@ -863,20 +902,20 @@
 
     const { createApp, ref, computed, onMounted, watch } = Vue;
 
-    // 🔥 導遊攻略加入外部連結 🔥
+    // 🔥 導遊攻略與外部連結 🔥
     const spotGuides = {
         '飛騨牛SUKIYAKI 中橋 WAKACHIYA': { title: '中橋 WAKACHIYA 飛驒牛專賣', intro: '座落於高山著名地標「中橋」旁的絕佳位置，在充滿江戶風情的老宅內享用頂級 A5 飛驒牛壽喜燒。', mustEat: ['🥩 頂級飛驒牛壽喜燒 (入口即化)', '🍣 飛驒牛炙燒握壽司', '🍶 在地飛驒高山清酒'], mustVisit: ['📸 用餐後漫步旁邊的紅色中橋與宮川河畔'], tips: '午餐時段常客滿，請務必準時抵達！壽喜燒的肉片輕涮幾秒帶點粉紅色最好吃。', link: 'https://www.google.com/search?q=%E4%B8%AD%E6%A9%8B+WAKACHIYA+%E9%A3%9B%E9%A9%8A%E7%89%9B+%E9%81%8A%E8%A8%98' },
         '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。', link: 'https://www.google.com/search?q=%E4%B8%AD%E8%8F%AF%E3%81%9D%E3%81%B0+%E3%81%A4%E3%81%A5%E3%81%BF+%E9%AB%98%E5%B1%B1%E6%8B%89%E9%BA%B5+%E9%81%8A%E8%A8%98' },
         '早餐: かじ橋食堂': { title: '宮川河畔元氣朝食・かじ橋食堂', intro: '清晨 06:00 開門營業的溫馨日式食堂，前往白川鄉前品嚐現煮日式朝食的最佳選擇。', mustEat: ['🍳 日式朝食定食 (烤鮭魚、煎蛋、高山越光米)', '🥩 飛驒牛朴葉味噌定食', '🍜 晨間醬油熱拉麵'], mustBuy: ['🌾 高山小農越光米、朴葉味噌調理包'], mustVisit: ['🪟 靠窗座位可欣賞宮川溪流與老街早起街景'], tips: '營業時間：06:00-14:00。早晨要搭 07:20 巴士去白川鄉，建議 06:00 準時入座。', link: 'https://www.google.com/search?q=%E3%81%8B%E3%81%98%E6%A9%8B%E9%A3%9F%E5%A0%82+%E9%AB%98%E5%B1%B1+%E9%81%8A%E8%A8%98' },
-        '飛驒高山老街+高山陣屋': { title: '飛驒高山老街 & 高山陣屋', intro: '完整保留黑色木造格子窗江戶町家建築，陣屋是全日本唯一現存的江戶時代代官所。', mustEat: ['🥩 坂口屋炙燒飛驒牛握壽司', '🍡 三葉五平餅', '🍦 原田酒造大吟釀霜淇淋'], mustBuy: ['🎎 猿寶寶除厄吉祥物', '🍶 船坂酒造深山菊原酒'], mustVisit: ['📸 宮川中橋：紅色朱橋搭配沿岸楓紅', '🏛️ 高山陣屋：參觀百年前的審判所與枯山水'], tips: '老街多數店鋪在傍晚 17:00 前就會陸續打烊，請趁早逛！', link: 'https://www.google.com/search?q=%E9%AB%98%E5%B1%B1%E8%80%81%E8%A1%97+%E9%AB%98%E5%B1%B1%E9%99%A3%E5%B1%8B+%E9%81%8A%E8%A8%98' },
-        '大正池→河童橋→(梓川左岸)→明神池→(梓川右岸)→河童橋': { title: '神降臨之地・上高地全覽健行', intro: '秋天落葉松金黃與穗高連峰白雪相襯，梓川清澈如玻璃，走在明神池間恍若仙境。', mustEat: ['🥧 五千尺手作卡士達蘋果派', '🍢 河童食堂現烤河童燒', '🥛 安曇野特濃牛奶'], mustBuy: ['🍪 焦糖杏仁脆餅', '🌿 信州現磨山葵醬'], mustVisit: ['📸 大正池枯木群晨霧', '🌉 河童橋經典背景', '⛩️ 明神池'], tips: '全程約需 3.5～4 小時，山區風大，洋蔥式穿法必備！', link: 'https://www.google.com/search?q=%E4%B8%8A%E9%AB%98%E5%9C%B0+%E5%A4%A7%E6%AD%A3%E6%B1%A0+%E6%98%8E%E7%A5%9E%E6%B1%A0+%E6%B2%B3%E7%AB%A5%E6%A9%8B+%E9%81%8A%E8%A8%98' },
-        '白川鄉合掌村 / 城山展望台': { title: '世界遺產・白川鄉合掌造聚落', intro: '童話般厚實茅草薑餅屋頂聚落，秋季四周被金黃稻田與楓林環繞。', mustEat: ['🥩 現烤飛驒牛串燒', '🍵 落人咖啡炭燒紅豆湯', '🍡 結之里五平餅'], mustBuy: ['🍶 白川鄉限定白濁酒', '🏠 迷你手工茅草屋擺飾'], mustVisit: ['📸 城山天守閣展望台', '🏡 和田家參觀內部', '🌉 相逢橋'], tips: '展望台接駁車單程200円，約20分鐘一班。', link: 'https://www.google.com/search?q=%E7%99%BD%E5%B7%9D%E9%84%89%E5%90%88%E6%8E%8C%E6%9D%91+%E5%9F%8E%E5%B1%B1%E5%B1%95%E6%9C%9B%E5%8F%B0+%E9%81%8A%E8%A8%98' },
+        '高山陣屋': { title: '飛驒高山老街 & 高山陣屋', intro: '完整保留黑色木造格子窗江戶町家建築，陣屋是全日本唯一現存的江戶時代代官所。', mustEat: ['🥩 坂口屋炙燒飛驒牛握壽司', '🍡 三葉五平餅', '🍦 原田酒造大吟釀霜淇淋'], mustBuy: ['🎎 猿寶寶除厄吉祥物', '🍶 船坂酒造深山菊原酒'], mustVisit: ['📸 宮川中橋：紅色朱橋搭配沿岸楓紅', '🏛️ 高山陣屋：參觀百年前的審判所與枯山水'], tips: '老街多數店鋪在傍晚 17:00 前就會陸續打烊，請趁早逛！', link: 'https://www.google.com/search?q=%E9%AB%98%E5%B1%B1%E8%80%81%E8%A1%97+%E9%AB%98%E5%B1%B1%E9%99%A3%E5%B1%8B+%E9%81%8A%E8%A8%98' },
+        '大正池': { title: '神降臨之地・上高地全覽健行', intro: '秋天落葉松金黃與穗高連峰白雪相襯，梓川清澈如玻璃，走在明神池間恍若仙境。', mustEat: ['🥧 五千尺手作卡士達蘋果派', '🍢 河童食堂現烤河童燒', '🥛 安曇野特濃牛奶'], mustBuy: ['🍪 焦糖杏仁脆餅', '🌿 信州現磨山葵醬'], mustVisit: ['📸 大正池枯木群晨霧', '🌉 河童橋經典背景', '⛩️ 明神池'], tips: '全程約需 3.5～4 小時，山區風大，洋蔥式穿法必備！', link: 'https://www.google.com/search?q=%E4%B8%8A%E9%AB%98%E5%9C%B0+%E5%A4%A7%E6%AD%A3%E6%B1%A0+%E6%98%8E%E7%A5%9E%E6%B1%A0+%E6%B2%B3%E7%AB%A5%E6%A9%8B+%E9%81%8A%E8%A8%98' },
+        '白川鄉合掌村': { title: '世界遺產・白川鄉合掌造聚落', intro: '童話般厚實茅草薑餅屋頂聚落，秋季四周被金黃稻田與楓林環繞。', mustEat: ['🥩 現烤飛驒牛串燒', '🍵 落人咖啡炭燒紅豆湯', '🍡 結之里五平餅'], mustBuy: ['🍶 白川鄉限定白濁酒', '🏠 迷你手工茅草屋擺飾'], mustVisit: ['📸 城山天守閣展望台', '🏡 和田家參觀內部', '🌉 相逢橋'], tips: '展望台接駁車單程200円，約20分鐘一班。', link: 'https://www.google.com/search?q=%E7%99%BD%E5%B7%9D%E9%84%89%E5%90%88%E6%8E%8C%E6%9D%91+%E5%9F%8E%E5%B1%B1%E5%B1%95%E6%9C%9B%E5%8F%B0+%E9%81%8A%E8%A8%98' },
         '吉卜力公園': { title: '宮崎駿動畫實境・吉卜力公園', intro: '走進愛知愛・地球博公園內的動畫森林，真實還原霍爾移動城堡、大倉庫與青春之丘。', mustEat: ['🥪 貓咪城堡三明治', '🥤 復古牛奶配西伯利亞蛋糕'], mustBuy: ['🧸 冒險飛行團限定金平糖', '📮 專屬郵筒紀念明信片'], mustVisit: ['📸 吉卜力大倉庫', '🌲 青春之丘', '🧹 魔女之谷'], tips: '各區步行需 15-20 分，大倉庫為指定時間入場務必提早排隊！', link: 'https://www.google.com/search?q=%E5%90%89%E5%8D%9C%E5%8A%9B%E5%85%AC%E5%9C%92+%E9%81%8A%E8%A8%98' },
-        '犬山城下町與天守閣': { title: '國寶五城・犬山城與城下町', intro: '日本現存最古老木造天守，城下町則是打卡小吃林立的美食散策街道。', mustEat: ['🥩 牛太郎現炙A5和牛握壽司', '🍢 本町茶寮田樂豆腐拼盤', '🍓 芳川屋草莓霜淇淋聖代', '🥧 COCOTOMO玄米年輪蛋糕'], mustBuy: ['💖 三光稻荷神社愛心繪馬與洗錢招財'], mustVisit: ['🏯 犬山城天守閣迴廊', '💰 三光稻荷神社洗錢儀式', '🏮 昭和橫丁'], tips: '天守閣階梯坡度極陡，建議穿平底鞋；迴廊風大注意帽子。', link: 'https://www.google.com/search?q=%E7%8A%AC%E5%B1%B1%E5%9F%8E+%E5%9F%8E%E4%B8%8B%E7%94%BA+%E9%81%8A%E8%A8%98' },
-        '炭燒鰻魚藤榮 HAERA店': { title: '名古屋極致鰻魚飯・炭燒鰻魚藤栄', intro: '備長炭高溫烤到外酥內嫩的名古屋經典鰻魚三吃，香脆焦香搭配三種經典吃法。', mustEat: ['🍱 經典鰻魚三吃 (原味/佐料/茶泡飯)', '🍢 炭烤鰻魚肝串'], mustBuy: ['🍵 特調高湯茶泡飯包'], mustVisit: ['👀 開放式炭火燒烤台近距離欣賞師傅手藝'], tips: '已有預訂編號:99bc9420，請準時入場以免被取消！', link: 'https://www.google.com/search?q=%E7%82%AD%E7%87%92%E3%81%86%E3%81%AA%E5%AF%8C+%E5%90%8D%E5%8F%A4%E5%B1%8B+%E9%B0%B3%E9%AD%9A%E9%A3%AF+%E9%81%8A%E8%A8%98' },
-        '燒鳥:炭火燒鳥 しげ榮本店': { title: '炭火燒鳥 しげ 榮本店', intro: '純炭火名古屋交趾地雞串燒居酒屋，高溫鎖住肉汁，香氣撲鼻。', mustEat: ['🍗 交趾地雞腿肉串', '🥚 手作雞肉丸子配生蛋黃', '🍺 愛知在地地酒冷酒'], mustBuy: ['🍗 秘製燒鳥醬汁'], mustVisit: ['🏮 熱鬧溫馨的吧台座位'], tips: '預約號碼:99bc9420，炭香濃郁，是小酌首選。', link: 'https://www.google.com/search?q=%E7%82%AD%E7%81%AB%E7%84%BC%E9%B3%A5+%E3%81%97%E3%81%92+%E6%A6%AE%E6%9C%AC%E5%BA%97+%E9%81%8A%E8%A8%98' },
+        '犬山城': { title: '國寶五城・犬山城與城下町', intro: '日本現存最古老木造天守，城下町則是打卡小吃林立的美食散策街道。', mustEat: ['🥩 牛太郎現炙A5和牛握壽司', '🍢 本町茶寮田樂豆腐拼盤', '🍓 芳川屋草莓霜淇淋聖代', '🥧 COCOTOMO玄米年輪蛋糕'], mustBuy: ['💖 三光稻荷神社愛心繪馬與洗錢招財'], mustVisit: ['🏯 犬山城天守閣迴廊', '💰 三光稻荷神社洗錢儀式', '🏮 昭和橫丁'], tips: '天守閣階梯坡度極陡，建議穿平底鞋；迴廊風大注意帽子。', link: 'https://www.google.com/search?q=%E7%8A%AC%E5%B1%B1%E5%9F%8E+%E5%9F%8E%E4%B8%8B%E7%94%BA+%E9%81%8A%E8%A8%98' },
+        '炭燒鰻魚藤榮': { title: '名古屋極致鰻魚飯・炭燒鰻魚藤栄', intro: '備長炭高溫烤到外酥內嫩的名古屋經典鰻魚三吃，香脆焦香搭配三種經典吃法。', mustEat: ['🍱 經典鰻魚三吃 (原味/佐料/茶泡飯)', '🍢 炭烤鰻魚肝串'], mustBuy: ['🍵 特調高湯茶泡飯包'], mustVisit: ['👀 開放式炭火燒烤台近距離欣賞師傅手藝'], tips: '已有預訂編號:99bc9420，請準時入場以免被取消！', link: 'https://www.google.com/search?q=%E7%82%AD%E7%87%92%E3%81%86%E3%81%AA%E5%AF%8C+%E5%90%8D%E5%8F%A4%E5%B1%8B+%E9%B0%B3%E9%AD%9A%E9%A3%AF+%E9%81%8A%E8%A8%98' },
+        'しげ榮本店': { title: '炭火燒鳥 しげ 榮本店', intro: '純炭火名古屋交趾地雞串燒居酒屋，高溫鎖住肉汁，香氣撲鼻。', mustEat: ['🍗 交趾地雞腿肉串', '🥚 手作雞肉丸子配生蛋黃', '🍺 愛知在地地酒冷酒'], mustBuy: ['🍗 秘製燒鳥醬汁'], mustVisit: ['🏮 熱鬧溫馨的吧台座位'], tips: '預約號碼:99bc9420，炭香濃郁，是小酌首選。', link: 'https://www.google.com/search?q=%E7%82%AD%E7%81%AB%E7%84%BC%E9%B3%A5+%E3%81%97%E3%81%92+%E6%A6%AE%E6%9C%AC%E5%BA%97+%E9%81%8A%E8%A8%98' },
         '味の与平': { title: '老街百年酒造料亭・味の与平', intro: '百年船坂酒造直營料亭，在老町家日式庭園中品嚐頂級飛驒牛與現榨清酒。', mustEat: ['🥩 飛驒牛朴葉味噌燒御膳', '🍶 鮮榨深山菊吟釀冷酒'], mustBuy: ['🍶 船坂酒造大吟釀'], mustVisit: ['🌿 欣賞中庭靜謐日式枯山水'], tips: '預約號碼:JZ44GD5SC5，用餐完可至隔壁酒造買酒。', link: 'https://www.google.com/search?q=%E5%91%B3%E3%81%AE%E4%B8%8E%E5%B9%B3+%E8%88%B9%E5%9D%82%E9%85%92%E9%80%A0+%E9%AB%98%E5%B1%B1+%E9%81%8A%E8%A8%98' },
-        '晚餐: 獅子丸拉麵': { title: '名古屋拉麵名作・麵家 獅子丸', intro: '米其林推薦泡沫系雞白湯拉麵，細緻泡沫如法式濃湯般圓潤甘甜。', mustEat: ['🍜 伊勢海老雞白湯拉麵', '🥚 低溫舒肥叉燒'], mustBuy: ['🍜 外帶生麵禮盒'], mustVisit: ['🛋️ 現代簡約木質店面'], tips: '晚餐時段人潮多，排隊時請依店員指示先買餐券！', link: 'https://www.google.com/search?q=%E9%BA%B5%E5%AE%B6+%E7%8D%85%E5%AD%90%E4%B8%B8+%E5%90%8D%E5%8F%A4%E5%B1%8B+%E6%8B%89%E9%BA%B5+%E9%81%8A%E8%A8%98' },
+        '獅子丸拉麵': { title: '名古屋拉麵名作・麵家 獅子丸', intro: '米其林推薦泡沫系雞白湯拉麵，細緻泡沫如法式濃湯般圓潤甘甜。', mustEat: ['🍜 伊勢海老雞白湯拉麵', '🥚 低溫舒肥叉燒'], mustBuy: ['🍜 外帶生麵禮盒'], mustVisit: ['🛋️ 現代簡約木質店面'], tips: '晚餐時段人潮多，排隊時請依店員指示先買餐券！', link: 'https://www.google.com/search?q=%E9%BA%B5%E5%AE%B6+%E7%8D%85%E5%AD%90%E4%B8%B8+%E5%90%8D%E5%8F%A4%E5%B1%8B+%E6%8B%89%E9%BA%B5+%E9%81%8A%E8%A8%98' },
         '名古屋榮商圈': { title: '時尚潮流旗艦・名古屋榮商圈', intro: '名古屋最繁華購物心臟，國際精品旗艦店、PARCO 與高檔甜點聚集。', mustEat: ['🍰 LOUANGE TOKYO Le Chateau法式千層派', '☕ HARBS榮本店水果千層'], mustBuy: ['🌿 FUEGUIA 1833阿根廷手工香水', '🍵 松坂屋地下街福壽園抹茶粉'], mustVisit: ['🗼 MIRAI TOWER 名古屋電視塔夜景', '🛸 Oasis 21 水之宇宙船'], tips: '退稅通常於 19:30 截止，請務必隨身攜帶護照！', link: 'https://www.google.com/search?q=%E5%90%8D%E5%8F%A4%E5%B1%8B+%E6%A6%AE%E5%95%86%E5%9C%88+%E5%BF%85%E8%B2%B7+%E9%81%8A%E8%A8%98' }
     };
 
@@ -951,16 +990,15 @@
     const app = createApp({
         components: { draggable: window.vuedraggable },
         setup() {
-            // 🔥 新增：API 抓取即時匯率功能 🔥
+            // API 抓取即時匯率功能
             const fetchExchangeRate = async () => {
                 try {
                     rateLoading.value = true;
-                    // 使用開源免金鑰的 er-api 抓取日幣對應各國匯率
                     const response = await fetch('https://open.er-api.com/v6/latest/JPY');
                     const data = await response.json();
                     if (data && data.rates && data.rates.TWD) {
                         exchangeRate.value = data.rates.TWD;
-                        updateFromJpy(); // 更新畫面上的換算
+                        updateFromJpy();
                     }
                 } catch (error) {
                     console.error("即時匯率抓取失敗，使用預設值:", error);
@@ -973,7 +1011,6 @@
                 const fallback = document.getElementById('loading-fallback');
                 if(fallback) fallback.style.display = 'none';
 
-                // 呼叫抓取匯率
                 fetchExchangeRate();
 
                 try {
@@ -1002,7 +1039,7 @@
                 });
             });
 
-            const currentTab = ref('info'); // 切換到資訊頁面方便您看匯率
+            const currentTab = ref('itinerary');
             const selectedDateIndex = ref(0);
             const selectedRegionIndex = ref(0);
             const syncStatus = ref('online');
@@ -1012,7 +1049,7 @@
             const listCollapse = ref({ shopping: true, luggage: true, ticket: true });
             const toggleList = (type) => { listCollapse.value[type] = !listCollapse.value[type]; };
 
-            // 模糊比對攻略名稱
+            // 🔥 強化版攻略抓取：使用模糊比對 🔥
             const getGuideKey = (name) => {
                 if (!name) return null;
                 if (spotGuides[name]) return name;
@@ -1038,10 +1075,10 @@
                 if (hotelGuides[name]) { activeHotelGuide.value = hotelGuides[name]; showHotelGuideModal.value = true; }
             };
 
-            const exchangeRate = ref(0.215); // 預設值，會被 fetch 蓋過
+            const exchangeRate = ref(0.215);
             const jpyInput = ref(10000);
             const twdInput = ref(2150);
-            const rateLoading = ref(true); // 初始設定為讀取中
+            const rateLoading = ref(true);
 
             const updateFromJpy = () => { twdInput.value = Math.round(jpyInput.value * exchangeRate.value); };
             const updateFromTwd = () => { jpyInput.value = Math.round(twdInput.value / exchangeRate.value); };
