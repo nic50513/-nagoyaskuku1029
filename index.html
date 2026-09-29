@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v41 終極修復版)</title>
+    <title>Japan Trip 2026 (v42 編輯修復版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -114,7 +114,7 @@
 <body>
 
 <div id="vue-error-logger" style="display:none; position:fixed; top:0; left:0; width:100%; background:rgba(220,38,38,0.95); color:white; z-index:9999; padding:20px; font-size:14px; word-break:break-all; min-height:100vh;">
-    <h3 style="font-size:18px; font-weight:bold; margin-bottom:10px;"><i class="fa-solid fa-triangle-exclamation"></i> 系統啟立異常</h3>
+    <h3 style="font-size:18px; font-weight:bold; margin-bottom:10px;"><i class="fa-solid fa-triangle-exclamation"></i> 系統啟動異常</h3>
     <p>抱歉！網頁載入發生錯誤，請清除瀏覽器快取或使用無痕模式重開：</p>
     <div id="error-text" style="background:rgba(0,0,0,0.5); padding:15px; border-radius:8px; margin-top:10px; font-family:monospace; font-size:12px; white-space:pre-wrap;"></div>
 </div>
@@ -134,7 +134,7 @@
 <!-- 核心 Vue 應用程式區塊 -->
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[999] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v41
+        ✅ 系統版本: v42
     </div>
 
     <div class="banner-wrapper"></div>
@@ -153,7 +153,7 @@
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : (syncStatus === 'error' ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100')">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : (syncStatus === 'error' ? 'text-red-500' : 'text-green-600')">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v41 即時對接)') }}
+            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v42 即時對接)') }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
             <i class="fa-solid fa-cloud-arrow-up text-maple-500"></i> 強制推送
@@ -411,10 +411,11 @@
                 </button>
             </div>
 
-            <!-- 🔥 完全隔離的兩種模式：確保瀏覽模式時絕對不會被觸控套件干擾 🔥 -->
+            <!-- 🔥 完美修復的行程區塊 🔥 -->
             
             <!-- 模式 1: 瀏覽與編輯模式 (關閉排序時) -->
             <div v-if="!isReorderMode" class="space-y-4 pb-8">
+                <!-- 直接使用原本的 v-for 來渲染，不再被 draggable 攔截點擊事件 -->
                 <div v-for="(item, idx) in currentItinerary" :key="item.id" class="relative group">
                     
                     <!-- 交通連接線 -->
@@ -426,8 +427,8 @@
                         </div>
                     </div>
 
-                    <!-- 航班卡片 (可點擊編輯) -->
-                    <div v-if="item.category === 'flight'" @click="editItineraryItem(item, idx)" class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-3xl p-5 pb-8 border border-blue-200 shadow-sm relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform hover:shadow-md">
+                    <!-- 航班卡片 (可點擊整張卡片編輯) -->
+                    <div v-if="item.category === 'flight'" @click="editItineraryItem(item)" class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-3xl p-5 pb-8 border border-blue-200 shadow-sm relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform hover:shadow-md">
                         <div class="flex justify-between items-center mb-4 relative z-10">
                             <span class="text-[10px] font-bold bg-blue-500 text-white px-2 py-1 rounded shadow-sm flex items-center gap-1"><i class="fa-solid fa-plane text-xs"></i> 航班資訊</span>
                             <span class="text-sm font-bold text-blue-800 bg-white/60 px-2 py-0.5 rounded">{{ item.startTime }}</span>
@@ -447,8 +448,8 @@
                         <div class="absolute bottom-0 right-0 bg-blue-500 text-white text-[11px] font-black px-4 py-1.5 rounded-tl-[20px] shadow-sm flex items-center gap-1.5 z-10"><i class="fa-solid fa-pen"></i> 點擊編輯</div>
                     </div>
 
-                    <!-- 一般行程卡片 (可點擊編輯) -->
-                    <div v-else @click="editItineraryItem(item, idx)" class="bg-white rounded-3xl p-5 pb-10 card-shadow relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform hover:border-maple-300 hover:shadow-md">
+                    <!-- 一般行程卡片 (可點擊整張卡片編輯) -->
+                    <div v-else @click="editItineraryItem(item)" class="bg-white rounded-3xl p-5 pb-10 card-shadow relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform hover:border-maple-300 hover:shadow-md">
                         <div class="flex justify-between items-start mb-3 relative z-10">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-xl text-white shadow-sm flex items-center justify-center text-xl" :class="getCategoryColor(item.category)"><i :class="getCategoryIcon(item.category)"></i></div>
@@ -523,7 +524,7 @@
             </div>
         </div>
 
-        <!-- 導遊私房筆記彈窗 Modal (🔥 已尋回外部連結按鈕 🔥) -->
+        <!-- 導遊私房筆記彈窗 Modal (外部連結按鈕) -->
         <div v-if="showGuideModal && activeGuide" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
             <div class="absolute inset-0" @click="showGuideModal = false"></div>
             <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10 max-h-[88vh] overflow-y-auto">
@@ -551,7 +552,7 @@
                     <div v-if="activeGuide.tips" class="bg-gray-50 rounded-xl p-3 border border-gray-200/70 text-[11px] text-gray-500 font-medium flex items-start gap-2"><i class="fa-solid fa-circle-exclamation text-amber-500 text-sm mt-0.5 shrink-0"></i><span class="leading-relaxed">{{ activeGuide.tips }}</span></div>
                 </div>
                 
-                <!-- 🔥 新增的外部遊記連結按鈕 (從 v34 尋回) 🔥 -->
+                <!-- 外部遊記連結按鈕 -->
                 <div v-if="activeGuide.link" class="mt-5 mb-2">
                     <a :href="activeGuide.link" target="_blank" class="w-full inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-white bg-[#DE7B54] px-4 py-3.5 rounded-xl shadow-md hover:bg-[#B85530] transition-colors">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> 查看網路詳細圖文遊記
@@ -930,7 +931,7 @@
 
     const { createApp, ref, computed, onMounted, watch } = Vue;
 
-    // 🔥 導遊攻略與外部連結 (全面補齊) 🔥
+    // 🔥 導遊攻略與外部連結 🔥
     const spotGuides = {
         '飛騨牛SUKIYAKI 中橋 WAKACHIYA': { title: '中橋 WAKACHIYA 飛驒牛專賣', intro: '座落於高山著名地標「中橋」旁的絕佳位置，在充滿江戶風情的老宅內享用頂級 A5 飛驒牛壽喜燒。', mustEat: ['🥩 頂級飛驒牛壽喜燒 (入口即化)', '🍣 飛驒牛炙燒握壽司', '🍶 在地飛驒高山清酒'], mustVisit: ['📸 用餐後漫步旁邊的紅色中橋與宮川河畔'], tips: '午餐時段常客滿，請務必準時抵達！壽喜燒的肉片輕涮幾秒帶點粉紅色最好吃。', link: 'https://www.google.com/search?q=%E4%B8%AD%E6%A9%8B+WAKACHIYA+%E9%A3%9B%E9%A9%8A%E7%89%9B+%E9%81%8A%E8%A8%98' },
         '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。', link: 'https://www.google.com/search?q=%E4%B8%AD%E8%8F%AF%E3%81%9D%E3%81%B0+%E3%81%A4%E3%81%A5%E3%81%BF+%E9%AB%98%E5%B1%B1%E6%8B%89%E9%BA%B5+%E9%81%8A%E8%A8%98' },
@@ -1077,7 +1078,7 @@
             const listCollapse = ref({ shopping: true, luggage: true, ticket: true });
             const toggleList = (type) => { listCollapse.value[type] = !listCollapse.value[type]; };
 
-            // 🔥 強化版攻略抓取：使用模糊比對 🔥
+            // 模糊比對攻略名稱
             const getGuideKey = (name) => {
                 if (!name) return null;
                 if (spotGuides[name]) return name;
@@ -1293,9 +1294,10 @@
             const getWeatherDescription = (c) => ({ sunny: '晴朗', cloudy: '多雲', rain: '降雨' }[c] || '晴朗');
             const getTransportIcon = (t) => ({ walk: 'fa-solid fa-person-walking', bus: 'fa-solid fa-bus', public: 'fa-solid fa-train-subway', flight: 'fa-solid fa-plane', car: 'fa-solid fa-car' }[t] || 'fa-solid fa-person-walking');
 
-            const editItineraryItem = (item, idx) => {
+            // 🔥 終極修復：透過獨一無二的 item.id 絕對尋找，保證不跑位 🔥
+            const editItineraryItem = (item) => {
                 isEditItineraryMode.value = true;
-                editingItineraryIndex.value = idx;
+                editingItineraryIndex.value = currentItinerary.value.findIndex(i => i.id === item.id);
                 newItinerary.value = JSON.parse(JSON.stringify(item));
                 showItineraryModal.value = true;
             };
