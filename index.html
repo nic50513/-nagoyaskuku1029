@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Trip 2026 (v50 自動氣象版)</title>
+    <title>Japan Trip 2026 (v51 終極完美版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
@@ -132,11 +133,12 @@
 
 <div id="app" class="app-container" v-cloak>
     <div class="absolute top-3 right-4 z-[99] bg-black/80 backdrop-blur text-white text-xs px-2.5 py-1 rounded-full shadow-lg font-bold border border-white/20">
-        ✅ 系統版本: v50 (自動氣象)
+        ✅ 系統版本: v51
     </div>
 
     <div class="banner-wrapper"></div>
     
+    <!-- 導覽列 -->
     <div class="nav-tabs-bar">
         <button @click="currentTab = 'itinerary'" title="行程" :class="{'active': currentTab === 'itinerary'}" class="tab-button"><i class="fa-solid fa-map-location-dot"></i></button>
         <button @click="currentTab = 'route'" title="路線圖" :class="{'active': currentTab === 'route'}" class="tab-button"><i class="fa-solid fa-route"></i></button>
@@ -146,10 +148,11 @@
         <button @click="currentTab = 'expenses'" title="花費" :class="{'active': currentTab === 'expenses'}" class="tab-button"><i class="fa-solid fa-coins"></i></button>
     </div>
     
+    <!-- 同步狀態列 -->
     <div class="flex justify-between items-center px-4 py-1.5 border-b" :class="syncStatus === 'syncing' ? 'bg-blue-50 border-blue-100' : (syncStatus === 'error' ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100')">
         <div class="text-[11px] font-bold transition-all" :class="syncStatus === 'syncing' ? 'text-blue-500' : (syncStatus === 'error' ? 'text-red-500' : 'text-green-600')">
             <i class="fa-solid fa-sync" :class="{'animate-spin': syncStatus === 'syncing'}"></i> 
-            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v50 活體系統)') }}
+            {{ syncStatus === 'syncing' ? '雲端同步中...' : (syncStatus === 'error' ? 'Firebase 連線失敗' : '🟢 同步完成 (v51 引擎啟動)') }}
         </div>
         <button @click="manualSync" class="text-[11px] bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm font-bold text-gray-600 hover:bg-gray-100 active:scale-95 transition-all flex items-center gap-1">
             <i class="fa-solid fa-cloud-arrow-up text-maple-500"></i> 強制推送
@@ -184,7 +187,7 @@
                 </svg>
 
                 <div class="relative w-full h-[1060px] z-20 pointer-events-auto">
-                    <button type="button" class="absolute w-[190px] text-left outline-none" style="top: 80px; left: 15px;" @click="openDayHighlight(0)">
+                    <button type="button" class="absolute w-[190px] text-left outline-none" style="top: 80px; left: 15px; z-index: 50;" @click="openDayHighlight(0)">
                         <div class="flex items-center gap-2 mb-1.5 pl-2">
                             <span class="pill-tag transform -rotate-3">Day 1</span>
                             <span class="text-3xl drop-shadow-md">🏯</span>
@@ -196,7 +199,7 @@
                         </div>
                     </button>
 
-                    <button type="button" class="absolute w-[190px] text-left outline-none" style="top: 250px; right: 15px;" @click="openDayHighlight(1)">
+                    <button type="button" class="absolute w-[190px] text-left outline-none" style="top: 250px; right: 15px; z-index: 50;" @click="openDayHighlight(1)">
                         <div class="flex items-center gap-2 mb-1.5 pr-2 justify-end">
                             <span class="text-3xl drop-shadow-md">⛰️</span>
                             <span class="pill-tag transform rotate-3">Day 2</span>
@@ -208,7 +211,7 @@
                         </div>
                     </button>
 
-                    <button type="button" class="absolute w-[190px] text-left outline-none" style="top: 450px; left: 15px;" @click="openDayHighlight(2)">
+                    <button type="button" class="absolute w-[190px] text-left outline-none" style="top: 450px; left: 15px; z-index: 50;" @click="openDayHighlight(2)">
                         <div class="flex items-center gap-2 mb-1.5 pl-2">
                             <span class="pill-tag transform -rotate-3">Day 3</span>
                             <span class="text-3xl drop-shadow-md">🛖</span>
@@ -220,7 +223,7 @@
                         </div>
                     </button>
 
-                    <button type="button" class="absolute w-[190px] text-left outline-none" style="top: 650px; right: 15px;" @click="openDayHighlight(3)">
+                    <button type="button" class="absolute w-[190px] text-left outline-none" style="top: 650px; right: 15px; z-index: 50;" @click="openDayHighlight(3)">
                         <div class="flex items-center gap-2 mb-1.5 pr-2 justify-end">
                             <span class="text-3xl drop-shadow-md">🎡</span>
                             <span class="pill-tag transform rotate-3">Day 4</span>
@@ -232,7 +235,7 @@
                         </div>
                     </button>
 
-                    <button type="button" class="absolute w-[190px] text-left outline-none" style="top: 840px; left: 15px;" @click="openDayHighlight(4)">
+                    <button type="button" class="absolute w-[190px] text-left outline-none" style="top: 840px; left: 15px; z-index: 50;" @click="openDayHighlight(4)">
                         <div class="flex items-center gap-2 mb-1.5 pl-2">
                             <span class="pill-tag transform -rotate-3">Day 5</span>
                             <span class="text-3xl drop-shadow-md">⛩️</span>
@@ -244,7 +247,7 @@
                         </div>
                     </button>
 
-                    <button type="button" class="absolute outline-none" style="top: 990px; right: 40px;" @click="openDayHighlight(5)">
+                    <button type="button" class="absolute outline-none" style="top: 990px; right: 40px; z-index: 50;" @click="openDayHighlight(5)">
                         <div class="text-4xl drop-shadow-md transform -rotate-12 transition-transform">✈️</div>
                         <div class="text-[10px] font-black text-[#A08C82] bg-white/90 px-2.5 py-1 rounded-full mt-1 shadow-sm border border-[#D4C4B7]">Day 6 NGO</div>
                     </button>
@@ -272,9 +275,8 @@
                 </div>
             </div>
 
-            <!-- 🔥 全新自動氣象區塊 🔥 -->
+            <!-- 自動氣象區塊 -->
             <div v-if="currentWeather" class="mt-4 mb-4 bg-white border border-maple-100 rounded-2xl p-4 card-shadow relative overflow-hidden">
-                <!-- 狀態標籤 (動態切換) -->
                 <div class="absolute top-0 right-0 px-2 py-0.5 rounded-bl-lg text-[9px] font-black text-white shadow-sm flex items-center gap-1 z-20" :class="weatherStatus === 'live' ? 'bg-green-500' : 'bg-amber-500'">
                     <i v-if="weatherLoading" class="fa-solid fa-spinner fa-spin"></i>
                     <i v-else-if="weatherStatus === 'live'" class="fa-solid fa-satellite-dish animate-pulse"></i>
@@ -342,7 +344,7 @@
                 </div>
             </div>
 
-            <!-- 防誤觸的行程解鎖系統 -->
+            <!-- 解鎖排序控制列 -->
             <div class="flex justify-between items-center mb-3 mt-5 px-1 border-t border-gray-200 pt-4">
                 <h3 class="font-bold text-gray-700 text-sm flex items-center gap-1.5"><i class="fa-solid fa-list-ul text-maple-500"></i> 行程明細</h3>
                 <button @click="isReorderMode = !isReorderMode" class="text-[11px] px-3 py-1.5 rounded-full font-bold transition-all shadow-sm flex items-center gap-1.5 border" :class="isReorderMode ? 'bg-maple-500 text-white border-maple-600 shadow-md animate-pulse' : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'">
@@ -475,7 +477,7 @@
                     </div>
                 </div>
                 <p class="text-[10px] text-maple-200 mt-4 text-right relative z-10 bg-black/10 px-3 py-1 rounded-full inline-block float-right flex items-center gap-1">
-                    <i class="fa-solid fa-sync text-[10px]" :class="{'animate-spin': rateLoading}"></i> 即時匯率: 1 JPY = {{ exchangeRate.toFixed(4) }} TWD
+                    <i v-if="rateLoading" class="fa-solid fa-sync animate-spin text-[10px]"></i> 即時匯率: 1 JPY = {{ exchangeRate.toFixed(4) }} TWD
                 </p>
                 <div class="clear-both"></div>
             </div>
@@ -490,7 +492,7 @@
                             <div class="text-center"><div class="text-2xl font-black text-gray-800">TPE</div><div class="text-xs font-bold text-gray-500 mt-1">02:55</div></div>
                             <div class="flex flex-col items-center w-full px-2">
                                 <span class="text-[10px] text-gray-400 font-bold bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100 mb-1 z-10">3h 30m</span>
-                                <div class="w-full border-t-2 border-dashed border-blue-200 relative -mt-2"><i class="fa-solid fa-plane absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-400 bg-white px-1 text-lg"></i></div>
+                                <div class="w-full border-t-2 border-dashed border-blue-300 relative -mt-3"><i class="fa-solid fa-plane absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-400 bg-white px-1 text-lg"></i></div>
                             </div>
                             <div class="text-center"><div class="text-2xl font-black text-gray-800">NGO</div><div class="text-xs font-bold text-gray-500 mt-1">06:25</div></div>
                         </div>
@@ -838,6 +840,99 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal: 導遊私房筆記彈窗 -->
+    <div v-if="showGuideModal && activeGuide" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="absolute inset-0" @click="showGuideModal = false"></div>
+        <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10 max-h-[88vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-3">
+                <div>
+                    <span class="text-[10px] font-black tracking-wider text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mb-1.5"><i class="fa-solid fa-compass"></i> 導遊私房筆記</span>
+                    <h3 class="text-xl font-black text-gray-800 leading-tight">{{ activeGuide.title }}</h3>
+                </div>
+                <button @click="showGuideModal = false" class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 transition-colors flex items-center justify-center shrink-0"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-xs font-medium text-gray-600 bg-amber-50/70 p-3 rounded-2xl border border-amber-100 leading-relaxed mb-4">{{ activeGuide.intro }}</p>
+            <div class="space-y-3.5">
+                <div v-if="activeGuide.mustEat" class="bg-red-50/50 rounded-2xl p-3.5 border border-red-100/70">
+                    <h4 class="text-xs font-black text-red-600 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-utensils"></i> 必吃在地美食</h4>
+                    <ul class="space-y-1.5"><li v-for="eat in activeGuide.mustEat" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-red-400 font-bold">•</span><span>{{ eat }}</span></li></ul>
+                </div>
+                <div v-if="activeGuide.mustBuy" class="bg-emerald-50/50 rounded-2xl p-3.5 border border-emerald-100/70">
+                    <h4 class="text-xs font-black text-emerald-700 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-basket-shopping"></i> 必買伴手禮・紀念品</h4>
+                    <ul class="space-y-1.5"><li v-for="buy in activeGuide.mustBuy" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-emerald-500 font-bold">•</span><span>{{ buy }}</span></li></ul>
+                </div>
+                <div v-if="activeGuide.mustVisit" class="bg-blue-50/50 rounded-2xl p-3.5 border border-blue-100/70">
+                    <h4 class="text-xs font-black text-blue-600 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-camera"></i> 必逛拍照亮點</h4>
+                    <ul class="space-y-1.5"><li v-for="spot in activeGuide.mustVisit" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-blue-400 font-bold">•</span><span>{{ spot }}</span></li></ul>
+                </div>
+                <div v-if="activeGuide.tips" class="bg-gray-50 rounded-xl p-3 border border-gray-200/70 text-[11px] text-gray-500 font-medium flex items-start gap-2"><i class="fa-solid fa-circle-exclamation text-amber-500 text-sm mt-0.5 shrink-0"></i><span class="leading-relaxed">{{ activeGuide.tips }}</span></div>
+            </div>
+            <div v-if="activeGuide.link" class="mt-5 mb-2">
+                <a :href="activeGuide.link" target="_blank" class="w-full inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-white bg-[#DE7B54] px-4 py-3.5 rounded-xl shadow-md hover:bg-[#B85530] transition-colors">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> 查看網路詳細圖文遊記
+                </a>
+            </div>
+            <button @click="showGuideModal = false" class="w-full mt-2 py-3.5 rounded-xl font-black text-sm text-[#8A6B52] bg-[#F4EFE6] hover:bg-[#EBE3D5] shadow-sm transition-colors border border-[#D4C4B7]">了解！關閉攻略</button>
+        </div>
+    </div>
+
+    <!-- Modal: 路線圖亮點視窗 -->
+    <div v-if="showHighlightModal && activeHighlight" class="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="absolute inset-0" @click="showHighlightModal = false"></div>
+        <div class="bg-[#FDFCF8] w-full max-w-[400px] rounded-[24px] shadow-2xl relative z-10 flex flex-col max-h-[85vh] overflow-hidden border-[4px] border-white">
+            <div class="bg-[#DE7B54] text-white p-4 flex justify-between items-center shrink-0">
+                <h3 class="font-black text-base drop-shadow-sm">✨ {{ activeHighlight.title.split('・')[0] }} 必逛精選</h3>
+                <button @click="showHighlightModal = false" class="w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-1 space-y-4 bg-[#FAF5F0] no-scrollbar">
+                <div v-for="(spot, idx) in activeHighlight.spots" :key="idx" class="bg-white rounded-2xl p-4 shadow-sm border border-[#F2EBE1] overflow-hidden group hover:shadow-md transition-shadow relative">
+                    <div class="absolute right-3 top-3 text-maple-100 text-4xl opacity-50 z-0"><i class="fa-solid fa-location-dot"></i></div>
+                    <div class="relative z-10">
+                        <h4 class="font-black text-[#5C4A3D] text-[15px] mb-2 border-l-4 border-maple-500 pl-2 leading-tight">{{ spot.title }}</h4>
+                        <p class="text-[12px] text-gray-600 font-medium leading-relaxed mb-3">{{ spot.desc }}</p>
+                        <a :href="spot.link" target="_blank" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-white bg-maple-500 px-3.5 py-2 rounded-xl shadow-sm hover:bg-maple-600 transition-colors">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> 查看詳細遊記/介紹
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 bg-white border-t border-[#F2EBE1] shrink-0">
+                <button @click="showHighlightModal = false" class="w-full py-3 rounded-xl font-black text-sm text-[#8A6B52] bg-[#F4EFE6] hover:bg-[#EBE3D5] shadow-sm transition-colors border border-[#D4C4B7]">收起卡片</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: 飯店設施指南 -->
+    <div v-if="showHotelGuideModal && activeHotelGuide" class="fixed inset-0 bg-black/60 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="absolute inset-0" @click="showHotelGuideModal = false"></div>
+        <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-3xl p-6 shadow-2xl relative z-10 max-h-[88vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-3">
+                <div>
+                    <span class="text-[10px] font-black tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 mb-1.5"><i class="fa-solid fa-hotel"></i> 住宿指南</span>
+                    <h3 class="text-xl font-black text-gray-800 leading-tight">{{ activeHotelGuide.title }}</h3>
+                </div>
+                <button @click="showHotelGuideModal = false" class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 transition-colors flex items-center justify-center shrink-0"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-xs font-medium text-gray-600 bg-indigo-50/70 p-3 rounded-2xl border border-indigo-100 leading-relaxed mb-4">{{ activeHotelGuide.intro }}</p>
+            <div class="space-y-3.5">
+                <div v-if="activeHotelGuide.facilities" class="bg-indigo-50/40 rounded-2xl p-3.5 border border-indigo-100/70">
+                    <h4 class="text-xs font-black text-indigo-700 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-bed"></i> 飯店內部設施</h4>
+                    <ul class="space-y-1.5"><li v-for="fac in activeHotelGuide.facilities" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-indigo-400 font-bold">•</span><span>{{ fac }}</span></li></ul>
+                </div>
+                <div v-if="activeHotelGuide.convenience" class="bg-emerald-50/50 rounded-2xl p-3.5 border border-emerald-100/70">
+                    <h4 class="text-xs font-black text-emerald-700 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-store"></i> 周邊超商與藥妝</h4>
+                    <ul class="space-y-1.5"><li v-for="store in activeHotelGuide.convenience" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-emerald-500 font-bold">•</span><span>{{ store }}</span></li></ul>
+                </div>
+                <div v-if="activeHotelGuide.nightNearby" class="bg-amber-50/50 rounded-2xl p-3.5 border border-amber-100/70">
+                    <h4 class="text-xs font-black text-amber-700 mb-2 flex items-center gap-1.5"><i class="fa-solid fa-moon"></i> 夜晚散策與周邊逛街</h4>
+                    <ul class="space-y-1.5"><li v-for="night in activeHotelGuide.nightNearby" class="text-xs text-gray-700 font-medium leading-relaxed flex items-start gap-1"><span class="text-amber-500 font-bold">•</span><span>{{ night }}</span></li></ul>
+                </div>
+                <div v-if="activeHotelGuide.tips" class="bg-gray-50 rounded-xl p-3 border border-gray-200/70 text-[11px] text-gray-500 font-medium flex items-start gap-2"><i class="fa-solid fa-circle-exclamation text-indigo-500 text-sm mt-0.5 shrink-0"></i><span class="leading-relaxed">{{ activeHotelGuide.tips }}</span></div>
+            </div>
+            <button @click="showHotelGuideModal = false" class="w-full mt-5 py-3.5 rounded-xl font-black text-sm text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition-colors">了解！關閉指南</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -859,97 +954,503 @@
 
     const { createApp, ref, computed, onMounted, watch } = Vue;
 
-    // 🔥 確認加入的天氣時間軸生成函數 🔥
-    const makeHourly = (minT, maxT, cond) => {
-        const curve = [0.2, 0.15, 0.1, 0.05, 0.0, 0.05, 0.15, 0.35, 0.6, 0.8, 0.95, 1.0, 0.95, 0.85, 0.75, 0.6, 0.45, 0.35, 0.3, 0.28, 0.25, 0.22, 0.2];
-        return curve.map((pct, h) => ({ time: `${String(h).padStart(2, '0')}:00`, temp: Math.round(minT + (maxT - minT) * pct), condition: cond, pop: cond === 'rain' ? 80 : 10, isNight: (h < 6 || h >= 18) }));
-    };
+    const app = createApp({
+        components: { draggable: window.vuedraggable },
+        setup() {
+            // 🔥 復活漏掉的資料 🔥
+            const makeHourly = (minT, maxT, cond) => {
+                const curve = [0.2, 0.15, 0.1, 0.05, 0.0, 0.05, 0.15, 0.35, 0.6, 0.8, 0.95, 1.0, 0.95, 0.85, 0.75, 0.6, 0.45, 0.35, 0.3, 0.28, 0.25, 0.22, 0.2];
+                return curve.map((pct, h) => ({ time: `${String(h).padStart(2, '0')}:00`, temp: Math.round(minT + (maxT - minT) * pct), condition: cond, pop: cond === 'rain' ? 80 : 10, isNight: (h < 6 || h >= 18) }));
+            };
 
-    const spotGuides = {
-        '飛騨牛SUKIYAKI 中橋 WAKACHIYA': { title: '中橋 WAKACHIYA 飛驒牛專賣', intro: '座落於高山著名地標「中橋」旁的絕佳位置，在充滿江戶風情的老宅內享用頂級 A5 飛驒牛壽喜燒。', mustEat: ['🥩 頂級飛驒牛壽喜燒 (入口即化)', '🍣 飛驒牛炙燒握壽司', '🍶 在地飛驒高山清酒'], mustVisit: ['📸 用餐後漫步旁邊的紅色中橋與宮川河畔'], tips: '午餐時段常客滿，請務必準時抵達！壽喜燒的肉片輕涮幾秒帶點粉紅色最好吃。', link: 'https://www.google.com/search?q=%E4%B8%AD%E6%A9%8B+WAKACHIYA+%E9%A3%9B%E9%A9%8A%E7%89%9B+%E9%81%8A%E8%A8%98' },
-        '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。', link: 'https://www.google.com/search?q=%E4%B8%AD%E8%8F%AF%E3%81%9D%E3%81%B0+%E3%81%A4%E3%81%A5%E3%81%BF+%E9%AB%98%E5%B1%B1%E6%8B%89%E9%BA%B5+%E9%81%8A%E8%A8%98' },
-        '早餐: かじ橋食堂': { title: '宮川河畔元氣朝食・かじ橋食堂', intro: '清晨 06:00 開門營業的溫馨日式食堂，前往白川鄉前品嚐現煮日式朝食的最佳選擇。', mustEat: ['🍳 日式朝食定食 (烤鮭魚、煎蛋、高山越光米)', '🥩 飛驒牛朴葉味噌定食', '🍜 晨間醬油熱拉麵'], mustBuy: ['🌾 高山小農越光米、朴葉味噌調理包'], mustVisit: ['🪟 靠窗座位可欣賞宮川溪流與老街早起街景'], tips: '營業時間：06:00-14:00。早晨要搭 07:20 巴士去白川鄉，建議 06:00 準時入座。', link: 'https://www.google.com/search?q=%E3%81%8B%E3%81%98%E6%A9%8B%E9%A3%9F%E5%A0%82+%E9%AB%98%E5%B1%B1+%E9%81%8A%E8%A8%98' },
-        '高山陣屋': { title: '飛驒高山老街 & 高山陣屋', intro: '完整保留黑色木造格子窗江戶町家建築，陣屋是全日本唯一現存的江戶時代代官所。', mustEat: ['🥩 坂口屋炙燒飛驒牛握壽司', '🍡 三葉五平餅', '🍦 原田酒造大吟釀霜淇淋'], mustBuy: ['🎎 猿寶寶除厄吉祥物', '🍶 船坂酒造深山菊原酒'], mustVisit: ['📸 宮川中橋：紅色朱橋搭配沿岸楓紅', '🏛️ 高山陣屋：參觀百年前的審判所與枯山水'], tips: '老街多數店鋪在傍晚 17:00 前就會陸續打烊，請趁早逛！', link: 'https://www.google.com/search?q=%E9%AB%98%E5%B1%B1%E8%80%81%E8%A1%97+%E9%AB%98%E5%B1%B1%E9%99%A3%E5%B1%8B+%E9%81%8A%E8%A8%98' },
-        '大正池': { title: '神降臨之地・上高地全覽健行', intro: '秋天落葉松金黃與穗高連峰白雪相襯，梓川清澈如玻璃，走在明神池間恍若仙境。', mustEat: ['🥧 五千尺手作卡士達蘋果派', '🍢 河童食堂現烤河童燒', '🥛 安曇野特濃牛奶'], mustBuy: ['🍪 焦糖杏仁脆餅', '🌿 信州現磨山葵醬'], mustVisit: ['📸 大正池枯木群晨霧', '🌉 河童橋經典背景', '⛩️ 明神池'], tips: '全程約需 3.5～4 小時，山區風大，洋蔥式穿法必備！', link: 'https://www.google.com/search?q=%E4%B8%8A%E9%AB%98%E5%9C%B0+%E5%A4%A7%E6%AD%A3%E6%B1%A0+%E6%98%8E%E7%A5%9E%E6%B1%A0+%E6%B2%B3%E7%AB%A5%E6%A9%8B+%E9%81%8A%E8%A8%98' },
-        '白川鄉合掌村': { title: '世界遺產・白川鄉合掌造聚落', intro: '童話般厚實茅草薑餅屋頂聚落，秋季四周被金黃稻田與楓林環繞。', mustEat: ['🥩 現烤飛驒牛串燒', '🍵 落人咖啡炭燒紅豆湯', '🍡 結之里五平餅'], mustBuy: ['🍶 白川鄉限定白濁酒', '🏠 迷你手工茅草屋擺飾'], mustVisit: ['📸 城山天守閣展望台', '🏡 和田家參觀內部', '🌉 相逢橋'], tips: '展望台接駁車單程200円，約20分鐘一班。', link: 'https://www.google.com/search?q=%E7%99%BD%E5%B7%9D%E9%84%89%E5%90%88%E6%8E%8C%E6%9D%91+%E5%9F%8E%E5%B1%B1%E5%B1%95%E6%9C%9B%E5%8F%B0+%E9%81%8A%E8%A8%98' },
-        '吉卜力公園': { title: '宮崎駿動畫實境・吉卜力公園', intro: '走進愛知愛・地球博公園內的動畫森林，真實還原霍爾移動城堡、大倉庫與青春之丘。', mustEat: ['🥪 貓咪城堡三明治', '🥤 復古牛奶配西伯利亞蛋糕'], mustBuy: ['🧸 冒險飛行團限定金平糖', '📮 專屬郵筒紀念明信片'], mustVisit: ['📸 吉卜力大倉庫', '🌲 青春之丘', '🧹 魔女之谷'], tips: '各區步行需 15-20 分，大倉庫為指定時間入場務必提早排隊！', link: 'https://www.google.com/search?q=%E5%90%89%E5%8D%9C%E5%8A%9B%E5%85%AC%E5%9C%92+%E9%81%8A%E8%A8%98' },
-        '犬山城': { title: '國寶五城・犬山城與城下町', intro: '日本現存最古老木造天守，城下町則是打卡小吃林立的美食散策街道。', mustEat: ['🥩 牛太郎現炙A5和牛握壽司', '🍢 本町茶寮田樂豆腐拼盤', '🍓 芳川屋草莓霜淇淋聖代', '🥧 COCOTOMO玄米年輪蛋糕'], mustBuy: ['💖 三光稻荷神社愛心繪馬與洗錢招財'], mustVisit: ['🏯 犬山城天守閣迴廊', '💰 三光稻荷神社洗錢儀式', '🏮 昭和橫丁'], tips: '天守閣階梯坡度極陡，建議穿平底鞋；迴廊風大注意帽子。', link: 'https://www.google.com/search?q=%E7%8A%AC%E5%B1%B1%E5%9F%8E+%E5%9F%8E%E4%B8%8B%E7%94%BA+%E9%81%8A%E8%A8%98' },
-        '炭燒鰻魚藤榮': { title: '名古屋極致鰻魚飯・炭燒鰻魚藤栄', intro: '備長炭高溫烤到外酥內嫩的名古屋經典鰻魚三吃，香脆焦香搭配三種經典吃法。', mustEat: ['🍱 經典鰻魚三吃 (原味/佐料/茶泡飯)', '🍢 炭烤鰻魚肝串'], mustBuy: ['🍵 特調高湯茶泡飯包'], mustVisit: ['👀 開放式炭火燒烤台近距離欣賞師傅手藝'], tips: '已有預訂編號:99bc9420，請準時入場以免被取消！', link: 'https://www.google.com/search?q=%E7%82%AD%E7%87%92%E3%81%86%E3%81%AA%E5%AF%8C+%E5%90%8D%E5%8F%A4%E5%B1%8B+%E9%B0%B3%E9%AD%9A%E9%A3%AF+%E9%81%8A%E8%A8%98' },
-        'しげ榮本店': { title: '炭火燒鳥 しげ 榮本店', intro: '純炭火名古屋交趾地雞串燒居酒屋，高溫鎖住肉汁，香氣撲鼻。', mustEat: ['🍗 交趾地雞腿肉串', '🥚 手作雞肉丸子配生蛋黃', '🍺 愛知在地地酒冷酒'], mustBuy: ['🍗 秘製燒鳥醬汁'], mustVisit: ['🏮 熱鬧溫馨的吧台座位'], tips: '預約號碼:99bc9420，炭香濃郁，是小酌首選。', link: 'https://www.google.com/search?q=%E7%82%AD%E7%81%AB%E7%84%BC%E9%B3%A5+%E3%81%97%E3%81%92+%E6%A6%AE%E6%9C%AC%E5%BA%97+%E9%81%8A%E8%A8%98' },
-        '味の与平': { title: '老街百年酒造料亭・味の与平', intro: '百年船坂酒造直營料亭，在老町家日式庭園中品嚐頂級飛驒牛與現榨清酒。', mustEat: ['🥩 飛驒牛朴葉味噌燒御膳', '🍶 鮮榨深山菊吟釀冷酒'], mustBuy: ['🍶 船坂酒造大吟釀'], mustVisit: ['🌿 欣賞中庭靜謐日式枯山水'], tips: '預約號碼:JZ44GD5SC5，用餐完可至隔壁酒造買酒。', link: 'https://www.google.com/search?q=%E5%91%B3%E3%81%AE%E4%B8%8E%E5%B9%B3+%E8%88%B9%E5%9D%82%E9%85%92%E9%80%A0+%E9%AB%98%E5%B1%B1+%E9%81%8A%E8%A8%98' },
-        '獅子丸拉麵': { title: '名古屋拉麵名作・麵家 獅子丸', intro: '米其林推薦泡沫系雞白湯拉麵，細緻泡沫如法式濃湯般圓潤甘甜。', mustEat: ['🍜 伊勢海老雞白湯拉麵', '🥚 低溫舒肥叉燒'], mustBuy: ['🍜 外帶生麵禮盒'], mustVisit: ['🛋️ 現代簡約木質店面'], tips: '晚餐時段人潮多，排隊時請依店員指示先買餐券！', link: 'https://www.google.com/search?q=%E9%BA%B5%E5%AE%B6+%E7%8D%85%E5%AD%90%E4%B8%B8+%E5%90%8D%E5%8F%A4%E5%B1%8B+%E6%8B%89%E9%BA%B5+%E9%81%8A%E8%A8%98' },
-        '名古屋榮商圈': { title: '時尚潮流旗艦・名古屋榮商圈', intro: '名古屋最繁華購物心臟，國際精品旗艦店、PARCO 與高檔甜點聚集。', mustEat: ['🍰 LOUANGE TOKYO Le Chateau法式千層派', '☕ HARBS榮本店水果千層'], mustBuy: ['🌿 FUEGUIA 1833阿根廷手工香水', '🍵 松坂屋地下街福壽園抹茶粉'], mustVisit: ['🗼 MIRAI TOWER 名古屋電視塔夜景', '🛸 Oasis 21 水之宇宙船'], tips: '退稅通常於 19:30 截止，請務必隨身攜帶護照！', link: 'https://www.google.com/search?q=%E5%90%8D%E5%8F%A4%E5%B1%8B+%E6%A6%AE%E5%95%86%E5%9C%88+%E5%BF%85%E8%B2%B7+%E9%81%8A%E8%A8%98' }
-    };
+            const spotGuides = {
+                '飛騨牛SUKIYAKI 中橋 WAKACHIYA': { title: '中橋 WAKACHIYA 飛驒牛專賣', intro: '座落於高山著名地標「中橋」旁的絕佳位置，在充滿江戶風情的老宅內享用頂級 A5 飛驒牛壽喜燒。', mustEat: ['🥩 頂級飛驒牛壽喜燒 (入口即化)', '🍣 飛驒牛炙燒握壽司', '🍶 在地飛驒高山清酒'], mustVisit: ['📸 用餐後漫步旁邊的紅色中橋與宮川河畔'], tips: '午餐時段常客滿，請務必準時抵達！壽喜燒的肉片輕涮幾秒帶點粉紅色最好吃。', link: 'https://www.google.com/search?q=%E4%B8%AD%E6%A9%8B+WAKACHIYA+%E9%A3%9B%E9%A9%8A%E7%89%9B+%E9%81%8A%E8%A8%98' },
+                '中華拉麵 つづみ': { title: '高山經典老字號・中華拉麵 つづみ', intro: '創立於昭和年代的超人氣高山拉麵名鋪！高山拉麵最大特色是醬油直接與雞骨蔬菜一同熬煮，清澈卻濃醇。', mustEat: ['🍜 經典高山醬油拉麵', '🥩 自家秘製醬油慢燉叉燒', '🥚 溏心溫泉蛋'], mustBuy: ['🍜 つづみそば生麵禮盒'], mustVisit: ['🏮 充滿昭和時代樸實町家氣氛的店內陳設'], tips: '營業時間：11:30-14:00, 17:00-21:00（每週二公休）。晚餐時間建議 17:30-18:00 前往。', link: 'https://www.google.com/search?q=%E4%B8%AD%E8%8F%AF%E3%81%9D%E3%81%B0+%E3%81%A4%E3%81%A5%E3%81%BF+%E9%AB%98%E5%B1%B1%E6%8B%89%E9%BA%B5+%E9%81%8A%E8%A8%98' },
+                '早餐: かじ橋食堂': { title: '宮川河畔元氣朝食・かじ橋食堂', intro: '清晨 06:00 開門營業的溫馨日式食堂，前往白川鄉前品嚐現煮日式朝食的最佳選擇。', mustEat: ['🍳 日式朝食定食 (烤鮭魚、煎蛋、高山越光米)', '🥩 飛驒牛朴葉味噌定食', '🍜 晨間醬油熱拉麵'], mustBuy: ['🌾 高山小農越光米、朴葉味噌調理包'], mustVisit: ['🪟 靠窗座位可欣賞宮川溪流與老街早起街景'], tips: '營業時間：06:00-14:00。早晨要搭 07:20 巴士去白川鄉，建議 06:00 準時入座。', link: 'https://www.google.com/search?q=%E3%81%8B%E3%81%98%E6%A9%8B%E9%A3%9F%E5%A0%82+%E9%AB%98%E5%B1%B1+%E9%81%8A%E8%A8%98' },
+                '高山陣屋': { title: '飛驒高山老街 & 高山陣屋', intro: '完整保留黑色木造格子窗江戶町家建築，陣屋是全日本唯一現存的江戶時代代官所。', mustEat: ['🥩 坂口屋炙燒飛驒牛握壽司', '🍡 三葉五平餅', '🍦 原田酒造大吟釀霜淇淋'], mustBuy: ['🎎 猿寶寶除厄吉祥物', '🍶 船坂酒造深山菊原酒'], mustVisit: ['📸 宮川中橋：紅色朱橋搭配沿岸楓紅', '🏛️ 高山陣屋：參觀百年前的審判所與枯山水'], tips: '老街多數店鋪在傍晚 17:00 前就會陸續打烊，請趁早逛！', link: 'https://www.google.com/search?q=%E9%AB%98%E5%B1%B1%E8%80%81%E8%A1%97+%E9%AB%98%E5%B1%B1%E9%99%A3%E5%B1%8B+%E9%81%8A%E8%A8%98' },
+                '大正池': { title: '神降臨之地・上高地全覽健行', intro: '秋天落葉松金黃與穗高連峰白雪相襯，梓川清澈如玻璃，走在明神池間恍若仙境。', mustEat: ['🥧 五千尺手作卡士達蘋果派', '🍢 河童食堂現烤河童燒', '🥛 安曇野特濃牛奶'], mustBuy: ['🍪 焦糖杏仁脆餅', '🌿 信州現磨山葵醬'], mustVisit: ['📸 大正池枯木群晨霧', '🌉 河童橋經典背景', '⛩️ 明神池'], tips: '全程約需 3.5～4 小時，山區風大，洋蔥式穿法必備！', link: 'https://www.google.com/search?q=%E4%B8%8A%E9%AB%98%E5%9C%B0+%E5%A4%A7%E6%AD%A3%E6%B1%A0+%E6%98%8E%E7%A5%9E%E6%B1%A0+%E6%B2%B3%E7%AB%A5%E6%A9%8B+%E9%81%8A%E8%A8%98' },
+                '白川鄉合掌村': { title: '世界遺產・白川鄉合掌造聚落', intro: '童話般厚實茅草薑餅屋頂聚落，秋季四周被金黃稻田與楓林環繞。', mustEat: ['🥩 現烤飛驒牛串燒', '🍵 落人咖啡炭燒紅豆湯', '🍡 結之里五平餅'], mustBuy: ['🍶 白川鄉限定白濁酒', '🏠 迷你手工茅草屋擺飾'], mustVisit: ['📸 城山天守閣展望台', '🏡 和田家參觀內部', '🌉 相逢橋'], tips: '展望台接駁車單程200円，約20分鐘一班。', link: 'https://www.google.com/search?q=%E7%99%BD%E5%B7%9D%E9%84%89%E5%90%88%E6%8E%8C%E6%9D%91+%E5%9F%8E%E5%B1%B1%E5%B1%95%E6%9C%9B%E5%8F%B0+%E9%81%8A%E8%A8%98' },
+                '吉卜力公園': { title: '宮崎駿動畫實境・吉卜力公園', intro: '走進愛知愛・地球博公園內的動畫森林，真實還原霍爾移動城堡、大倉庫與青春之丘。', mustEat: ['🥪 貓咪城堡三明治', '🥤 復古牛奶配西伯利亞蛋糕'], mustBuy: ['🧸 冒險飛行團限定金平糖', '📮 專屬郵筒紀念明信片'], mustVisit: ['📸 吉卜力大倉庫', '🌲 青春之丘', '🧹 魔女之谷'], tips: '各區步行需 15-20 分，大倉庫為指定時間入場務必提早排隊！', link: 'https://www.google.com/search?q=%E5%90%89%E5%8D%9C%E5%8A%9B%E5%85%AC%E5%9C%92+%E9%81%8A%E8%A8%98' },
+                '犬山城': { title: '國寶五城・犬山城與城下町', intro: '日本現存最古老木造天守，城下町則是打卡小吃林立的美食散策街道。', mustEat: ['🥩 牛太郎現炙A5和牛握壽司', '🍢 本町茶寮田樂豆腐拼盤', '🍓 芳川屋草莓霜淇淋聖代', '🥧 COCOTOMO玄米年輪蛋糕'], mustBuy: ['💖 三光稻荷神社愛心繪馬與洗錢招財'], mustVisit: ['🏯 犬山城天守閣迴廊', '💰 三光稻荷神社洗錢儀式', '🏮 昭和橫丁'], tips: '天守閣階梯坡度極陡，建議穿平底鞋；迴廊風大注意帽子。', link: 'https://www.google.com/search?q=%E7%8A%AC%E5%B1%B1%E5%9F%8E+%E5%9F%8E%E4%B8%8B%E7%94%BA+%E9%81%8A%E8%A8%98' },
+                '炭燒鰻魚藤榮': { title: '名古屋極致鰻魚飯・炭燒鰻魚藤栄', intro: '備長炭高溫烤到外酥內嫩的名古屋經典鰻魚三吃，香脆焦香搭配三種經典吃法。', mustEat: ['🍱 經典鰻魚三吃 (原味/佐料/茶泡飯)', '🍢 炭烤鰻魚肝串'], mustBuy: ['🍵 特調高湯茶泡飯包'], mustVisit: ['👀 開放式炭火燒烤台近距離欣賞師傅手藝'], tips: '已有預訂編號:99bc9420，請準時入場以免被取消！', link: 'https://www.google.com/search?q=%E7%82%AD%E7%87%92%E3%81%86%E3%81%AA%E5%AF%8C+%E5%90%8D%E5%8F%A4%E5%B1%8B+%E9%B0%B3%E9%AD%9A%E9%A3%AF+%E9%81%8A%E8%A8%98' },
+                'しげ榮本店': { title: '炭火燒鳥 しげ 榮本店', intro: '純炭火名古屋交趾地雞串燒居酒屋，高溫鎖住肉汁，香氣撲鼻。', mustEat: ['🍗 交趾地雞腿肉串', '🥚 手作雞肉丸子配生蛋黃', '🍺 愛知在地地酒冷酒'], mustBuy: ['🍗 秘製燒鳥醬汁'], mustVisit: ['🏮 熱鬧溫馨的吧台座位'], tips: '預約號碼:99bc9420，炭香濃郁，是小酌首選。', link: 'https://www.google.com/search?q=%E7%82%AD%E7%81%AB%E7%84%BC%E9%B3%A5+%E3%81%97%E3%81%92+%E6%A6%AE%E6%9C%AC%E5%BA%97+%E9%81%8A%E8%A8%98' },
+                '味の与平': { title: '老街百年酒造料亭・味の与平', intro: '百年船坂酒造直營料亭，在老町家日式庭園中品嚐頂級飛驒牛與現榨清酒。', mustEat: ['🥩 飛驒牛朴葉味噌燒御膳', '🍶 鮮榨深山菊吟釀冷酒'], mustBuy: ['🍶 船坂酒造大吟釀'], mustVisit: ['🌿 欣賞中庭靜謐日式枯山水'], tips: '預約號碼:JZ44GD5SC5，用餐完可至隔壁酒造買酒。', link: 'https://www.google.com/search?q=%E5%91%B3%E3%81%AE%E4%B8%8E%E5%B9%B3+%E8%88%B9%E5%9D%82%E9%85%92%E9%80%A0+%E9%AB%98%E5%B1%B1+%E9%81%8A%E8%A8%98' },
+                '獅子丸拉麵': { title: '名古屋拉麵名作・麵家 獅子丸', intro: '米其林推薦泡沫系雞白湯拉麵，細緻泡沫如法式濃湯般圓潤甘甜。', mustEat: ['🍜 伊勢海老雞白湯拉麵', '🥚 低溫舒肥叉燒'], mustBuy: ['🍜 外帶生麵禮盒'], mustVisit: ['🛋️ 現代簡約木質店面'], tips: '晚餐時段人潮多，排隊時請依店員指示先買餐券！', link: 'https://www.google.com/search?q=%E9%BA%B5%E5%AE%B6+%E7%8D%85%E5%AD%90%E4%B8%B8+%E5%90%8D%E5%8F%A4%E5%B1%8B+%E6%8B%89%E9%BA%B5+%E9%81%8A%E8%A8%98' },
+                '名古屋榮商圈': { title: '時尚潮流旗艦・名古屋榮商圈', intro: '名古屋最繁華購物心臟，國際精品旗艦店、PARCO 與高檔甜點聚集。', mustEat: ['🍰 LOUANGE TOKYO Le Chateau法式千層派', '☕ HARBS榮本店水果千層'], mustBuy: ['🌿 FUEGUIA 1833阿根廷手工香水', '🍵 松坂屋地下街福壽園抹茶粉'], mustVisit: ['🗼 MIRAI TOWER 名古屋電視塔夜景', '🛸 Oasis 21 水之宇宙船'], tips: '退稅通常於 19:30 截止，請務必隨身攜帶護照！', link: 'https://www.google.com/search?q=%E5%90%8D%E5%8F%A4%E5%B1%8B+%E6%A6%AE%E5%95%86%E5%9C%88+%E5%BF%85%E8%B2%B7+%E9%81%8A%E8%A8%98' }
+            };
 
-    const hotelGuides = {
-        'FAV LUX HIDATAKAYAMA': { title: 'FAV LUX Hida Takayama', intro: '2023 全新開幕高質感設計旅宿，步行至高山車站僅 3 分鐘。', facilities: ['♨️ 舒適大浴場與半露天溫泉設施', '🛋️ 客房備有客廳、微波爐與大冰箱', '🛜 全館高速 Wi-Fi 與自助洗衣'], convenience: ['🏪 7-Eleven 高山花里町店 (步行2分)', '🏪 全家高山站前店 (步行3分)', '🛒 松本清藥妝店 (步行5分)'], nightNearby: ['🏮 高山車站周邊居酒屋街', '🌉 宮川沿岸夜景與中橋點燈'], tips: '飯店距離車站非常近，隔天搭巴士去上高地極為方便！' },
-        'Henn na Hotel Nagoya': { title: 'Henn na Hotel Nagoya (名古屋機器人飯店)', intro: '恐龍機器人接待特色科技旅宿，位於伏見站旁，交通四通八達。', facilities: ['🤖 恐龍全息投影櫃檯接待', '👖 全客房配備 LG Styler 智慧蒸氣電子衣櫥', '🛜 免費 Wi-Fi 與自助行李置物櫃'], convenience: ['🏪 Lawson 伏見站南店 (步行1分)', '🏪 7-Eleven 名古屋伏見站東店 (步行2分)', '🛒 大型生活超市與藥妝店 (步行4分)'], nightNearby: ['🛍 榮商圈綠洲21夜景', '🍜 伏見與榮地下街宵夜美食'], tips: '地鐵伏見站三分鐘即達，去吉卜力與榮商圈免轉車！' }
-    };
+            const hotelGuides = {
+                'FAV LUX HIDATAKAYAMA': { title: 'FAV LUX Hida Takayama', intro: '2023 全新開幕高質感設計旅宿，步行至高山車站僅 3 分鐘。', facilities: ['♨️ 舒適大浴場與半露天溫泉設施', '🛋️ 客房備有客廳、微波爐與大冰箱', '🛜 全館高速 Wi-Fi 與自助洗衣'], convenience: ['🏪 7-Eleven 高山花里町店 (步行2分)', '🏪 全家高山站前店 (步行3分)', '🛒 松本清藥妝店 (步行5分)'], nightNearby: ['🏮 高山車站周邊居酒屋街', '🌉 宮川沿岸夜景與中橋點燈'], tips: '飯店距離車站非常近，隔天搭巴士去上高地極為方便！' },
+                'Henn na Hotel Nagoya': { title: 'Henn na Hotel Nagoya (名古屋機器人飯店)', intro: '恐龍機器人接待特色科技旅宿，位於伏見站旁，交通四通八達。', facilities: ['🤖 恐龍全息投影櫃檯接待', '👖 全客房配備 LG Styler 智慧蒸氣電子衣櫥', '🛜 免費 Wi-Fi 與自助行李置物櫃'], convenience: ['🏪 Lawson 伏見站南店 (步行1分)', '🏪 7-Eleven 名古屋伏見站東店 (步行2分)', '🛒 大型生活超市與藥妝店 (步行4分)'], nightNearby: ['🛍️ 榮商圈綠洲21夜景', '🍜 伏見與榮地下街宵夜美食'], tips: '地鐵伏見站三分鐘即達，去吉卜力與榮商圈免轉車！' }
+            };
 
-    // 🔥 確認加入的核心行程庫 🔥
-    const defaultItineraryData = [
-        [
-            { id: 101, name: '機場報到', category: 'flight', startTime: '24:00', address: '桃園國際機場', note: '', transportType: 'walk', travelTime: '第一航廈' },
-            { id: 102, name: '桃園機場-名古屋機場', category: 'flight', startTime: '02:55-06:25', address: 'TPE - NGO', note: '航班MM724', transportType: 'flight', travelTime: '3h30m' },
-            { id: 103, name: '出關', category: 'other', startTime: '06:25-07:26', address: '名古屋機場', note: '可買早餐或到名古屋後再買', transportType: 'walk', travelTime: '至車站' },
-            { id: 104, name: '名古屋機場-名古屋車站', category: 'transport', startTime: '07:26-08:08', address: '名古屋車站', note: '搭乘USKY', transportType: 'public', travelTime: '轉乘等待' },
-            { id: 105, name: '名古屋車站-高山', category: 'transport', startTime: '08:43-10:58', address: '高山車站', note: 'Klook預約 (共4780)', transportType: 'public', travelTime: '約15分' },
-            { id: 106, name: '飯店放行李', category: 'accommodation', startTime: '10:58-12:00', address: 'FAV LUX HIDATAKAYAMA', note: '寄放行李與整裝出發', transportType: 'walk', travelTime: '約15分' },
-            { id: 107, name: '飛騨牛SUKIYAKI 中橋 WAKACHIYA', category: 'food', startTime: '12:30-14:00', address: '中橋 WAKACHIYA', note: '', hours: '11:00-14:00, 17:00-21:00', transportType: 'walk', travelTime: '至老街' },
-            { id: 108, name: '飛驒高山老街+高山陣屋', category: 'sightseeing', startTime: '14:00-18:00', address: '高山陣屋', note: '', hours: '09:00-17:00', transportType: 'walk', travelTime: '至餐廳' },
-            { id: 109, name: '中華拉麵 つづみ', category: 'food', startTime: '18:00-19:00', address: '中華拉麵 つづみ', note: '', hours: '17:00-21:00 (週二休)', transportType: 'walk', travelTime: '至飯店' },
-            { id: 110, name: '住 FAV LUX HIDATAKAYAMA', category: 'accommodation', startTime: '19:00', address: 'FAV LUX HIDATAKAYAMA', note: '回飯店泡湯休息', transportType: 'walk', travelTime: '' }
-        ],
-        [
-            { id: 201, name: '起床', category: 'other', startTime: '06:00', address: '', note: '', transportType: 'walk', travelTime: '至車站' },
-            { id: 202, name: '高山車站 - 平湯溫泉站', category: 'transport', startTime: '07:00-08:08', address: '平湯溫泉', note: '高山濃飛巴士總站售票處搭乘', transportType: 'bus', travelTime: '轉乘等待' },
-            { id: 203, name: '平湯溫泉 - 大正池', category: 'transport', startTime: '08:30-09:00', address: '大正池', note: '現場買來回票', transportType: 'bus', travelTime: '抵達大正池' },
-            { id: 204, name: '大正池→河童橋→(梓川左岸)→明神池→(梓川右岸)→河童橋', category: 'sightseeing', startTime: '09:00-15:00', address: '上高地', note: '健行。河童橋午餐、蘋果派、河童燒、五千尺布丁', hours: '步道全天開放', transportType: 'walk', travelTime: '依現場車次' },
-            { id: 205, name: '上高地站→平湯溫泉→高山站', category: 'transport', startTime: '15:30-17:31', address: '高山站', note: '15:30至平湯溫泉，轉乘16:30至高山', transportType: 'bus', travelTime: '至餐廳' },
-            { id: 206, name: '味の与平', category: 'food', startTime: '18:30', address: '味の与平', note: '預約號碼:JZ44GD5SC5', hours: '17:00-20:00', transportType: 'walk', travelTime: '回飯店' },
-            { id: 207, name: '住 FAV LUX HIDATAKAYAMA', category: 'accommodation', startTime: '', address: 'FAV LUX HIDATAKAYAMA', note: '', transportType: 'walk', travelTime: '' }
-        ],
-        [
-            { id: 301, name: '起床', category: 'other', startTime: '05:30', address: '', note: '', transportType: 'walk', travelTime: '至餐廳' },
-            { id: 302, name: '早餐: かじ橋食堂', category: 'food', startTime: '06:00-07:00', address: 'かじ橋食堂', note: '06:00開門營業', hours: '06:00-14:00', transportType: 'walk', travelTime: '至車站' },
-            { id: 303, name: '巴士前往白川鄉合掌村', category: 'transport', startTime: '07:20-08:20', address: '白川鄉', note: '提前預約巴士', transportType: 'bus', travelTime: '合掌村' },
-            { id: 304, name: '白川鄉合掌村', category: 'sightseeing', startTime: '08:20-14:30', address: '白川鄉', note: '「城山展望台」俯瞰茅草屋聚落全景', hours: '店家展館約 09:00-17:00', transportType: 'walk', travelTime: '至巴士站' },
-            { id: 305, name: '高速巴士前往名古屋市區', category: 'transport', startTime: '14:30-17:16', address: '名古屋', note: '搭乘高速巴士直達名古屋', transportType: 'bus', travelTime: '飯店' },
-            { id: 306, name: '飯店放行李', category: 'accommodation', startTime: '17:30-18:30', address: 'henn na hotel', note: '', transportType: 'walk', travelTime: '逛街' },
-            { id: 307, name: '炭燒鰻魚藤榮', category: 'food', startTime: '20:00', address: '炭燒鰻魚藤榮', note: '預訂編號:99bc9420。必點炭烤鰻魚三吃。', hours: '17:00-21:00', transportType: 'walk', travelTime: '回飯店' },
-            { id: 308, name: '住 henn na hotel', category: 'accommodation', startTime: '21:00', address: 'henn na hotel', note: '', transportType: 'walk', travelTime: '' }
-        ],
-        [
-            { id: 401, name: '飯店早餐/早午餐', category: 'food', startTime: '08:00', address: '飯店', note: '享用晨間朝食充飽電', hours: '06:30-10:00', transportType: 'walk', travelTime: '至地鐵' },
-            { id: 402, name: '地下鐵東山線到藤が丘轉Linimo', category: 'transport', startTime: '08:30-09:30', address: '愛・地球博記念公園', note: '東山線轉 Linimo 到愛・地球博記念公園站', transportType: 'public', travelTime: '吉卜力' },
-            { id: 403, name: '吉卜力公園', category: 'sightseeing', startTime: '09:30-15:00', address: 'Ghibli Park', note: '大倉庫、魔女之谷、青春之丘漫遊', hours: '09:00-17:00 (週二休)', transportType: 'walk', travelTime: '至車站' },
-            { id: 404, name: '返回名古屋', category: 'transport', startTime: '15:00-16:00', address: '名古屋市區', note: '搭乘 Linimo 轉東山線回市區', transportType: 'public', travelTime: '市區' },
-            { id: 405, name: '名古屋市區逛街', category: 'shopping', startTime: '16:00-20:00', address: '名古屋市區', note: 'PARCO、松坂屋旗艦店', hours: '10:00-20:00', transportType: 'walk', travelTime: '居酒屋' },
-            { id: 406, name: 'しげ榮本店', category: 'food', startTime: '20:00', address: 'しげ榮本店', note: '預約號碼:99bc9420。交趾地雞炭烤', hours: '17:00-24:00', transportType: 'walk', travelTime: '回飯店' },
-            { id: 407, name: '住 henn na hotel', category: 'accommodation', startTime: '22:00', address: 'henn na hotel', note: '', transportType: 'walk', travelTime: '' }
-        ],
-        [
-            { id: 501, name: '飯店早餐', category: 'food', startTime: '07:00', address: '飯店', note: '飯店晨間朝食', hours: '06:30-10:00', transportType: 'walk', travelTime: '至名鐵站' },
-            { id: 502, name: '飯店-名古屋車站', category: 'transport', startTime: '08:30-09:00', address: '名古屋車站', note: '', transportType: 'public', travelTime: '名鐵' },
-            { id: 503, name: '名鐵名古屋站(名鐵犬山線)→犬山站', category: 'transport', startTime: '09:00-09:30', address: '犬山站', note: '車程約30分', transportType: 'public', travelTime: '犬山' },
-            { id: 504, name: '犬山城', category: 'sightseeing', startTime: '09:30-15:00', address: '犬山城', note: '牛太郎握壽司、本町茶寮、三光稻荷神社洗錢', hours: '09:00-17:00', transportType: 'walk', travelTime: '回車站' },
-            { id: 505, name: '返名古屋', category: 'transport', startTime: '15:00-16:00', address: '名古屋市區', note: '', transportType: 'public', travelTime: '至餐廳' },
-            { id: 506, name: '獅子丸拉麵', category: 'food', startTime: '18:00-19:30', address: '獅子丸拉麵', note: '米其林推薦泡沫系雞白湯', hours: '17:30-22:00', transportType: 'walk', travelTime: '至飯店' },
-            { id: 507, name: '住 henn na hotel', category: 'accommodation', startTime: '20:00', address: 'henn na hotel', note: '', transportType: 'walk', travelTime: '' }
-        ],
-        [
-            { id: 601, name: '飯店早餐', category: 'food', startTime: '08:00', address: '飯店', note: '', hours: '06:30-10:00', transportType: 'walk', travelTime: '榮商圈' },
-            { id: 602, name: '名古屋榮商圈', category: 'shopping', startTime: '10:00', address: '榮', note: 'FUEGUIA 1833、LOUANGE TOKYO', hours: '10:00-20:00', transportType: 'walk', travelTime: '機場' },
-            { id: 603, name: '到機場', category: 'transport', startTime: '14:30', address: '名古屋機場 (NGO)', note: '免稅店採買伴手禮', transportType: 'public', travelTime: '飛機' },
-            { id: 604, name: '回台', category: 'flight', startTime: '16:40-19:10', address: 'NGO - TPE', note: '航班CX531', transportType: 'flight', travelTime: '' }
-        ]
-    ];
+            const defaultItineraryData = [
+                [
+                    { id: 101, name: '機場報到', category: 'flight', startTime: '24:00', address: '桃園國際機場', note: '', transportType: 'walk', travelTime: '第一航廈' },
+                    { id: 102, name: '桃園機場-名古屋機場', category: 'flight', startTime: '02:55-06:25', address: 'TPE - NGO', note: '航班MM724', transportType: 'flight', travelTime: '3h30m' },
+                    { id: 103, name: '出關', category: 'other', startTime: '06:25-07:26', address: '名古屋機場', note: '可買早餐或到名古屋後再買', transportType: 'walk', travelTime: '至車站' },
+                    { id: 104, name: '名古屋機場-名古屋車站', category: 'transport', startTime: '07:26-08:08', address: '名古屋車站', note: '搭乘USKY', transportType: 'public', travelTime: '轉乘等待' },
+                    { id: 105, name: '名古屋車站-高山', category: 'transport', startTime: '08:43-10:58', address: '高山車站', note: 'Klook預約 (共4780)', transportType: 'public', travelTime: '約15分' },
+                    { id: 106, name: '飯店放行李', category: 'accommodation', startTime: '10:58-12:00', address: 'FAV LUX HIDATAKAYAMA', note: '寄放行李與整裝出發', transportType: 'walk', travelTime: '約15分' },
+                    { id: 107, name: '飛騨牛SUKIYAKI 中橋 WAKACHIYA', category: 'food', startTime: '12:30-14:00', address: '中橋 WAKACHIYA', note: '', hours: '11:00-14:00, 17:00-21:00', transportType: 'walk', travelTime: '至老街' },
+                    { id: 108, name: '飛驒高山老街+高山陣屋', category: 'sightseeing', startTime: '14:00-18:00', address: '高山陣屋', note: '', hours: '09:00-17:00', transportType: 'walk', travelTime: '至餐廳' },
+                    { id: 109, name: '中華拉麵 つづみ', category: 'food', startTime: '18:00-19:00', address: '中華拉麵 つづみ', note: '', hours: '17:00-21:00 (週二休)', transportType: 'walk', travelTime: '至飯店' },
+                    { id: 110, name: '住 FAV LUX HIDATAKAYAMA', category: 'accommodation', startTime: '19:00', address: 'FAV LUX HIDATAKAYAMA', note: '回飯店泡湯休息', transportType: 'walk', travelTime: '' }
+                ],
+                [
+                    { id: 201, name: '起床', category: 'other', startTime: '06:00', address: '', note: '', transportType: 'walk', travelTime: '至車站' },
+                    { id: 202, name: '高山車站 - 平湯溫泉站', category: 'transport', startTime: '07:00-08:08', address: '平湯溫泉', note: '高山濃飛巴士總站售票處搭乘', transportType: 'bus', travelTime: '轉乘等待' },
+                    { id: 203, name: '平湯溫泉 - 大正池', category: 'transport', startTime: '08:30-09:00', address: '大正池', note: '現場買來回票', transportType: 'bus', travelTime: '抵達大正池' },
+                    { id: 204, name: '大正池→河童橋→(梓川左岸)→明神池→(梓川右岸)→河童橋', category: 'sightseeing', startTime: '09:00-15:00', address: '上高地', note: '健行。河童橋午餐、蘋果派、河童燒、五千尺布丁', hours: '步道全天開放', transportType: 'walk', travelTime: '依現場車次' },
+                    { id: 205, name: '上高地站→平湯溫泉→高山站', category: 'transport', startTime: '15:30-17:31', address: '高山站', note: '15:30至平湯溫泉，轉乘16:30至高山', transportType: 'bus', travelTime: '至餐廳' },
+                    { id: 206, name: '味の与平', category: 'food', startTime: '18:30', address: '味の与平', note: '預約號碼:JZ44GD5SC5', hours: '17:00-20:00', transportType: 'walk', travelTime: '回飯店' },
+                    { id: 207, name: '住 FAV LUX HIDATAKAYAMA', category: 'accommodation', startTime: '', address: 'FAV LUX HIDATAKAYAMA', note: '', transportType: 'walk', travelTime: '' }
+                ],
+                [
+                    { id: 301, name: '起床', category: 'other', startTime: '05:30', address: '', note: '', transportType: 'walk', travelTime: '至餐廳' },
+                    { id: 302, name: '早餐: かじ橋食堂', category: 'food', startTime: '06:00-07:00', address: 'かじ橋食堂', note: '06:00開門營業', hours: '06:00-14:00', transportType: 'walk', travelTime: '至車站' },
+                    { id: 303, name: '巴士前往白川鄉合掌村', category: 'transport', startTime: '07:20-08:20', address: '白川鄉', note: '提前預約巴士', transportType: 'bus', travelTime: '合掌村' },
+                    { id: 304, name: '白川鄉合掌村', category: 'sightseeing', startTime: '08:20-14:30', address: '白川鄉', note: '「城山展望台」俯瞰茅草屋聚落全景', hours: '店家展館約 09:00-17:00', transportType: 'walk', travelTime: '至巴士站' },
+                    { id: 305, name: '高速巴士前往名古屋市區', category: 'transport', startTime: '14:30-17:16', address: '名古屋', note: '搭乘高速巴士直達名古屋', transportType: 'bus', travelTime: '飯店' },
+                    { id: 306, name: '飯店放行李', category: 'accommodation', startTime: '17:30-18:30', address: 'henn na hotel', note: '', transportType: 'walk', travelTime: '逛街' },
+                    { id: 307, name: '炭燒鰻魚藤榮', category: 'food', startTime: '20:00', address: '炭燒鰻魚藤榮', note: '預訂編號:99bc9420。必點炭烤鰻魚三吃。', hours: '17:00-21:00', transportType: 'walk', travelTime: '回飯店' },
+                    { id: 308, name: '住 henn na hotel', category: 'accommodation', startTime: '21:00', address: 'henn na hotel', note: '', transportType: 'walk', travelTime: '' }
+                ],
+                [
+                    { id: 401, name: '飯店早餐/早午餐', category: 'food', startTime: '08:00', address: '飯店', note: '享用晨間朝食充飽電', hours: '06:30-10:00', transportType: 'walk', travelTime: '至地鐵' },
+                    { id: 402, name: '地下鐵東山線到藤が丘轉Linimo', category: 'transport', startTime: '08:30-09:30', address: '愛・地球博記念公園', note: '東山線轉 Linimo 到愛・地球博記念公園站', transportType: 'public', travelTime: '吉卜力' },
+                    { id: 403, name: '吉卜力公園', category: 'sightseeing', startTime: '09:30-15:00', address: 'Ghibli Park', note: '大倉庫、魔女之谷、青春之丘漫遊', hours: '09:00-17:00 (週二休)', transportType: 'walk', travelTime: '至車站' },
+                    { id: 404, name: '返回名古屋', category: 'transport', startTime: '15:00-16:00', address: '名古屋市區', note: '搭乘 Linimo 轉東山線回市區', transportType: 'public', travelTime: '市區' },
+                    { id: 405, name: '名古屋市區逛街', category: 'shopping', startTime: '16:00-20:00', address: '名古屋市區', note: 'PARCO、松坂屋旗艦店', hours: '10:00-20:00', transportType: 'walk', travelTime: '居酒屋' },
+                    { id: 406, name: 'しげ榮本店', category: 'food', startTime: '20:00', address: 'しげ榮本店', note: '預約號碼:99bc9420。交趾地雞炭烤', hours: '17:00-24:00', transportType: 'walk', travelTime: '回飯店' },
+                    { id: 407, name: '住 henn na hotel', category: 'accommodation', startTime: '22:00', address: 'henn na hotel', note: '', transportType: 'walk', travelTime: '' }
+                ],
+                [
+                    { id: 501, name: '飯店早餐', category: 'food', startTime: '07:00', address: '飯店', note: '飯店晨間朝食', hours: '06:30-10:00', transportType: 'walk', travelTime: '至名鐵站' },
+                    { id: 502, name: '飯店-名古屋車站', category: 'transport', startTime: '08:30-09:00', address: '名古屋車站', note: '', transportType: 'public', travelTime: '名鐵' },
+                    { id: 503, name: '名鐵名古屋站(名鐵犬山線)→犬山站', category: 'transport', startTime: '09:00-09:30', address: '犬山站', note: '車程約30分', transportType: 'public', travelTime: '犬山' },
+                    { id: 504, name: '犬山城', category: 'sightseeing', startTime: '09:30-15:00', address: '犬山城', note: '牛太郎握壽司、本町茶寮、三光稻荷神社洗錢', hours: '09:00-17:00', transportType: 'walk', travelTime: '回車站' },
+                    { id: 505, name: '返名古屋', category: 'transport', startTime: '15:00-16:00', address: '名古屋市區', note: '', transportType: 'public', travelTime: '至餐廳' },
+                    { id: 506, name: '獅子丸拉麵', category: 'food', startTime: '18:00-19:30', address: '獅子丸拉麵', note: '米其林推薦泡沫系雞白湯', hours: '17:30-22:00', transportType: 'walk', travelTime: '至飯店' },
+                    { id: 507, name: '住 henn na hotel', category: 'accommodation', startTime: '20:00', address: 'henn na hotel', note: '', transportType: 'walk', travelTime: '' }
+                ],
+                [
+                    { id: 601, name: '飯店早餐', category: 'food', startTime: '08:00', address: '飯店', note: '', hours: '06:30-10:00', transportType: 'walk', travelTime: '榮商圈' },
+                    { id: 602, name: '名古屋榮商圈', category: 'shopping', startTime: '10:00', address: '榮', note: 'FUEGUIA 1833、LOUANGE TOKYO', hours: '10:00-20:00', transportType: 'walk', travelTime: '機場' },
+                    { id: 603, name: '到機場', category: 'transport', startTime: '14:30', address: '名古屋機場 (NGO)', note: '免稅店採買伴手禮', transportType: 'public', travelTime: '飛機' },
+                    { id: 604, name: '回台', category: 'flight', startTime: '16:40-19:10', address: 'NGO - TPE', note: '航班CX531', transportType: 'flight', travelTime: '' }
+                ]
+            ];
 
-    app.config.errorHandler = (err, vm, info) => {
-        document.getElementById('vue-error-logger').style.display = 'block';
-        document.getElementById('error-text').innerText += '[Vue Error] ' + err.message + '\nInfo: ' + info + '\n\n';
-        console.error(err);
-    };
+            const fetchExchangeRate = async () => {
+                try {
+                    rateLoading.value = true;
+                    const response = await fetch('https://open.er-api.com/v6/latest/JPY');
+                    const data = await response.json();
+                    if (data && data.rates && data.rates.TWD) {
+                        exchangeRate.value = data.rates.TWD;
+                        updateFromJpy();
+                    }
+                } catch (error) {
+                    console.error("即時匯率抓取失敗，使用預設值:", error);
+                } finally {
+                    rateLoading.value = false;
+                }
+            };
+
+            onMounted(() => {
+                const fallback = document.getElementById('loading-fallback');
+                if(fallback) fallback.style.display = 'none';
+
+                fetchExchangeRate();
+
+                try {
+                    const local = localStorage.getItem('japan_trip_local_v2026');
+                    if (local) {
+                        const parsed = JSON.parse(local);
+                        if (parsed.itinerary && Array.isArray(parsed.itinerary)) itineraryData.value = parsed.itinerary;
+                        if (parsed.shopping && Array.isArray(parsed.shopping)) shoppingList.value = parsed.shopping;
+                        if (parsed.expenses && Array.isArray(parsed.expenses)) expenses.value = parsed.expenses;
+                    }
+                } catch(e) {}
+
+                tripRef.on('value', (snapshot) => {
+                    syncStatus.value = 'syncing';
+                    const data = snapshot.val();
+                    if (data) {
+                        if (data.itinerary) itineraryData.value = data.itinerary;
+                        if (data.shopping) shoppingList.value = data.shopping;
+                        if (data.expenses) expenses.value = data.expenses;
+                        saveLocal();
+                    }
+                    setTimeout(() => { syncStatus.value = 'online'; }, 500);
+                }, (error) => {
+                    syncStatus.value = 'error';
+                    console.error("Firebase Sync Error:", error);
+                });
+            });
+
+            const currentTab = ref('itinerary');
+            const selectedDateIndex = ref(0);
+            const selectedRegionIndex = ref(0);
+            const syncStatus = ref('online');
+
+            const isReorderMode = ref(false);
+
+            const listCollapse = ref({ shopping: true, luggage: true, ticket: true });
+            const toggleList = (type) => { listCollapse.value[type] = !listCollapse.value[type]; };
+
+            const getGuideKey = (name) => {
+                if (!name) return null;
+                if (spotGuides[name]) return name;
+                const keys = Object.keys(spotGuides);
+                return keys.find(k => name.includes(k) || k.includes(name)) || null;
+            };
+
+            const showGuideModal = ref(false);
+            const activeGuide = ref(null);
+            
+            const hasGuide = (name) => !!getGuideKey(name);
+            const openGuideModal = (name) => {
+                const key = getGuideKey(name);
+                if (key) { 
+                    activeGuide.value = spotGuides[key]; 
+                    showGuideModal.value = true; 
+                }
+            };
+
+            const showHotelGuideModal = ref(false);
+            const activeHotelGuide = ref(null);
+            const openHotelGuide = (name) => {
+                if (!name) return;
+                const keys = Object.keys(hotelGuides);
+                const matchedKey = keys.find(k => name.includes(k) || k.includes(name));
+                if (matchedKey) {
+                    activeHotelGuide.value = hotelGuides[matchedKey];
+                    showHotelGuideModal.value = true;
+                }
+            };
+
+            const exchangeRate = ref(0.215);
+            const jpyInput = ref(10000);
+            const twdInput = ref(2150);
+            const rateLoading = ref(true);
+
+            const updateFromJpy = () => { twdInput.value = Math.round(jpyInput.value * exchangeRate.value); };
+            const updateFromTwd = () => { jpyInput.value = Math.round(twdInput.value / exchangeRate.value); };
+
+            const dates = ref([
+                { date: '10/29', weekday: 'Thu' }, { date: '10/30', weekday: 'Fri' },
+                { date: '10/31', weekday: 'Sat' }, { date: '11/01', weekday: 'Sun' },
+                { date: '11/02', weekday: 'Mon' }, { date: '11/03', weekday: 'Tue' }
+            ]);
+
+            const weatherRegionsData = ref([
+                [ { region: '高山', condition: 'sunny', temp: '16/7', feel: '14', pop: 10, hourly: makeHourly(7, 16, 'sunny') }, { region: '名古屋', condition: 'sunny', temp: '19/11', feel: '18', pop: 10, hourly: makeHourly(11, 19, 'sunny') } ],
+                [ { region: '上高地', condition: 'cloudy', temp: '12/3', feel: '9', pop: 30, hourly: makeHourly(3, 12, 'cloudy') }, { region: '高山', condition: 'sunny', temp: '15/6', feel: '13', pop: 10, hourly: makeHourly(6, 15, 'sunny') } ],
+                [ { region: '白川鄉', condition: 'sunny', temp: '14/5', feel: '12', pop: 10, hourly: makeHourly(5, 14, 'sunny') }, { region: '名古屋', condition: 'sunny', temp: '19/10', feel: '18', pop: 10, hourly: makeHourly(10, 19, 'sunny') } ],
+                [ { region: '吉卜力公園', condition: 'sunny', temp: '18/10', feel: '17', pop: 10, hourly: makeHourly(10, 18, 'sunny') }, { region: '名古屋', condition: 'sunny', temp: '19/11', feel: '18', pop: 10, hourly: makeHourly(11, 19, 'sunny') } ],
+                [ { region: '犬山', condition: 'cloudy', temp: '17/9', feel: '15', pop: 30, hourly: makeHourly(9, 17, 'cloudy') }, { region: '名古屋', condition: 'cloudy', temp: '18/10', feel: '16', pop: 30, hourly: makeHourly(10, 18, 'cloudy') } ],
+                [ { region: '名古屋', condition: 'rain', temp: '16/10', feel: '14', pop: 80, hourly: makeHourly(10, 16, 'rain') } ]
+            ]);
+
+            watch(selectedDateIndex, () => { selectedRegionIndex.value = 0; });
+            const currentDayRegions = computed(() => weatherRegionsData.value[selectedDateIndex.value] || []);
+            const currentWeather = computed(() => currentDayRegions.value[selectedRegionIndex.value] || currentDayRegions.value[0]);
+
+            const dailyOverviews = ref([
+                { 
+                    title: '高山老街・極致飛驒牛', 
+                    desc: '抵達日本後直奔飛驒小京都「高山」，享用入口即化的飛驒牛壽喜燒與三町通老街散策。', 
+                    highlights: ['飛驒牛', '高山老街', '高山陣屋'],
+                    spots: [
+                        { title: '高山老街 (三町通)', desc: '江戶時代完整町家建築，兩側林立百年釀酒廠與飛驒牛小吃。', link: 'https://www.google.com/search?q=%E9%AB%98%E5%B1%B1%E8%80%81%E8%A1%97+%E9%81%8A%E8%A8%98' },
+                        { title: '飛驒牛握壽司', desc: '老街必吃美食，炙燒A5飛驒牛放上仙貝托盤，油花入口即化。', link: 'https://www.google.com/search?q=%E9%AB%98%E5%B1%B1+%E9%A3%9B%E9%A9%8A%E7%89%9B%E6%8F%A1%E5%A3%BD%E5%8F%B8+%E9%81%8A%E8%A8%98' },
+                        { title: '高山陣屋', desc: '日本唯一現存的江戶時代代官所，可參觀審判所與日式枯山水。', link: 'https://www.google.com/search?q=%E9%AB%98%E5%B1%B1%E9%99%A3%E5%B1%8B+%E9%81%8A%E8%A8%98' }
+                    ]
+                },
+                { 
+                    title: '神之故鄉・上高地金秋健行', 
+                    desc: '全日沉浸在阿爾卑斯仙境「上高地」，欣賞梓川與明神池的絕美神聖秋景。', 
+                    highlights: ['上高地', '梓川', '河童橋'],
+                    spots: [
+                        { title: '河童橋', desc: '上高地的象徵，站在橋上可遠眺壯麗的穗高連峰與清澈見底的梓川。', link: 'https://www.google.com/search?q=%E4%B8%8A%E9%AB%98%E5%9C%B0+%E6%B2%B3%E7%AB%A5%E6%A9%8B+%E9%81%8A%E8%A8%98' },
+                        { title: '明神池', desc: '被針葉林環繞的神聖池水，秋季時水面倒映著金黃色的絕美景色。', link: 'https://www.google.com/search?q=%E4%B8%8A%E9%AB%98%E5%9C%B0+%E6%98%8E%E7%A5%9E%E6%B1%A0+%E9%81%8A%E8%A8%98' }
+                    ]
+                },
+                { 
+                    title: '童話合掌村', 
+                    desc: '專注遊覽世界遺產「白川鄉合掌村」，彷彿走入與世隔絕的童話世界。', 
+                    highlights: ['合掌造聚落', '城山展望台', '和田家'],
+                    spots: [
+                        { title: '城山天守閣展望台', desc: '絕佳拍照點！從高處俯瞰如童話般的合掌造聚落全景，秋冬絕美。', link: 'https://www.google.com/search?q=%E7%99%BD%E5%B7%9D%E9%84%89+%E5%9F%8E%E5%B1%B1%E5%B1%95%E6%9C%9B%E5%8F%B0+%E9%81%8A%E8%A8%98' },
+                        { title: '和田家', desc: '村內規模最大的合掌造建築，可入內參觀傳統生活格局與養蠶器具。', link: 'https://www.google.com/search?q=%E7%99%BD%E5%B7%9D%E9%84%89+%E5%92%8C%E7%94%B0%E5%AE%B6+%E9%81%8A%E8%A8%98' },
+                        { title: '落人咖啡', desc: '隱身在百年合掌造中的超人氣咖啡店，必喝炭火熬煮的紅豆湯。', link: 'https://www.google.com/search?q=%E7%99%BD%E5%B7%9D%E9%84%89+%E8%90%BD%E4%BA%BA%E5%92%96%E5%95%A1+%E9%81%8A%E8%A8%98' }
+                    ]
+                },
+                { 
+                    title: '宮崎駿實境・吉卜力公園', 
+                    desc: '全日朝聖愛知「吉卜力公園」，走進動畫森林，尋找龍貓與霍爾的蹤跡。', 
+                    highlights: ['吉卜力大倉庫', '魔女之谷', '青春之丘'],
+                    spots: [
+                        { title: '吉卜力大倉庫', desc: '充滿《神隱少女》、《天空之城》等經典場景的室內奇幻空間。', link: 'https://www.google.com/search?q=%E5%90%89%E5%8D%9C%E5%8A%9B%E5%85%AC%E5%9C%92+%E5%A4%A7%E5%80%89%E5%BA%AB+%E9%81%8A%E8%A8%98' },
+                        { title: '魔女之谷', desc: '完美還原《霍爾的移動城堡》與《魔女宅急便》的歐洲風情小鎮。', link: 'https://www.google.com/search?q=%E5%90%89%E5%8D%9C%E5%8A%9B%E5%85%AC%E5%9C%92+%E9%AD%94%E5%A5%B3%E4%B9%8B%E8%B0%B7+%E9%81%8A%E8%A8%98' },
+                        { title: '青春之丘', desc: '重現《心之谷》的地球屋，還能買到專屬的紀念明信片與郵票。', link: 'https://www.google.com/search?q=%E5%90%89%E5%8D%9C%E5%8A%9B%E5%85%AC%E5%9C%92+%E9%9D%92%E6%98%A5%E4%B9%8B%E4%B8%98+%E9%81%8A%E8%A8%98' }
+                    ]
+                },
+                { 
+                    title: '國寶犬山城・城下町結緣', 
+                    desc: '登頂國寶犬山城360度迴廊，體驗三光稻荷洗錢儀式與超人氣城下町小吃。', 
+                    highlights: ['國寶犬山城', '洗錢神社', '獅子丸拉麵'],
+                    spots: [
+                        { title: '國寶 犬山城', desc: '日本現存最古老木造天守閣，登頂可360度俯瞰木曾川與城下町。', link: 'https://www.google.com/search?q=%E7%8A%AC%E5%B1%B1%E5%9F%8E+%E9%81%8A%E8%A8%98' },
+                        { title: '三光稻荷神社', desc: '超人氣結緣與洗錢聖地，粉色愛心繪馬與加倍奉還洗錢池必訪。', link: 'https://www.google.com/search?q=%E4%B8%89%E5%85%89%E7%A8%BB%E8%8D%B7%E7%A5%9E%E7%A4%BE+%E6%B4%97%E9%8C%A2+%E9%81%8A%E8%A8%98' }
+                    ]
+                },
+                { 
+                    title: '榮商圈精品・滿載回台', 
+                    desc: '榮商圈朝聖精品小眾香氛與法式甜點，帶著滿滿的戰利品與回憶前往機場。', 
+                    highlights: ['榮商圈', '法式甜點', '中部國際機場'],
+                    spots: [
+                        { title: '綠洲21 (Oasis 21)', desc: '位於榮商圈的宇宙船造型建築，周邊集結各大精品百貨與甜點。', link: 'https://www.google.com/search?q=%E5%90%8D%E5%8F%A4%E5%B1%8B+%E7%B6%A0%E6%B4%B221+%E9%81%8A%E8%A8%98' },
+                        { title: '中部電視塔', desc: '名古屋市區最美地標，夜晚點燈後漫步於下方公園非常浪漫。', link: 'https://www.google.com/search?q=%E5%90%8D%E5%8F%A4%E5%B1%8B%E9%9B%BB%E8%A6%96%E5%A1%94+%E9%81%8A%E8%A8%98' }
+                    ]
+                }
+            ]);
+            const currentOverview = computed(() => dailyOverviews.value[selectedDateIndex.value]);
+
+            const showHighlightModal = ref(false);
+            const activeHighlight = ref(null);
+            const openDayHighlight = (index) => {
+                activeHighlight.value = dailyOverviews.value[index];
+                showHighlightModal.value = true;
+            };
+
+            const itineraryData = ref(JSON.parse(JSON.stringify(defaultItineraryData)));
+            
+            const shoppingList = ref([
+                { id: 1, name: 'COCOTOMO FARM 玄米年輪蛋糕', checked: false, category: 'shopping', location: '犬山城下町' },
+                { id: 2, name: '護照 / 日幣現鈔', checked: false, category: 'luggage', location: '隨身包包' },
+                { id: 3, name: '昇龍道巴士券', checked: false, category: 'ticket', location: '手機 QR Code' }
+            ]);
+
+            const categorizedLists = computed(() => {
+                return {
+                    shopping: shoppingList.value.filter(i => (i.category || 'shopping') === 'shopping'),
+                    luggage: shoppingList.value.filter(i => i.category === 'luggage'),
+                    ticket: shoppingList.value.filter(i => i.category === 'ticket')
+                };
+            });
+
+            const expenses = ref([
+                { name: 'Klook 高山車票', amount: 4780, category: 'transport', date: '2026-10-29', payment: 'card', payer: '甯', currency: 'TWD' }
+            ]);
+
+            const showItineraryModal = ref(false);
+            const isEditItineraryMode = ref(false);
+            const editingItineraryIndex = ref(-1);
+            const newItinerary = ref({ id: null, name: '', startTime: '', travelTime: '', note: '', category: 'sightseeing' });
+
+            const showShoppingModal = ref(false);
+            const isEditShoppingMode = ref(false);
+            const editingShoppingItemRef = ref(null);
+            const newShoppingItem = ref({ id: null, name: '', image: null, checked: false, category: 'shopping', location: '' });
+
+            const showExpenseModal = ref(false);
+            const isEditExpenseMode = ref(false);
+            const editingExpenseIndex = ref(-1);
+            const newExpense = ref({ name: '', amount: null, payer: '甯', currency: 'JPY', date: '2026-10-29', payment: 'cash', category: 'food' });
+
+            const saveLocal = () => {
+                try {
+                    localStorage.setItem('japan_trip_local_v2026', JSON.stringify({
+                        itinerary: itineraryData.value, shopping: shoppingList.value, expenses: expenses.value
+                    }));
+                } catch(e) {}
+            };
+
+            const triggerSync = () => {
+                syncStatus.value = 'syncing';
+                saveLocal();
+                tripRef.set({
+                    itinerary: itineraryData.value,
+                    shopping: shoppingList.value,
+                    expenses: expenses.value,
+                    last_update: Date.now()
+                }).then(() => {
+                    syncStatus.value = 'online';
+                }).catch(() => {
+                    syncStatus.value = 'error';
+                });
+            };
+
+            const manualSync = () => {
+                triggerSync(); 
+            };
+
+            const currentItinerary = computed({
+                get: () => itineraryData.value[selectedDateIndex.value] || [],
+                set: (val) => { itineraryData.value[selectedDateIndex.value] = val; }
+            });
+
+            const uniquePayers = computed(() => {
+                const payers = new Set(expenses.value.map(e => e.payer).filter(Boolean));
+                return ['All', ...Array.from(payers)];
+            });
+            const expenseFilterPayer = ref('All');
+            const filteredExpenses = computed(() => {
+                if (expenseFilterPayer.value === 'All') return expenses.value;
+                return expenses.value.filter(e => e.payer === expenseFilterPayer.value);
+            });
+            
+            const filteredExpensesJPY = computed(() => filteredExpenses.value.filter(e => e.currency === 'JPY').reduce((sum, e) => sum + Number(e.amount || 0), 0));
+            const filteredExpensesTWD = computed(() => filteredExpenses.value.filter(e => e.currency === 'TWD').reduce((sum, e) => sum + Number(e.amount || 0), 0));
+
+            const formatNumber = (n) => n ? Number(n).toLocaleString() : '0';
+
+            const getCategoryColor = (cat) => ({ sightseeing: 'bg-[#2E5C3A]', food: 'bg-[#B33A3A]', shopping: 'bg-[#6C8D74]', accommodation: 'bg-[#D98E6C]', flight: 'bg-[#3A5CB3]', transport: 'bg-[#8A3B31]' }[cat] || 'bg-gray-500');
+            const getCategoryIcon = (cat) => ({ sightseeing: 'fa-solid fa-camera', food: 'fa-solid fa-utensils', shopping: 'fa-solid fa-basket-shopping', accommodation: 'fa-solid fa-bed', flight: 'fa-solid fa-plane', transport: 'fa-solid fa-train-subway' }[cat] || 'fa-solid fa-tag');
+            const getCategoryLabel = (cat) => ({ sightseeing: '景點', food: '飲食', shopping: '購物', accommodation: '住宿', flight: '航班', transport: '交通' }[cat] || '其他');
+            const getWeatherIcon = (c) => ({ sunny: 'fa-solid fa-sun', cloudy: 'fa-solid fa-cloud', rain: 'fa-solid fa-cloud-showers-heavy' }[c] || 'fa-solid fa-sun');
+            const getHourlyWeatherIcon = (h) => h.isNight ? 'fa-solid fa-moon' : getWeatherIcon(h.condition);
+            const getWeatherDescription = (c) => ({ sunny: '晴朗', cloudy: '多雲', rain: '降雨' }[c] || '晴朗');
+            const getTransportIcon = (t) => ({ walk: 'fa-solid fa-person-walking', bus: 'fa-solid fa-bus', public: 'fa-solid fa-train-subway', flight: 'fa-solid fa-plane', car: 'fa-solid fa-car' }[t] || 'fa-solid fa-person-walking');
+
+            const editItineraryItem = (item) => {
+                isEditItineraryMode.value = true;
+                editingItineraryIndex.value = currentItinerary.value.findIndex(i => i.id === item.id);
+                newItinerary.value = JSON.parse(JSON.stringify(item));
+                showItineraryModal.value = true;
+            };
+
+            const saveItineraryItem = () => {
+                if (!newItinerary.value.name) return alert('請輸入名稱');
+                const list = [...currentItinerary.value];
+                if (isEditItineraryMode.value && editingItineraryIndex.value > -1) {
+                    list[editingItineraryIndex.value] = { ...newItinerary.value };
+                } else {
+                    list.push({ ...newItinerary.value, id: Date.now() });
+                }
+                currentItinerary.value = list;
+                showItineraryModal.value = false;
+                triggerSync();
+            };
+
+            const removeItineraryItem = () => {
+                if (confirm('確定刪除此行程？')) {
+                    const list = [...currentItinerary.value];
+                    list.splice(editingItineraryIndex.value, 1);
+                    currentItinerary.value = list;
+                    showItineraryModal.value = false;
+                    triggerSync();
+                }
+            };
+
+            const handleAddClick = () => {
+                if (currentTab.value === 'itinerary') {
+                    isEditItineraryMode.value = false;
+                    newItinerary.value = { id: Date.now(), name: '', startTime: '', travelTime: '', note: '', category: 'sightseeing', transportType: 'walk' };
+                    showItineraryModal.value = true;
+                } else if (currentTab.value === 'list') {
+                    isEditShoppingMode.value = false;
+                    newShoppingItem.value = { id: Date.now(), name: '', image: null, checked: false, category: 'shopping', location: '' };
+                    showShoppingModal.value = true;
+                } else if (currentTab.value === 'expenses') {
+                    isEditExpenseMode.value = false;
+                    newExpense.value = { name: '', amount: null, payer: '甯', currency: 'JPY', date: '2026-10-29', payment: 'cash', category: 'food' };
+                    showExpenseModal.value = true;
+                }
+            };
+
+            const editShoppingItem = (item) => {
+                isEditShoppingMode.value = true;
+                editingShoppingItemRef.value = item;
+                newShoppingItem.value = JSON.parse(JSON.stringify(item));
+                if (!newShoppingItem.value.category) newShoppingItem.value.category = 'shopping';
+                if (!newShoppingItem.value.location) newShoppingItem.value.location = '';
+                showShoppingModal.value = true;
+            };
+
+            const saveShoppingItem = () => {
+                if (!newShoppingItem.value.name) return alert('請輸入名稱');
+                if (isEditShoppingMode.value && editingShoppingItemRef.value) {
+                    const realIdx = shoppingList.value.findIndex(i => i.id === editingShoppingItemRef.value.id || i.name === editingShoppingItemRef.value.name);
+                    if (realIdx > -1) shoppingList.value[realIdx] = { ...newShoppingItem.value };
+                } else {
+                    if(!newShoppingItem.value.id) newShoppingItem.value.id = Date.now();
+                    shoppingList.value.push({ ...newShoppingItem.value });
+                }
+                showShoppingModal.value = false;
+                triggerSync();
+            };
+
+            const removeShoppingItem = (item) => {
+                if (confirm('確定刪除此項目？')) {
+                    const realIdx = shoppingList.value.findIndex(i => i.id === item.id || i.name === item.name);
+                    if (realIdx > -1) shoppingList.value.splice(realIdx, 1);
+                    triggerSync();
+                }
+            };
+
+            const editExpenseItem = (exp, idx) => {
+                isEditExpenseMode.value = true;
+                editingExpenseIndex.value = expenses.value.findIndex(e => e === exp);
+                newExpense.value = JSON.parse(JSON.stringify(exp));
+                showExpenseModal.value = true;
+            };
+
+            const saveExpenseItem = () => {
+                if (!newExpense.value.name || !newExpense.value.amount) return alert('請輸入名稱與金額');
+                if (isEditExpenseMode.value && editingExpenseIndex.value > -1) {
+                    expenses.value[editingExpenseIndex.value] = { ...newExpense.value };
+                } else {
+                    expenses.value.push({ ...newExpense.value });
+                }
+                expenses.value.sort((a, b) => new Date(b.date) - new Date(a.date));
+                showExpenseModal.value = false;
+                triggerSync();
+            };
+
+            const deleteExpense = () => {
+                if (confirm('確定刪除此花費？')) {
+                    expenses.value.splice(editingExpenseIndex.value, 1);
+                    showExpenseModal.value = false;
+                    triggerSync();
+                }
+            };
+
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        newShoppingItem.value.image = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const openMap = (query) => {
+                if (query) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank');
+            };
+
+            return {
+                currentTab, selectedDateIndex, selectedRegionIndex, syncStatus, isReorderMode, weatherStatus: computed(() => rateLoading.value ? 'loading' : 'live'), weatherLoading: rateLoading,
+                dates, weatherRegionsData, currentDayRegions, currentWeather, dailyOverviews, currentOverview,
+                itineraryData, currentItinerary, shoppingList, categorizedLists, listCollapse, toggleList, expenses, hotels, rateLoading,
+                showHighlightModal, activeHighlight, openDayHighlight,
+                exchangeRate, jpyInput, twdInput, updateFromJpy, updateFromTwd,
+                filteredExpensesJPY, filteredExpensesTWD, uniquePayers, expenseFilterPayer, filteredExpenses,
+                formatNumber, getCategoryColor, getCategoryIcon, getCategoryLabel, getWeatherIcon, getHourlyWeatherIcon, getWeatherDescription, getTransportIcon,
+                showItineraryModal, isEditItineraryMode, editingItineraryIndex, newItinerary, editItineraryItem, saveItineraryItem, removeItineraryItem,
+                showShoppingModal, isEditShoppingMode, newShoppingItem, editShoppingItem, saveShoppingItem, removeShoppingItem, handleImageUpload,
+                showExpenseModal, isEditExpenseMode, editingExpenseIndex, newExpense, editExpenseItem, saveExpenseItem, deleteExpense,
+                showGuideModal, activeGuide, openGuideModal, hasGuide,
+                showHotelGuideModal, activeHotelGuide, openHotelGuide, spotGuides,
+                handleAddClick, saveLocal, triggerSync, manualSync, openMap
+            };
+        }
+    });
 
     app.mount('#app');
 </script>
